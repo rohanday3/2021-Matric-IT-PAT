@@ -20,10 +20,10 @@ I chose to create an application to assist with inventory management, donation m
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/MultiView.png" width="700" description="MultiView">*Multiview*
 
 
-<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login1.png" width="350" title="Login screen 1"> **
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login1.png" width="350" title="Login screen 1"> *Login screen 1*
   
 
-<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login2.png" width="350" title="Login screen 2">** 
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login2.png" width="350" title="Login screen 2">*Login screen 2* 
 
 
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Sign-in.png" width="300" description="Sign-in-1">*Sign-in username*
