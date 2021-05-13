@@ -12,6 +12,8 @@ I chose to create an application to assist with inventory management, donation m
 
 
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Donations.png" width="700" description="Donations"> *Donations tab*
+
+
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Donations.png" width="700" description="Donations show x records"> *Donations show x records*
 
 
