@@ -3,7 +3,7 @@ program prjPAT2021;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  uMain in 'uMain.pas' {Form1},
+  uMain in 'uMain.pas' {Form1} ,
   uNaviPanel in 'uNaviPanel.pas',
   uDashPanel in 'uDashPanel.pas',
   uDonationPanel in 'uDonationPanel.pas',
@@ -12,7 +12,10 @@ uses
 {$R *.res}
 
 begin
-  Application.Initialize;
-  Application.CreateForm(TForm2, Form2);
-  Application.Run;
+  if TForm2.Execute then
+  begin
+    Application.Initialize;
+    Application.CreateForm(TForm1, Form1);
+    Application.Run;
+  end;
 end.

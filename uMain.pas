@@ -8,7 +8,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.MultiView, FMX.Objects, FMX.Layouts,
   uNaviPanel, FMX.StdCtrls, FMX.TabControl, uDashPanel, UIConsts, FMX.Edit,
-  FMX.ListBox, uDonationPanel;
+  FMX.ListBox, uDonationPanel, System.ImageList, FMX.ImgList;
 
 type
   TForm1 = class(TForm)
@@ -57,6 +57,8 @@ type
     scrollDonationsVert: TVertScrollBox;
     Label8: TLabel;
     Label9: TLabel;
+    ImageList1: TImageList;
+    ImageList2: TImageList;
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure MultiView1MouseLeave(Sender: TObject);
@@ -103,22 +105,14 @@ begin
   arrNavipanel[6].SetLabel('Backup');
   arrNavipanel[7].SetLabel('Settings');
   arrNavipanel[8].SetLabel('Help');
-  arrNavipanel[1].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Home\black-48dp\2x\outline_home_white_48dp.png');
-  arrNavipanel[2].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\donations\black-48dp\2x\donations.png');
-  arrNavipanel[3].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\payments\black-48dp\2x\payments.png');
-  arrNavipanel[4].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Inventory\black-48dp\2x\outline_inventory_2_white_48dp.png');
-  arrNavipanel[5].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Report\black-48dp\2x\outline_summarize_white_48dp.png');
-  arrNavipanel[6].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Backup\black-48dp\2x\outline_backup_white_48dp.png');
-  arrNavipanel[7].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Settings\black-48dp\2x\outline_settings_white_48dp.png');
-  arrNavipanel[8].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Help\black-48dp\2x\outline_help_outline_white_48dp.png');
+  arrNavipanel[1].GetTImage.Bitmap := (ImageList2.Source.Items[0].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[2].GetTImage.Bitmap := (ImageList2.Source.Items[1].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[3].GetTImage.Bitmap := (ImageList2.Source.Items[2].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[4].GetTImage.Bitmap := (ImageList2.Source.Items[3].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[5].GetTImage.Bitmap := (ImageList2.Source.Items[4].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[6].GetTImage.Bitmap := (ImageList2.Source.Items[5].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[7].GetTImage.Bitmap := (ImageList2.Source.Items[6].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[8].GetTImage.Bitmap := (ImageList2.Source.Items[7].MultiResBitmap.Bitmaps[1]);
   loading_status := 'Loading top panel...';
   lblTab.Text := arrNavipanel[TabControl1.TabIndex + 1].GetLabel;
   loading_status := 'Loading botom panel...';
@@ -129,31 +123,25 @@ begin
   begin
     arrDashpanel[I] := TDashPanel.Create(Self, flowHome);
   end;
-  arrDashpanel[1].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\items\items.png');
+  arrDashpanel[1].GetTImage.Bitmap := (ImageList1.Source.Items[0].MultiResBitmap.Bitmaps[1]);
+    //(GetCurrentDir + '\..\..\..\..\Assets\Icons\items\items.png');
   arrDashpanel[1].setColor(StringToAlphaColor('#FF00bfee'));
   arrDashpanel[1].SetLabel2('Total items');
-  arrDashpanel[2].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Boxes\inventory.png');
+  arrDashpanel[2].GetTImage.Bitmap := (ImageList1.Source.Items[1].MultiResBitmap.Bitmaps[1]);
   arrDashpanel[2].setColor(StringToAlphaColor('#FF00a659'));
   arrDashpanel[2].SetLabel2('Total categories');
-  arrDashpanel[3].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\donations\donations.png');
+  arrDashpanel[3].GetTImage.Bitmap := (ImageList1.Source.Items[2].MultiResBitmap.Bitmaps[1]);
   arrDashpanel[3].setColor(StringToAlphaColor('#FFf39c11'));
   arrDashpanel[3].SetLabel2('Total donations');
-  arrDashpanel[4].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\expenses\expenses.png');
+  arrDashpanel[4].GetTImage.Bitmap := (ImageList1.Source.Items[3].MultiResBitmap.Bitmaps[1]);
   arrDashpanel[4].setColor(StringToAlphaColor('#FFdd4c39'));
   arrDashpanel[4].SetLabel2('Outstanding expenses');;
-  arrDashpanel[5].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\People\people.png');
+  arrDashpanel[5].GetTImage.Bitmap := (ImageList1.Source.Items[4].MultiResBitmap.Bitmaps[1]);
   arrDashpanel[5].setColor(StringToAlphaColor('#FF00bfee'));
   arrDashpanel[5].SetLabel2('Total staff');
-  arrDashpanel[6].SetImage
-    ('C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\income\income.png');
+  arrDashpanel[6].GetTImage.Bitmap := (ImageList1.Source.Items[5].MultiResBitmap.Bitmaps[1]);
   arrDashpanel[6].setColor(StringToAlphaColor('#FF00a659'));
   arrDashpanel[6].SetLabel2('Total income');
-
   LoadDonations;
 
   // End of form create

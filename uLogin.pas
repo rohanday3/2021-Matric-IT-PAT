@@ -13,7 +13,7 @@ type
   TForm2 = class(TForm)
     Rectangle1: TRectangle;
     Label1: TLabel;
-    Rectangle2: TRectangle;
+    RectWelome: TRectangle;
     Image1: TImage;
     Label2: TLabel;
     Label3: TLabel;
@@ -68,7 +68,7 @@ type
     floatRectLogin2PosR: TFloatAnimation;
     floatRect11PosF: TFloatAnimation;
     floatRect11PosR: TFloatAnimation;
-    Rectangle13: TRectangle;
+    RectCreateAccount: TRectangle;
     Label18: TLabel;
     Rectangle14: TRectangle;
     AniIndicator1: TAniIndicator;
@@ -84,8 +84,11 @@ type
     ComboBox1: TComboBox;
     Label21: TLabel;
     Rectangle19: TRectangle;
+    loginhideRect2Height: TFloatAnimation;
+    loginhideImage1Pos: TFloatAnimation;
+    loginhideImage1Height: TFloatAnimation;
+    FloatAnimation1: TFloatAnimation;
     procedure zoomFinish(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure Rectangle1Click(Sender: TObject);
     procedure fadeoutLabel2PosFinish(Sender: TObject);
@@ -114,17 +117,23 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Rectangle15Click(Sender: TObject);
     procedure Rectangle14Click(Sender: TObject);
-    procedure Rectangle13Click(Sender: TObject);
+    procedure RectCreateAccountClick(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
     procedure ComboBox1Click(Sender: TObject);
     procedure Rectangle19Click(Sender: TObject);
     procedure ComboBox1KeyDown(Sender: TObject; var Key: Word;
       var KeyChar: Char; Shift: TShiftState);
     procedure FormPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
+    procedure rectBtnBackClick(Sender: TObject);
+    procedure loginhideRect2HeightFinish(Sender: TObject);
+    procedure Rectangle10Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     iconstarty: Single;
     function confirmAccount: Boolean;
+    function confirmPassword: Boolean;
     procedure hideerror;
     procedure showerror(error: integer);
     procedure LoadCountryCodes;
@@ -133,9 +142,10 @@ type
       Size: Single; Color: string);
     procedure FilterComboBox(ComboBox: TComboBox; Key: String);
     procedure ResetComboBox;
-    function GetVersionNumber:string;
+    function GetVersionNumber: string;
   public
     { Public declarations }
+    class function Execute: Boolean;
   end;
 
 var
@@ -147,6 +157,7 @@ var
   ComboboxSearch: string;
   CountryCodes: TStringList;
   CountryCodesFiltered: TStringList;
+  FormWidth, FormHeight: integer;
 
 implementation
 
@@ -211,6 +222,14 @@ begin
     Result := False;
 end;
 
+function TForm2.confirmPassword: Boolean;
+begin
+  if Edit2.Text = 'admin' then
+    Result := True
+  else
+    Result := False;
+end;
+
 procedure TForm2.Edit1Click(Sender: TObject);
 begin
   if not errorlogin then
@@ -235,6 +254,16 @@ begin
     else
       showerror(2);
   end;
+end;
+
+class function TForm2.Execute: Boolean;
+begin
+  with TForm2.Create(nil) do
+    try
+      Result := ShowModal = mrOk;
+    finally
+      Free;
+    end;
 end;
 
 procedure TForm2.fadeoutLabel2PosFinish(Sender: TObject);
@@ -295,12 +324,12 @@ end;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin
-  Rectangle2.Width := Form2.Width;
-  Rectangle2.Height := Form2.Height;
+  RectWelome.width := 460;
+  RectWelome.height := 640;
   Rectangle1.Visible := False;
   Label2.Visible := False;
   Label3.Visible := False;
-  iconstarty := round((Form2.Height / 2) - (Image1.Width / 2));
+  iconstarty := round((640 / 2) - (Image1.width / 2));
   zoomfromcenteradjust.StopValue := iconstarty;
   zoomfromcenteradjust.StartValue := iconstarty + 36;
   LoadCountryCodeFiles;
@@ -309,7 +338,7 @@ begin
   float.StartValue := iconstarty;
   rectLogin2.BringToFront;
   rectLogin.BringToFront;
-  Rectangle2.BringToFront;
+  RectWelome.BringToFront;
   hideerror;
 end;
 
@@ -320,11 +349,18 @@ begin
     ResetComboBox;
 end;
 
-function TForm2.GetVersionNumber:string;
+procedure TForm2.FormShow(Sender: TObject);
 begin
-Result:=Inttostr(TOSVersion.Major)+'.'+IntToStr(TOSVersion.Minor)+'.'+IntToStr(TOSVersion.Build);
-//ShowMessage();
-//GetEnvironmentVariable()
+  // Showmessage('screen width = ' + Inttostr(Screen.Width) + ', screen height = '
+  // + Inttostr(Screen.Height));
+end;
+
+function TForm2.GetVersionNumber: string;
+begin
+  Result := Inttostr(TOSVersion.Major) + '.' + Inttostr(TOSVersion.Minor) + '.'
+    + Inttostr(TOSVersion.Build);
+  // ShowMessage();
+  // GetEnvironmentVariable()
 end;
 
 procedure TForm2.hideerror;
@@ -363,7 +399,7 @@ begin
   Except
     on Exception do
     begin
-      ShowMessage('Country codes file not found.');
+      Showmessage('Country codes file not found.');
     end;
   End;
   filestream.Destroy();
@@ -380,10 +416,39 @@ begin
   StyleComboBoxItems(ComboBox1, 'Calibri', 16, '#ff000000');
 end;
 
-procedure TForm2.Rectangle13Click(Sender: TObject);
+procedure TForm2.loginhideRect2HeightFinish(Sender: TObject);
+begin
+  //
+  Label4.Visible := True;
+  Label6.Visible := True;
+  Rectangle3.Visible := True;
+  Rectangle3.Enabled := True;
+end;
+
+procedure TForm2.RectCreateAccountClick(Sender: TObject);
 begin
   Rectangle18.Fill.Color := StringToAlphaColor('#FFFFFFFF');
   Rectangle19.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+end;
+
+procedure TForm2.Rectangle10Click(Sender: TObject);
+begin
+  if confirmPassword then
+  begin
+    // hideerror2;
+    Rectangle8.Stroke.Color := TAlphaColors.Green;
+    Rectangle8.Fill.Color := StringToAlphaColor('#9b37cf7b');
+    ModalResult := mrOk;
+  end
+  else
+  begin
+    ModalResult := mrCancel;
+    Label13.Visible := True;
+    if Length(Edit1.Text) > 0 then
+      // showerror2(0)
+    else
+      // showerror2(1);
+  end;
 end;
 
 procedure TForm2.Rectangle14Click(Sender: TObject);
@@ -433,7 +498,7 @@ end;
 procedure TForm2.Rectangle4Click(Sender: TObject);
 begin
   //
-  Rectangle13.BringToFront;
+  RectCreateAccount.BringToFront;
   Rectangle14.Visible := False;
   AniIndicator1.Visible := True;
   AniIndicator1.Enabled := True;
@@ -476,6 +541,14 @@ begin
   Label16.FontColor := StringToAlphaColor('#FF3E81C4');
 end;
 
+procedure TForm2.rectBtnBackClick(Sender: TObject);
+begin
+  //
+  loginhideRect2Height.Start;
+  loginhideImage1Pos.Start;
+  loginhideImage1Height.Start;
+end;
+
 procedure TForm2.rectBtnBackMouseEnter(Sender: TObject);
 begin
   TRectangle(Sender).Fill.Color := StringToAlphaColor('#FFb2b2b2');
@@ -492,7 +565,7 @@ begin
   begin
     hideerror;
     Label14.Text := Edit1.Text;
-    Rectangle2.SendToBack;
+    RectWelome.SendToBack;
     Rectangle11.Visible := False;
     // floatRectLoginFadeF.Start;
     // rectLogin2.Opacity:=0;
@@ -557,7 +630,7 @@ begin
     CreateAccountForward := False;
   end
   else
-    Rectangle13.SendToBack;
+    RectCreateAccount.SendToBack;
   Timer1.Enabled := False;
 end;
 

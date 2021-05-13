@@ -14,6 +14,7 @@ Type
     procedure SetLabel(caption: string);
     function GetLabel: string;
     procedure SetImage(image: string);
+    function GetTImage: TImage;
     function GetTabIndex: integer;
     procedure setTabIndex(index: integer);
     procedure setTabControl(AObject: TTabControl);
@@ -75,6 +76,11 @@ begin
   Result := olabel.Text;
 end;
 
+function TNaviPanel.GetTImage: TImage;
+begin
+  Result := oimage;
+end;
+
 function TNaviPanel.GetTabIndex: integer;
 begin
   Result := tabcontrolindex;
@@ -109,7 +115,7 @@ end;
 procedure TNaviPanel.setClicked;
 begin
   opanel.Fill.Color := StringToAlphaColor('#FFF15A23');
-  selected:=True;
+  selected := True;
 end;
 
 procedure TNaviPanel.SetImage(image: string);

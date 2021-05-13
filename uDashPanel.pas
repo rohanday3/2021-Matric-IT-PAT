@@ -17,6 +17,7 @@ Type
     procedure SetImage(image: string);
     procedure resetColor;
     procedure setColor(Color: TAlphaColor);
+    function GetTImage:TImage;
   protected
     { protected fields }
     { protected methods }
@@ -83,6 +84,11 @@ end;
 function TDashPanel.GetLabel1: string;
 begin
 
+end;
+
+function TDashPanel.GetTImage: TImage;
+begin
+  Result:= oimage;
 end;
 
 procedure TDashPanel.onMouseEnter(Sender: TObject);

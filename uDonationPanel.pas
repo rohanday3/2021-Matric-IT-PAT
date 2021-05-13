@@ -15,6 +15,7 @@ Type
     procedure SetLabelTime(caption: string);
     procedure SetLabelDesc(caption: string);
     procedure SetLabelQuantity(caption: string);
+    procedure setColor(Color: TAlphaColor);
     procedure resize;
   protected
     { protected fields }
@@ -31,7 +32,6 @@ Type
     opanelDesc: TRectangle;
     opanelQuantity: TRectangle;
     { private methods }
-    procedure setColor(Color: TAlphaColor);
   end;
 
 implementation
@@ -153,6 +153,26 @@ end;
 procedure TDonationPanel.setColor(Color: TAlphaColor);
 begin
   opanel.Fill.Color := Color;
+end;
+
+procedure TDonationPanel.SetLabelDesc(caption: string);
+begin
+
+end;
+
+procedure TDonationPanel.SetLabelName(caption: string);
+begin
+
+end;
+
+procedure TDonationPanel.SetLabelQuantity(caption: string);
+begin
+
+end;
+
+procedure TDonationPanel.SetLabelTime(caption: string);
+begin
+
 end;
 
 end.
