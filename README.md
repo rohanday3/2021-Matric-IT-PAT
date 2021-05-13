@@ -9,4 +9,11 @@ I chose to create an application to assist with inventory management, donation m
 
 # Sample GUI
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Dashboard.png" width="700" description="Dashboard">
-Dashboard
+Dashboard - Home tab
+
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Donations.png" width="700" description="Donations">
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Donations.png" width="700" description="Donations show x records">
+Donations tab
+
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/MultiView.png" width="700" description="MultiView">
+Multiview
