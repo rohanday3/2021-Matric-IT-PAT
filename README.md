@@ -20,12 +20,11 @@ I chose to create an application to assist with inventory management, donation m
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/MultiView.png" width="700" description="MultiView"> *Multiview*
 
 <div align-content=space-evenly>
-  <figure display=inline-block text-align=center>
+  <figure>
   <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login1.png" width="350" title="Login screen 1">
-    <br>
   <figcaption text-align=center>Fig.5 - Login screen 1.</figcaption>
 </figure>
- <figure display=inline-block text-align=center>
+ <figure>
  <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login2.png" width="350" title="Login screen 2"> 
   <figcaption text-align=center>Fig.6 - Login screen 2.</figcaption>
 </figure> 
