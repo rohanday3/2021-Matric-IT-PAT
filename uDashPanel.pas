@@ -26,9 +26,6 @@ Type
     olabel2: TLabel;
     oimage: TImage;
     opanel: TRectangle;
-    tabcontrolindex: integer;
-    TabControl: TTabControl;
-    selected: boolean;
     { private methods }
     procedure onMouseEnter(Sender: TObject);
     procedure onMouseLeave(Sender: TObject);

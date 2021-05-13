@@ -7,7 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.Platform, FMX.Ani,
-  FMX.Edit, UIConsts, FMX.ListBox;
+  FMX.Edit, UIConsts, FMX.ListBox, FMX.Layouts;
 
 type
   TForm2 = class(TForm)
@@ -80,8 +80,10 @@ type
     Rectangle17: TRectangle;
     Edit3: TEdit;
     Rectangle18: TRectangle;
-    ComboBox1: TComboBox;
     StyleBook1: TStyleBook;
+    ComboBox1: TComboBox;
+    Label21: TLabel;
+    Rectangle19: TRectangle;
     procedure zoomFinish(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure floatFinish(Sender: TObject);
@@ -112,15 +114,26 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Rectangle15Click(Sender: TObject);
     procedure Rectangle14Click(Sender: TObject);
-    procedure ComboBox1Click(Sender: TObject);
     procedure Rectangle13Click(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    procedure ComboBox1Click(Sender: TObject);
+    procedure Rectangle19Click(Sender: TObject);
+    procedure ComboBox1KeyDown(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
+    procedure FormPaint(Sender: TObject; Canvas: TCanvas; const ARect: TRectF);
   private
     { Private declarations }
     iconstarty: Single;
     function confirmAccount: Boolean;
     procedure hideerror;
     procedure showerror(error: integer);
-    procedure loadCountryCodes;
+    procedure LoadCountryCodes;
+    procedure LoadCountryCodeFiles;
+    procedure StyleComboBoxItems(ComboBox: TComboBox; Family: string;
+      Size: Single; Color: string);
+    procedure FilterComboBox(ComboBox: TComboBox; Key: String);
+    procedure ResetComboBox;
+    function GetVersionNumber:string;
   public
     { Public declarations }
   end;
@@ -130,14 +143,64 @@ var
   errorlogin: Boolean;
   last_error: integer;
   CreateAccountForward: Boolean;
+  CurrentListItem: integer;
+  ComboboxSearch: string;
+  CountryCodes: TStringList;
+  CountryCodesFiltered: TStringList;
 
 implementation
 
 {$R *.fmx}
 
+Procedure TForm2.StyleComboBoxItems(ComboBox: TComboBox; Family: string;
+  Size: Single; Color: string);
+var
+  Item: TListBoxItem;
+  i: integer;
+begin
+  for i := 0 to ComboBox.Count - 1 do
+  begin
+    Item := ComboBox.ListItems[i];
+    Item.Font.Family := Family; // eg. 'Arial';
+    Item.Font.Size := Size; // eg. 20;
+    Item.FontColor := StringToAlphaColor(Color);
+    Item.StyledSettings := Item.StyledSettings - [TStyledSetting.Family,
+      TStyledSetting.Size, TStyledSetting.FontColor];
+    // Item.Text := '*'+Item.Text;
+  end;
+end;
+
+procedure TForm2.ComboBox1Change(Sender: TObject);
+var
+  s: string;
+begin
+  Rectangle18.Fill.Color := StringToAlphaColor('#ffffffff');
+  Rectangle19.Fill.Color := StringToAlphaColor('#ffffffff');
+  s := ComboBox1.Items[ComboBox1.ItemIndex];
+  Label21.Text := Copy(s, Pos('+', s), Length(s) - Pos('+', s) + 1);
+end;
+
 procedure TForm2.ComboBox1Click(Sender: TObject);
 begin
-  Rectangle18.Fill.Color := StringToAlphacolor('#FFEEEEEE')
+  Rectangle18.Fill.Color := StringToAlphaColor('#ffeeeeee');
+  Rectangle19.Fill.Color := StringToAlphaColor('#ffeeeeee');
+end;
+
+procedure TForm2.ComboBox1KeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+  if Inttostr(Key) = Inttostr(8) then // Backspace
+    ComboboxSearch := Copy(ComboboxSearch, 0, Length(ComboboxSearch) - 1)
+  else if Inttostr(Key) = Inttostr(16) then // Shift key press
+    // Enable for debugging ShowMessage(ComboboxSearch)
+  else
+    ComboboxSearch := ComboboxSearch + KeyChar;
+  // ShowMessage(Inttostr(Key))
+
+  // Remove spaces
+  ComboboxSearch := StringReplace(ComboboxSearch, ' ', '', [rfReplaceAll]);
+
+  FilterComboBox(ComboBox1, ComboboxSearch)
 end;
 
 function TForm2.confirmAccount: Boolean;
@@ -152,7 +215,7 @@ procedure TForm2.Edit1Click(Sender: TObject);
 begin
   if not errorlogin then
     TRectangle(TEdit(Sender).Parent).Stroke.Color :=
-      StringToAlphacolor('#FF1A69B9');
+      StringToAlphaColor('#FF1A69B9');
 end;
 
 procedure TForm2.Edit1Exit(Sender: TObject);
@@ -182,6 +245,29 @@ begin
   Label6.Visible := True;
   Rectangle1.Cursor := crDefault;
   Rectangle1.Enabled := False;
+end;
+
+procedure TForm2.FilterComboBox(ComboBox: TComboBox; Key: String);
+var
+  i: integer;
+begin
+  if Key = '' then
+  begin
+    ComboBox.Items.AddStrings(CountryCodes);
+    StyleComboBoxItems(ComboBox, 'Calibri', 16, '#ff000000');
+    Exit;
+  end;
+  CountryCodesFiltered := TStringList.Create;
+
+  CountryCodesFiltered.Clear;
+
+  for i := 0 to CountryCodes.Count - 1 do
+    if Pos(Lowercase(Key), Lowercase(CountryCodes[i])) > 0 then
+      CountryCodesFiltered.Add(CountryCodes[i]);
+
+  ComboBox.Items.Clear;
+  ComboBox.Items.AddStrings(CountryCodesFiltered);
+  StyleComboBoxItems(ComboBox, 'Calibri', 16, '#ff000000');
 end;
 
 procedure TForm2.floatFinish(Sender: TObject);
@@ -217,7 +303,9 @@ begin
   iconstarty := round((Form2.Height / 2) - (Image1.Width / 2));
   zoomfromcenteradjust.StopValue := iconstarty;
   zoomfromcenteradjust.StartValue := iconstarty + 36;
-  Showmessage(GetCurrentDir);
+  LoadCountryCodeFiles;
+  LoadCountryCodes;
+  Label6.Text := GetVersionNumber;
   float.StartValue := iconstarty;
   rectLogin2.BringToFront;
   rectLogin.BringToFront;
@@ -225,11 +313,25 @@ begin
   hideerror;
 end;
 
+procedure TForm2.FormPaint(Sender: TObject; Canvas: TCanvas;
+  const ARect: TRectF);
+begin
+  if ComboBox1.DroppedDown = False then
+    ResetComboBox;
+end;
+
+function TForm2.GetVersionNumber:string;
+begin
+Result:=Inttostr(TOSVersion.Major)+'.'+IntToStr(TOSVersion.Minor)+'.'+IntToStr(TOSVersion.Build);
+//ShowMessage();
+//GetEnvironmentVariable()
+end;
+
 procedure TForm2.hideerror;
 begin
   Label13.Text := '';
   Rectangle6.Position.Y := 115;
-  Rectangle5.Stroke.Color := StringToAlphacolor('#FF1A69B9');
+  Rectangle5.Stroke.Color := StringToAlphaColor('#FF1A69B9');
   errorlogin := False;
 end;
 
@@ -241,35 +343,53 @@ end;
 
 procedure TForm2.Image2MouseEnter(Sender: TObject);
 begin
-  Rectangle7.Fill.Color := StringToAlphacolor('#FFe5e5e5');
+  Rectangle7.Fill.Color := StringToAlphaColor('#FFe5e5e5');
 end;
 
 procedure TForm2.Image2MouseLeave(Sender: TObject);
 begin
-  Rectangle7.Fill.Color := StringToAlphacolor('#FFFFFFFF');
+  Rectangle7.Fill.Color := StringToAlphaColor('#FFFFFFFF');
 end;
 
-procedure TForm2.loadCountryCodes;
+procedure TForm2.LoadCountryCodeFiles;
+var
+  filestream: TFileStream;
 begin
+  CountryCodes := TStringList.Create;
+  filestream := TFileStream.Create((GetCurrentDir + '\Country-Codes.txt'),
+    fmShareDenyNone);
   Try
-    ComboBox1.Items.Clear();
-    ComboBox1.Items.LoadFromFile(GetCurrentDir + '\Country-Codes.txt');
+    CountryCodes.LoadFromStream(filestream);
   Except
     on Exception do
     begin
       ShowMessage('Country codes file not found.');
     end;
   End;
+  filestream.Destroy();
+end;
+
+procedure TForm2.LoadCountryCodes;
+begin
+  try
+    ComboBox1.Items.Clear();
+    ComboBox1.Items.AddStrings(CountryCodes);
+  except
+
+  end;
+  StyleComboBoxItems(ComboBox1, 'Calibri', 16, '#ff000000');
 end;
 
 procedure TForm2.Rectangle13Click(Sender: TObject);
 begin
-  Rectangle18.Fill.Color := StringToAlphacolor('#00EEEEEE');
+  Rectangle18.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+  Rectangle19.Fill.Color := StringToAlphaColor('#FFFFFFFF');
 end;
 
 procedure TForm2.Rectangle14Click(Sender: TObject);
 begin
-  Rectangle18.Fill.Color := StringToAlphacolor('#00EEEEEE');
+  Rectangle18.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+  Rectangle19.Fill.Color := StringToAlphaColor('#FFFFFFFF');
 end;
 
 procedure TForm2.Rectangle15Click(Sender: TObject);
@@ -279,6 +399,13 @@ begin
   AniIndicator1.Enabled := True;
   Timer1.Interval := Random(2000) + 1000;
   Timer1.Enabled := True;
+end;
+
+procedure TForm2.Rectangle19Click(Sender: TObject);
+begin
+  ComboBox1.DropDown;
+  ComboBox1.OnClick(ComboBox1);
+  ComboBox1.SetFocus;
 end;
 
 procedure TForm2.Rectangle1Click(Sender: TObject);
@@ -318,45 +445,45 @@ end;
 procedure TForm2.Rectangle4MouseEnter(Sender: TObject);
 begin
   Label10.Font.Style := [TFontStyle.fsUnderline];
-  Label10.FontColor := StringToAlphacolor('#FF666666');
+  Label10.FontColor := StringToAlphaColor('#FF666666');
 end;
 
 procedure TForm2.Rectangle4MouseLeave(Sender: TObject);
 begin
   Label10.Font.Style := [];
-  Label10.FontColor := StringToAlphacolor('#FF1A69B9');
+  Label10.FontColor := StringToAlphaColor('#FF1A69B9');
 end;
 
 procedure TForm2.Rectangle7MouseEnter(Sender: TObject);
 begin
-  Rectangle7.Fill.Color := StringToAlphacolor('#FFe5e5e5');
+  Rectangle7.Fill.Color := StringToAlphaColor('#FFe5e5e5');
 end;
 
 procedure TForm2.Rectangle7MouseLeave(Sender: TObject);
 begin
-  Rectangle7.Fill.Color := StringToAlphacolor('#FFFFFFFF');
+  Rectangle7.Fill.Color := StringToAlphaColor('#FFFFFFFF');
 end;
 
 procedure TForm2.Rectangle9MouseEnter(Sender: TObject);
 begin
   Label16.Font.Style := [TFontStyle.fsUnderline];
-  Label16.FontColor := StringToAlphacolor('#FF666666');
+  Label16.FontColor := StringToAlphaColor('#FF666666');
 end;
 
 procedure TForm2.Rectangle9MouseLeave(Sender: TObject);
 begin
   Label16.Font.Style := [];
-  Label16.FontColor := StringToAlphacolor('#FF3E81C4');
+  Label16.FontColor := StringToAlphaColor('#FF3E81C4');
 end;
 
 procedure TForm2.rectBtnBackMouseEnter(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FFb2b2b2');
+  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FFb2b2b2');
 end;
 
 procedure TForm2.rectBtnBackMouseLeave(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FFcccccc');
+  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FFcccccc');
 end;
 
 procedure TForm2.rectBtnNextClick(Sender: TObject);
@@ -384,17 +511,23 @@ end;
 
 procedure TForm2.rectBtnNextMouseEnter(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FF165fa7');
+  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FF165fa7');
 end;
 
 procedure TForm2.rectBtnNextMouseLeave(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FF1a69b9');
+  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FF1a69b9');
+end;
+
+procedure TForm2.ResetComboBox;
+begin
+  ComboboxSearch := '';
+  LoadCountryCodes;
 end;
 
 procedure TForm2.showerror(error: integer);
 begin
-  Rectangle5.Stroke.Color := StringToAlphacolor('#FFde1916');
+  Rectangle5.Stroke.Color := StringToAlphaColor('#FFde1916');
   if error = 0 then
   begin
     Label13.Text :=
