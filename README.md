@@ -6,3 +6,6 @@ Create an application to assist a non-profit organisation.
 
 # Topic
 I chose to create an application to assist with inventory management, donation management, expenses, staff etc.
+
+# Sample GUI
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/GUI Sample/Dashboard.png" width="250">
