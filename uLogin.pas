@@ -128,7 +128,6 @@ type
     procedure loginhideRect2HeightFinish(Sender: TObject);
     procedure Rectangle10Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     iconstarty: Single;
@@ -161,10 +160,14 @@ var
 
 implementation
 
+uses
+  uMain;
+
 {$R *.fmx}
 
 Procedure TForm2.StyleComboBoxItems(ComboBox: TComboBox; Family: string;
   Size: Single; Color: string);
+
 var
   Item: TListBoxItem;
   i: integer;
@@ -262,6 +265,7 @@ begin
     try
       Result := ShowModal = mrOk;
     finally
+      Application.Hint := Edit1.Text;
       Free;
     end;
 end;
@@ -349,12 +353,6 @@ begin
     ResetComboBox;
 end;
 
-procedure TForm2.FormShow(Sender: TObject);
-begin
-  // Showmessage('screen width = ' + Inttostr(Screen.Width) + ', screen height = '
-  // + Inttostr(Screen.Height));
-end;
-
 function TForm2.GetVersionNumber: string;
 begin
   Result := Inttostr(TOSVersion.Major) + '.' + Inttostr(TOSVersion.Minor) + '.'
@@ -418,7 +416,6 @@ end;
 
 procedure TForm2.loginhideRect2HeightFinish(Sender: TObject);
 begin
-  //
   Label4.Visible := True;
   Label6.Visible := True;
   Rectangle3.Visible := True;
