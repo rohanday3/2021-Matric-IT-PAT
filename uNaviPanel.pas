@@ -4,7 +4,7 @@ interface
 
 uses
   FMX.StdCtrls, FMX.Objects, FMX.Controls, FMX.Layouts, FMX.Types, UIConsts,
-  UITypes, FMX.TabControl;
+  UITypes, FMX.TabControl, FMX.Multiview, FMX.Dialogs, System.SysUtils;
 
 Type
   TNaviPanel = Class(TPanel)
@@ -47,12 +47,12 @@ begin
   opanel := TRectangle.Create(AOwner);
   opanel.Parent := AParent;
   opanel.Width := TFlowLayout(AParent).Width;
-  opanel.onMouseEnter := onMouseEnter;
-  opanel.onMouseLeave := onMouseLeave;
   opanel.Height := 55;
   opanel.Stroke.Thickness := 0;
   opanel.OnClick := onPanelClick;
   opanel.Fill.Color := StringToAlphaColor('#FF222D31');
+  opanel.onMouseEnter := onMouseEnter;
+  opanel.onMouseLeave := onMouseLeave;
   olabel := TLabel.Create(AOwner);
   olabel.Parent := opanel;
   olabel.Position.X := 100;
@@ -69,6 +69,9 @@ begin
   oimage.Position.Y := 7;
   oimage.Width := 40;
   oimage.Height := 40;
+  oimage.OnClick := opanel.OnClick;
+  oimage.onMouseEnter := onMouseEnter;
+  oimage.onMouseLeave := onMouseLeave;
 end;
 
 function TNaviPanel.GetLabel: string;
@@ -88,7 +91,7 @@ end;
 
 procedure TNaviPanel.onMouseEnter(Sender: TObject);
 begin
-  if not selected then
+  if (selected <> True) then
     // opanel.Fill.Color := StringToAlphaColor('#FF1D262B');
     opanel.Fill.Color := StringToAlphaColor('#FF6d797e');
 end;

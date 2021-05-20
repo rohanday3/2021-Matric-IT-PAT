@@ -8,7 +8,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.MultiView, FMX.Objects, FMX.Layouts,
   uNaviPanel, FMX.StdCtrls, FMX.TabControl, uDashPanel, UIConsts, FMX.Edit,
-  FMX.ListBox, uDonationPanel, System.ImageList, FMX.ImgList;
+  FMX.ListBox, uDonationPanel, System.ImageList, FMX.ImgList, Datamodule,
+  FMX.Ani, uDonationsThread;
 
 type
   TForm1 = class(TForm)
@@ -60,13 +61,14 @@ type
     ImageList1: TImageList;
     ImageList2: TImageList;
     ImageList3: TImageList;
+    FloatAnimation1: TFloatAnimation;
+    FloatAnimation2: TFloatAnimation;
+    AniIndicator1: TAniIndicator;
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure MultiView1MouseLeave(Sender: TObject);
     procedure TabControl1Change(Sender: TObject);
     procedure imgNaviBarMouseEnter(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure LoadDonations;
     procedure DonationsFlowResize;
     procedure rectDonHeadTimeMouseEnter(Sender: TObject);
     procedure rectDonHeadTimeMouseLeave(Sender: TObject);
@@ -75,6 +77,7 @@ type
     procedure rectDonHeadTimeClick(Sender: TObject);
     procedure rectDonHeadTimeMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Single);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     arrNavipanel: array [1 .. 8] of TNaviPanel;
@@ -83,17 +86,26 @@ type
     sorttype: integer;
     sortcolumn: integer;
     sort: Boolean;
-    CurAccount:string;
+    CurAccount: string;
+    procedure LoadDashboard;
+    procedure LoadNavigationPanel;
+    function ChangeColour(colour, option: string): string;
   public
     { Public declarations }
     loading_status: string;
-    procedure setCurAccount(accountName:string);
+    procedure setCurAccount(accountName: string);
+    procedure LoadDonations;
+    procedure OnDonationsLoaded(Sender: TObject);
+    class var donation_thread: TLoadDonations;
   end;
 
 var
   Form1: TForm1;
 
 implementation
+
+uses
+  uLogin;
 
 {$R *.fmx}
 
@@ -103,81 +115,34 @@ var
 begin
   loading_status := 'Starting application...';
   loading_status := 'Loading navigation panel...';
-  for I := 1 to 8 do
-  begin
-    arrNavipanel[I] := TNaviPanel.Create(Self, flowNavibar);
-    arrNavipanel[I].setTabControl(TabControl1);
-    arrNavipanel[I].setTabIndex(I - 1);
-  end;
-  arrNavipanel[1].setClicked;
-  arrNavipanel[1].SetLabel('Home');
-  arrNavipanel[2].SetLabel('Donations');
-  arrNavipanel[3].SetLabel('Payments');
-  arrNavipanel[4].SetLabel('Inventory');
-  arrNavipanel[5].SetLabel('Report');
-  arrNavipanel[6].SetLabel('Backup');
-  arrNavipanel[7].SetLabel('Settings');
-  arrNavipanel[8].SetLabel('Help');
-  arrNavipanel[1].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[0].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[2].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[1].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[3].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[2].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[4].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[3].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[5].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[4].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[6].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[5].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[7].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[6].MultiResBitmap.Bitmaps[1]);
-  arrNavipanel[8].GetTImage.Bitmap :=
-    (ImageList2.Source.Items[7].MultiResBitmap.Bitmaps[1]);
+  LoadNavigationPanel;
   loading_status := 'Loading top panel...';
+  lblAccount.Text := 'Welcome, ' + Application.Hint;
+  Application.Hint := '';
   lblTab.Text := arrNavipanel[TabControl1.TabIndex + 1].GetLabel;
   loading_status := 'Loading botom panel...';
   lblCopyright.Text := 'Copyright © ' + FormatDateTime('yyyy', Now) +
     '. All rights reserved.';
-  loading_status := 'loading home panel...';
-  for I := 1 to 6 do
-  begin
-    arrDashpanel[I] := TDashPanel.Create(Self, flowHome);
-  end;
-  arrDashpanel[1].GetTImage.Bitmap :=
-    (ImageList1.Source.Items[0].MultiResBitmap.Bitmaps[1]);
-  // (GetCurrentDir + '\..\..\..\..\Assets\Icons\items\items.png');
-  arrDashpanel[1].setColor(StringToAlphaColor('#FF00bfee'));
-  arrDashpanel[1].SetLabel2('Total items');
-  arrDashpanel[2].GetTImage.Bitmap :=
-    (ImageList1.Source.Items[1].MultiResBitmap.Bitmaps[1]);
-  arrDashpanel[2].setColor(StringToAlphaColor('#FF00a659'));
-  arrDashpanel[2].SetLabel2('Total categories');
-  arrDashpanel[3].GetTImage.Bitmap :=
-    (ImageList1.Source.Items[2].MultiResBitmap.Bitmaps[1]);
-  arrDashpanel[3].setColor(StringToAlphaColor('#FFf39c11'));
-  arrDashpanel[3].SetLabel2('Total donations');
-  arrDashpanel[4].GetTImage.Bitmap :=
-    (ImageList1.Source.Items[3].MultiResBitmap.Bitmaps[1]);
-  arrDashpanel[4].setColor(StringToAlphaColor('#FFdd4c39'));
-  arrDashpanel[4].SetLabel2('Outstanding expenses');;
-  arrDashpanel[5].GetTImage.Bitmap :=
-    (ImageList1.Source.Items[4].MultiResBitmap.Bitmaps[1]);
-  arrDashpanel[5].setColor(StringToAlphaColor('#FF00bfee'));
-  arrDashpanel[5].SetLabel2('Total staff');
-  arrDashpanel[6].GetTImage.Bitmap :=
-    (ImageList1.Source.Items[5].MultiResBitmap.Bitmaps[1]);
-  arrDashpanel[6].setColor(StringToAlphaColor('#FF00a659'));
-  arrDashpanel[6].SetLabel2('Total income');
+  loading_status := 'loading dashboard panel...';
+  LoadDashboard;
+  loading_status := 'loading donations panel...';
   LoadDonations;
+  OnDonationsLoaded(nil);
+
+  //donation_thread := TLoadDonations.Create();
+  //donation_thread.OnTerminate := OnDonationsLoaded;
   sorttype := 0;
   sortcolumn := -1;
   sort := False;
-  lblAccount.Text:=Application.Hint;
-  Application.Hint:='';
   // End of form create
   TabControl1.TabIndex := 0;
+  // MultiView1.Enabled := False;
+end;
 
+procedure TForm1.FormDestroy(Sender: TObject);
+begin
+Application.Free;
+Application.Destroy;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -209,15 +174,135 @@ begin
     MultiView1.ShowMaster;
 end;
 
+procedure TForm1.LoadDashboard;
+var
+  I, Category, inventory_quantity, donation_quantity, payment_quantity,
+    staff_quantity, low_stock_quantity: integer;
+  item_count, donation_count, staff_count: string;
+begin
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT item_category,COUNT(*) FROM Inventory GROUP BY item_category');
+    Open;
+    Category := RecordCount;
+  end;
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT SUM(item_quantity) AS TOTAL FROM Inventory');
+    Open;
+    inventory_quantity := FieldByName('TOTAL').AsInteger;
+  end;
+  if length(inttostr(inventory_quantity)) > 4 then
+    item_count := FloatToStrF(inventory_quantity / 1000, ffGeneral, 3, 2) + 'k'
+  else
+    item_count := inttostr(inventory_quantity);
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT SUM(donation_quantity) AS TOTAL FROM Donations');
+    Open;
+    donation_quantity := FieldByName('TOTAL').AsInteger;
+  end;
+  if length(inttostr(donation_quantity)) > 4 then
+    donation_count := FloatToStrF(donation_quantity / 1000, ffGeneral,
+      3, 2) + 'k'
+  else
+    donation_count := inttostr(donation_quantity);
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT SUM(paid) AS TOTAL FROM Payments WHERE paid = FALSE');
+    Open;
+    payment_quantity := FieldByName('TOTAL').AsInteger;
+  end;
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT COUNT(*) AS TOTAL FROM Employees WHERE access = "staff"');
+    Open;
+    staff_quantity := FieldByName('TOTAL').AsInteger;
+  end;
+  if length(inttostr(staff_quantity)) > 4 then
+    staff_count := FloatToStrF(staff_quantity / 1000, ffGeneral, 3, 2) + 'k'
+  else
+    staff_count := inttostr(staff_quantity);
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT COUNT(*) AS TOTAL FROM Inventory WHERE item_quantity < minimum_quantity');
+    Open;
+    low_stock_quantity := FieldByName('TOTAL').AsInteger;
+  end;
+  for I := 1 to 6 do
+  begin
+    arrDashpanel[I] := TDashPanel.Create(Self, flowHome);
+    arrDashpanel[I].opanel.Cursor := crHandPoint;
+  end;
+  arrDashpanel[1].GetTImage.Bitmap :=
+    (ImageList1.Source.Items[0].MultiResBitmap.Bitmaps[1]);
+  // (GetCurrentDir + '\..\..\..\..\Assets\Icons\items\items.png');
+  arrDashpanel[1].setColor(StringToAlphaColor('#FF14bfe4'));
+  arrDashpanel[1].SetLabel2('Total items');
+  arrDashpanel[1].SetLabel1(item_count);
+  arrDashpanel[2].GetTImage.Bitmap :=
+    (ImageList1.Source.Items[1].MultiResBitmap.Bitmaps[1]);
+  arrDashpanel[2].setColor(StringToAlphaColor('#FF14a659'));
+  arrDashpanel[2].SetLabel2('Total categories');
+  arrDashpanel[2].SetLabel1(inttostr(Category));
+  arrDashpanel[3].GetTImage.Bitmap :=
+    (ImageList1.Source.Items[2].MultiResBitmap.Bitmaps[1]);
+  arrDashpanel[3].setColor(StringToAlphaColor('#FFec9e1b'));
+  arrDashpanel[3].SetLabel2('Total donations');
+  arrDashpanel[3].SetLabel1(donation_count);
+  arrDashpanel[4].GetTImage.Bitmap :=
+    (ImageList1.Source.Items[3].MultiResBitmap.Bitmaps[1]);
+  arrDashpanel[4].setColor(StringToAlphaColor('#FFdd4c39'));
+  arrDashpanel[4].SetLabel2('Outstanding expenses');
+  arrDashpanel[4].SetLabel1(inttostr(payment_quantity));
+  arrDashpanel[5].GetTImage.Bitmap :=
+    (ImageList1.Source.Items[4].MultiResBitmap.Bitmaps[1]);
+  arrDashpanel[5].setColor(StringToAlphaColor('#FF14bfe4'));
+  arrDashpanel[5].SetLabel2('Total staff');
+  arrDashpanel[5].SetLabel1(staff_count);
+  arrDashpanel[6].GetTImage.Bitmap :=
+    (ImageList1.Source.Items[6].MultiResBitmap.Bitmaps[1]);
+  if low_stock_quantity < 1 then
+    arrDashpanel[6].setColor(StringToAlphaColor('#FF14a659'))
+  else
+    arrDashpanel[6].setColor(StringToAlphaColor('#FFec9e1b'));
+  arrDashpanel[6].SetLabel2('Low stock');
+  arrDashpanel[6].SetLabel1(inttostr(low_stock_quantity));
+end;
+
 procedure TForm1.LoadDonations;
 var
   I: integer;
   grey: Boolean;
 begin
+  with DataModule1.ADOQuery1 do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT * FROM Donations');
+    Open;
+    First;
+  end;
   grey := True;
-  for I := 1 to 100 do
+  for I := 1 to DataModule1.ADOQuery1.RecordCount do
   begin
     arrDonationPanel[I] := TDonationPanel.Create(Self, flowDonations);
+    arrDonationPanel[I].SetLabelName
+      (DataModule1.ADOQuery1.FieldByName('item_id').AsString);
+    arrDonationPanel[I].SetLabelTime
+      (DataModule1.ADOQuery1.FieldByName('donation_date').AsString);
     if grey = True then
     begin
       arrDonationPanel[I].setColor(StringToAlphaColor('#FFf9f9f9'));
@@ -228,13 +313,53 @@ begin
       arrDonationPanel[I].setColor(StringToAlphaColor('#FFffffff'));
       grey := True;
     end;
+    DataModule1.ADOQuery1.Next;
   end;
   DonationsFlowResize;
 end;
 
-procedure TForm1.MultiView1MouseLeave(Sender: TObject);
+procedure TForm1.LoadNavigationPanel;
+var
+  I: integer;
 begin
-  MultiView1.HideMaster;
+  for I := 1 to 8 do
+  begin
+    arrNavipanel[I] := TNaviPanel.Create(Self, flowNavibar);
+    arrNavipanel[I].setTabControl(TabControl1);
+    arrNavipanel[I].setTabIndex(I - 1);
+  end;
+  arrNavipanel[1].setClicked;
+  arrNavipanel[1].SetLabel('Home');
+  arrNavipanel[2].SetLabel('Donations');
+  arrNavipanel[3].SetLabel('Payments');
+  arrNavipanel[4].SetLabel('Inventory');
+  arrNavipanel[5].SetLabel('Report');
+  arrNavipanel[6].SetLabel('Backup');
+  arrNavipanel[7].SetLabel('Settings');
+  arrNavipanel[8].SetLabel('Help');
+  arrNavipanel[1].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[0].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[2].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[1].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[3].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[2].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[4].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[3].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[5].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[4].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[6].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[5].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[7].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[6].MultiResBitmap.Bitmaps[1]);
+  arrNavipanel[8].GetTImage.Bitmap :=
+    (ImageList2.Source.Items[7].MultiResBitmap.Bitmaps[1]);
+end;
+
+procedure TForm1.OnDonationsLoaded(Sender:TObject);
+begin
+  AniIndicator1.Enabled := False;
+  AniIndicator1.Visible := False;
+  MultiView1.Enabled := True;
 end;
 
 procedure TForm1.rectDonHeadDescMouseDown(Sender: TObject; Button: TMouseButton;
@@ -316,7 +441,7 @@ end;
 
 procedure TForm1.setCurAccount(accountName: string);
 begin
-CurAccount:=accountName;
+  CurAccount := accountName;
 end;
 
 procedure TForm1.TabControl1Change(Sender: TObject);
@@ -340,6 +465,26 @@ var
 begin
   today := Now;
   lblDatetime.Text := FormatDateTime('dddddd tt', today);
+end;
+
+function TForm1.ChangeColour(colour, option: string): string;
+var
+  colour_string: string;
+  red, green, blue: integer;
+const
+  change_by: integer = 10;
+begin
+  colour_string := copy(colour, 4, 6);
+  red := StrToInt64('$' + copy(colour_string, 1, 2));
+  green := StrToInt64('$' + copy(colour_string, 3, 2));
+  blue := StrToInt64('$' + copy(colour_string, 5, 2));
+
+  if option = 'lighten' then
+    Result := copy(colour, 1, 3) + IntToHex(red + change_by, 1) +
+      IntToHex(green + change_by, 1) + IntToHex(blue + change_by, 1);
+  if option = 'darken' then
+    Result := copy(colour, 1, 3) + IntToHex(red - change_by, 1) +
+      IntToHex(green - change_by, 1) + IntToHex(blue - change_by, 1);
 end;
 
 procedure TForm1.DonationsFlowResize;

@@ -147,7 +147,11 @@ end;
 
 procedure TDonationPanel.resize;
 begin
-  opanel.Width := TFlowLayout(opanel.Parent).Width;
+    try
+      opanel.Width := TFlowLayout(opanel.Parent).Width;
+    except
+
+    end;
 end;
 
 procedure TDonationPanel.setColor(Color: TAlphaColor);
@@ -157,22 +161,22 @@ end;
 
 procedure TDonationPanel.SetLabelDesc(caption: string);
 begin
-
+  olabelDesc.Text := caption;
 end;
 
 procedure TDonationPanel.SetLabelName(caption: string);
 begin
-
+  olabelName.Text := caption;
 end;
 
 procedure TDonationPanel.SetLabelQuantity(caption: string);
 begin
-
+  olabelQuantity.Text := caption;
 end;
 
 procedure TDonationPanel.SetLabelTime(caption: string);
 begin
-
+  olabelTime.Text := caption;
 end;
 
 end.

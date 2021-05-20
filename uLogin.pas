@@ -7,7 +7,11 @@ uses
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.Objects, FMX.Platform, FMX.Ani,
-  FMX.Edit, UIConsts, FMX.ListBox, FMX.Layouts;
+  FMX.Edit, UIConsts, FMX.ListBox, FMX.Layouts, System.Rtti,
+  FMX.Grid.Style, Data.Bind.EngExt, FMX.Bind.DBEngExt, FMX.Bind.Grid,
+  System.Bindings.Outputs, FMX.Bind.Editors, Data.Bind.Components,
+  Data.Bind.Grid, Data.Bind.DBScope, FMX.ScrollBox, FMX.Grid, Data.DB,
+  Data.Win.ADODB, System.NetEncoding;
 
 type
   TForm2 = class(TForm)
@@ -88,6 +92,7 @@ type
     loginhideImage1Pos: TFloatAnimation;
     loginhideImage1Height: TFloatAnimation;
     FloatAnimation1: TFloatAnimation;
+    ADOQuery1: TADOQuery;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure Rectangle1Click(Sender: TObject);
@@ -219,7 +224,19 @@ end;
 
 function TForm2.confirmAccount: Boolean;
 begin
-  if Edit1.Text = 'admin' then
+  ADOQuery1.Close;
+  ADOQuery1.SQL.Clear;
+  ADOQuery1.SQL.Add('SELECT * FROM Users Where (username = :User)');
+  ADOQuery1.Parameters.ParamByName('User').Value := Edit1.Text;
+  ADOQuery1.Open;
+  if ADOQuery1.RecordCount = 0 then
+  begin
+    ADOQuery1.SQL.Clear;
+    ADOQuery1.SQL.Add('SELECT * FROM Employees Where (username = :User)');
+    ADOQuery1.Parameters.ParamByName('User').Value := Edit1.Text;
+    ADOQuery1.Open;
+  end;
+  if ADOQuery1.RecordCount > 0 then
     Result := True
   else
     Result := False;
@@ -227,10 +244,12 @@ end;
 
 function TForm2.confirmPassword: Boolean;
 begin
-  if Edit2.Text = 'admin' then
+  if TNetEncoding.Base64.EncodeBytesToString(TEncoding.UTF8.GetBytes(Edit2.Text)
+    ) = ADOQuery1.FieldByName('password').AsString then
     Result := True
   else
     Result := False;
+
 end;
 
 procedure TForm2.Edit1Click(Sender: TObject);
@@ -265,7 +284,6 @@ begin
     try
       Result := ShowModal = mrOk;
     finally
-      Application.Hint := Edit1.Text;
       Free;
     end;
 end;
@@ -435,11 +453,11 @@ begin
     // hideerror2;
     Rectangle8.Stroke.Color := TAlphaColors.Green;
     Rectangle8.Fill.Color := StringToAlphaColor('#9b37cf7b');
+    Application.Hint := ADOQuery1.FieldByName('first_name').AsString;
     ModalResult := mrOk;
   end
   else
   begin
-    ModalResult := mrCancel;
     Label13.Visible := True;
     if Length(Edit1.Text) > 0 then
       // showerror2(0)
