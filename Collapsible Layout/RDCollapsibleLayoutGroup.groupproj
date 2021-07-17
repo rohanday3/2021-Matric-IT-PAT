@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{CC7F8D1B-4A7A-4761-8CC1-0ACB1F8CE30F}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="RDCollapsibleLayout.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TestRDCollapsibleLayout.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="RDCollapsibleLayout">
+        <MSBuild Projects="RDCollapsibleLayout.dproj"/>
+    </Target>
+    <Target Name="RDCollapsibleLayout:Clean">
+        <MSBuild Projects="RDCollapsibleLayout.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RDCollapsibleLayout:Make">
+        <MSBuild Projects="RDCollapsibleLayout.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TestRDCollapsibleLayout">
+        <MSBuild Projects="TestRDCollapsibleLayout.dproj"/>
+    </Target>
+    <Target Name="TestRDCollapsibleLayout:Clean">
+        <MSBuild Projects="TestRDCollapsibleLayout.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TestRDCollapsibleLayout:Make">
+        <MSBuild Projects="TestRDCollapsibleLayout.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="RDCollapsibleLayout;TestRDCollapsibleLayout"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="RDCollapsibleLayout:Clean;TestRDCollapsibleLayout:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="RDCollapsibleLayout:Make;TestRDCollapsibleLayout:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

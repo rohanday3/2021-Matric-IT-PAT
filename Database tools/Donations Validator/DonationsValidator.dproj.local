@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/05/16 16:06:43.000.175,=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2021/05/16 16:07:19.000.068,=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit3.pas</Transaction>
+    <Transaction>2021/05/16 16:15:04.000.716,C:\Users\DELL\Documents\IT PAT 2021\Database tools\DonationsValidator.pas=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2021/05/16 16:15:04.000.716,C:\Users\DELL\Documents\IT PAT 2021\Database tools\DonationsValidator.dfm=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>2021/05/16 16:16:10.000.866,C:\Users\DELL\Documents\IT PAT 2021\Database tools\Donations Validator\uDatamodule.dfm=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit3.dfm</Transaction>
+    <Transaction>2021/05/16 16:16:10.000.866,C:\Users\DELL\Documents\IT PAT 2021\Database tools\Donations Validator\uDatamodule.pas=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit3.pas</Transaction>
+    <Transaction>2021/05/16 16:17:29.000.324,C:\Users\DELL\Documents\IT PAT 2021\Database tools\uMain.pas=C:\Users\DELL\Documents\IT PAT 2021\Database tools\DonationsValidator.pas</Transaction>
+    <Transaction>2021/05/16 16:17:29.000.324,C:\Users\DELL\Documents\IT PAT 2021\Database tools\uMain.dfm=C:\Users\DELL\Documents\IT PAT 2021\Database tools\DonationsValidator.dfm</Transaction>
+    <Transaction>2021/05/16 16:17:59.000.322,C:\Users\DELL\Documents\IT PAT 2021\Database tools\Donations Validator\DonationsValidator.dproj=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Project2.dproj</Transaction>
+    <Transaction>2021/05/16 16:19:23.000.603,=C:\Users\DELL\Documents\IT PAT 2021\Database tools\Donations Validator\uMain.pas</Transaction>
+  </Transactions>
+</BorlandProject>

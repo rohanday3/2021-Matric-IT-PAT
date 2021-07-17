@@ -1,0 +1,151 @@
+object frmPreferences: TfrmPreferences
+  Left = 0
+  Top = 0
+  Caption = 'Preferences'
+  ClientHeight = 564
+  ClientWidth = 717
+  Fill.Color = xFF444444
+  Fill.Kind = Solid
+  Position = Default
+  FormStyle = StayOnTop
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object Layout1: TLayout
+    Align = Client
+    Size.Width = 717.000000000000000000
+    Size.Height = 564.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object rectCategoryLabel: TRectangle
+      Fill.Color = xFF5D5D5D
+      Position.X = 8.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 160.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      XRadius = 3.000000000000000000
+      YRadius = 3.000000000000000000
+      object lblCategoryLabel: TLabel
+        StyledSettings = []
+        Position.X = 8.000000000000000000
+        Size.Width = 152.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 16.000000000000000000
+        TextSettings.Font.StyleExt = {00060000000000000004000000}
+        TextSettings.FontColor = xFFBBBBBB
+        Text = 'Categories'
+        TabOrder = 0
+      end
+    end
+    object rectCategoryGroup: TRectangle
+      ClipChildren = True
+      Fill.Color = xFF2B2B2B
+      Position.X = 8.000000000000000000
+      Position.Y = 64.000000000000000000
+      Size.Width = 160.000000000000000000
+      Size.Height = 417.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Color = xFF5285A6
+      XRadius = 3.000000000000000000
+      YRadius = 3.000000000000000000
+    end
+    object rectCategoryHeader: TRectangle
+      Fill.Color = xFF5D5D5D
+      Position.X = 176.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 521.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      XRadius = 3.000000000000000000
+      YRadius = 3.000000000000000000
+      object lblCategoryHeader: TLabel
+        StyledSettings = [Family]
+        Position.X = 8.000000000000000000
+        Size.Width = 513.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 16.000000000000000000
+        TextSettings.Font.StyleExt = {00060000000000000004000000}
+        TextSettings.FontColor = xFFBBBBBB
+        Text = 'lblCategoryHeader'
+        TabOrder = 0
+      end
+    end
+    object TabControl1: TTabControl
+      Position.X = 272.000000000000000000
+      Position.Y = 168.000000000000000000
+      Size.Width = 200.000000000000000000
+      Size.Height = 200.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      TabPosition = PlatformDefault
+    end
+    object VertScrollBox1: TVertScrollBox
+      Position.X = 176.000000000000000000
+      Position.Y = 64.000000000000000000
+      Size.Width = 521.000000000000000000
+      Size.Height = 417.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Viewport.Width = 521.000000000000000000
+      Viewport.Height = 417.000000000000000000
+    end
+    object rectSaveBtn: TRectangle
+      Fill.Color = xFF5D5D5D
+      Position.X = 8.000000000000000000
+      Position.Y = 488.000000000000000000
+      Size.Width = 343.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      OnMouseDown = rectSaveBtnMouseDown
+      OnMouseUp = rectSaveBtnMouseUp
+      OnMouseEnter = rectSaveBtnMouseEnter
+      OnMouseLeave = rectSaveBtnMouseLeave
+      object lblSaveBtn: TLabel
+        Align = Client
+        StyledSettings = [Family, Style]
+        Size.Width = 343.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 16.000000000000000000
+        TextSettings.FontColor = xFFEEEEEE
+        TextSettings.HorzAlign = Center
+        Text = 'Save'
+        TabOrder = 0
+      end
+    end
+    object rectCancelBtn: TRectangle
+      Fill.Color = xFF5D5D5D
+      Position.X = 354.000000000000000000
+      Position.Y = 488.000000000000000000
+      Size.Width = 343.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      OnClick = rectCancelBtnClick
+      OnMouseDown = rectSaveBtnMouseDown
+      OnMouseUp = rectSaveBtnMouseUp
+      OnMouseEnter = rectSaveBtnMouseEnter
+      OnMouseLeave = rectSaveBtnMouseLeave
+      object lblCancelBtn: TLabel
+        Align = Client
+        StyledSettings = [Family, Style]
+        Size.Width = 343.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 16.000000000000000000
+        TextSettings.FontColor = xFFEEEEEE
+        TextSettings.HorzAlign = Center
+        Text = 'Cancel'
+        TabOrder = 0
+      end
+    end
+  end
+end

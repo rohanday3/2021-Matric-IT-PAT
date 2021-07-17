@@ -1,0 +1,5 @@
+You've tried to sign in too many times with an incorrect account or password.
+Captcha
+Help us make sure you're not a robot
+enter the characters you see
+Setting to allow customizing the dashboard (Add more dashpanels with color and image customization)

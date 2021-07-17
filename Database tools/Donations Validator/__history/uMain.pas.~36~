@@ -1,0 +1,92 @@
+unit uMain;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  uDatamodule,
+  Vcl.StdCtrls;
+
+type
+  TForm2 = class(TForm)
+    DBGrid1: TDBGrid;
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
+    Button4: TButton;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form2: TForm2;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm2.Button1Click(Sender: TObject);
+begin
+  with DataModule3 do
+  begin
+    ADOQuery1.Close;
+    ADOQuery1.SQL.Clear;
+    ADOQuery1.SQL.Add
+      ('SELECT d.donation_date, e.employment_date FROM Donations d, Employees e Where (d.donation_date < e.employment_date) AND (d.employee_id = e.employee_id)');
+    ADOQuery1.Open;
+  end;
+  DBGrid1.DataSource := DataModule3.DataSource2;
+  ShowMessage(inttostr(DataModule3.DataSource2.DataSet.RecordCount));
+end;
+
+procedure TForm2.Button2Click(Sender: TObject);
+begin
+  with DataModule3 do
+  begin
+    ADOQuery1.Close;
+    ADOQuery1.SQL.Clear;
+    ADOQuery1.SQL.Add
+      ('Delete d.* FROM Donations d, Employees e Where (d.donation_date < e.employment_date) AND (d.employee_id = e.employee_id)');
+    ADOQuery1.Open;
+  end;
+  DBGrid1.DataSource := DataModule3.DataSource2;
+  ShowMessage(inttostr(DataModule3.DataSource2.DataSet.RecordCount));
+end;
+
+procedure TForm2.Button3Click(Sender: TObject);
+begin
+  with DataModule3 do
+  begin
+    ADOQuery1.Close;
+    ADOQuery1.SQL.Clear;
+    ADOQuery1.SQL.Add
+      ('SELECT u.username, e.username FROM Users u, Employees e Where (u.username = e.username)');
+    ADOQuery1.Open;
+  end;
+  DBGrid1.DataSource := DataModule3.DataSource2;
+  ShowMessage(inttostr(DataModule3.DataSource2.DataSet.RecordCount));
+end;
+
+procedure TForm2.Button4Click(Sender: TObject);
+begin
+  with DataModule3 do
+  begin
+    ADOQuery1.Close;
+    ADOQuery1.SQL.Clear;
+    ADOQuery1.SQL.Add
+      ('SELECT COUNT(*) AS TOTAL,item_category FROM Inventory GROUP BY item_category');
+    ADOQuery1.Open;
+  end;
+  DBGrid1.DataSource := DataModule3.DataSource2;
+  ShowMessage(inttostr(DataModule3.DataSource2.DataSet.RecordCount));
+end;
+
+end.

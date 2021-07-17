@@ -1,0 +1,35 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object FlowLayout1: TFlowLayout
+    Size.Width = 800.000000000000000000
+    Size.Height = 480.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Justify = Left
+    JustifyLastLine = Left
+    FlowDirection = LeftToRight
+    object Panel1: TPanel
+      TabOrder = 0
+    end
+    object Panel2: TPanel
+      Position.X = 120.000000000000000000
+      TabOrder = 1
+    end
+    object Panel3: TPanel
+      Position.X = 240.000000000000000000
+      TabOrder = 2
+    end
+    object Panel4: TPanel
+      Position.X = 360.000000000000000000
+      TabOrder = 3
+    end
+  end
+end

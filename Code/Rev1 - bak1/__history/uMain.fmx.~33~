@@ -1,0 +1,241 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 667
+  ClientWidth = 990
+  StyleBook = StyleBook1
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Position.X = 56.000000000000000000
+    Size.Width = 937.000000000000000000
+    Size.Height = 57.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Image2: TImage
+      MultiResBitmap.Height = 48
+      MultiResBitmap.Width = 48
+      MultiResBitmap = <
+        item
+          Width = 48
+          Height = 48
+          PNG = {
+            89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+            87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            0287494441546843ED990B72DB300C446D5F2CF1C99A9EACE9C5ECEECA2B8E24
+            020248B17133F59BD19016F1210188FAF8F4E2C57FCE59ED21EEF7FB3B9A77B4
+            6FE7F3997D17C87C42E637BA6C3F1F679F0426F371BBDD7EA1ED42BA1F32F775
+            C029A33D9ADDCC0DE348C423685B6ED2A4AF01D86784320E7EAA25738D2FA3FB
+            43ED1ED7A1D707273F85C841594997006513991C535234F4B057D33AF12DD40D
+            16727C113264316CF7A0AD87C91A89F4B1131D37321CB3F4A26C716C12DC403D
+            89B4015DAF74DC4904E530B137210C37FB7491E216B76C32939F091661969386
+            7340BE32D2E334A03518A6BC791FA0B4BA4BDCBDD992C7A9F999877DF31909E7
+            3CFF94AD02E6C9AFA0328E157BD127122B58F256543564E264A10AC245ED122B
+            52CBBB6B08E4A7C82FB1CEEDE1F88C178055BEA95B80B12F7FECB57C5A73AB98
+            12B5202A1F22D1C2881222191DAB8456B4A69E4067BE9971779ADE19784EC369
+            7A7C57D104E12303651EA24D74D9D55021CC4006448A8ED2D70965A9A39F8718
+            B20072B95CAE99455086B2FA7998610B209A98B9109DBB8E9C3C19BA0082D298
+            228C7685CEA5CB2CCBF0053C9D9EFDFA6F21F705CE4D43852A034873B5F74277
+            770FE7388ED437A2C5FD21B4A96EC19A5B051571ACB0564E30D4B3FF6F31B753
+            2718B99BA184B71465F4474C7C4B5908FAE69B998663205B4D5011C97C0EE966
+            CEB4E3C3CC94FB82400D755B19F161AB825BB1BA39307FEF05DB22BC28975056
+            3A59D2B65744E532A7FC08477D8469A111752B9AD3EA70C447E64EEC3EBB287A
+            7DE905D40D223CE6B9898E18258FD68550362A1D90B2972E0119CCD4FCBFF779
+            7D492272DD04E5340EF86AD962B3745F4BDDC0E9D3FFE41BB50D327ACCCAF7FA
+            9BF5C58B6FCFE9F4071A94A7EB6FE0D7940000000049454E44AE426082}
+          FileName = 
+            'C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Account\black-4' +
+            '8dp\2x\outline_account_circle_white_48dp.png'
+        end>
+      Position.X = 880.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 45.000000000000000000
+      Size.Height = 45.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Label1: TLabel
+      StyledSettings = [Family]
+      Position.X = 264.000000000000000000
+      Position.Y = 16.000000000000000000
+      Size.Width = 384.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 18.000000000000000000
+      TextSettings.Font.StyleExt = {00060000000000000004000000}
+      TextSettings.FontColor = claWhite
+      TextSettings.HorzAlign = Trailing
+      TabOrder = 1
+    end
+    object Label2: TLabel
+      StyledSettings = [Family, Style]
+      Position.X = 736.000000000000000000
+      Position.Y = 12.000000000000000000
+      Size.Width = 120.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 18.000000000000000000
+      TextSettings.FontColor = claWhite
+      TextSettings.HorzAlign = Trailing
+      Text = 'Sign in'
+      TabOrder = 2
+    end
+  end
+  object StyleBook1: TStyleBook
+    Styles = <
+      item
+      end
+      item
+        Platform = 'Windows 10 Desktop'
+        ResourcesBin = {
+          464D585F5354594C4520322E3501060E4D756C7469566965777374796C6503F6
+          00060A50616E656C7374796C6503B40000545046300A5452656374616E676C65
+          00095374796C654E616D65060E4D756C7469566965777374796C6505416C6967
+          6E070643656E7465720A46696C6C2E436F6C6F72070D636C61446F6467657262
+          6C75650748697454657374080A53697A652E57696474680500000000000000DC
+          06400B53697A652E48656967687405000000000000C0A608401453697A652E50
+          6C6174666F726D44656661756C74080B5374726F6B652E4B696E6407044E6F6E
+          650756697369626C6508000C5442727573684F626A65637400095374796C654E
+          616D65060864726F706C696E650B42727573682E436F6C6F7207097846464343
+          43434343000000545046300A5452656374616E676C6500095374796C654E616D
+          65060A50616E656C7374796C6505416C69676E070643656E7465720A46696C6C
+          2E436F6C6F72070D636C61446F64676572626C75650748697454657374080A53
+          697A652E57696474680500000000000040EA08400B53697A652E486569676874
+          0500000000000000E404401453697A652E506C6174666F726D44656661756C74
+          080C5374726F6B652E436F6C6F7207097846464343434343430000}
+      end>
+    Left = 520
+    Top = 400
+  end
+  object Timer1: TTimer
+    Interval = 500
+    OnTimer = Timer1Timer
+    Left = 488
+    Top = 328
+  end
+  object TabControl1: TTabControl
+    Position.X = 56.000000000000000000
+    Position.Y = 56.000000000000000000
+    Size.Width = 937.000000000000000000
+    Size.Height = 617.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 4
+    TabOrder = 5
+    TabPosition = None
+    Sizes = (
+      937s
+      617s
+      937s
+      617s
+      937s
+      617s
+      937s
+      617s
+      937s
+      617s)
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Home'
+    end
+    object TabItem2: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem2'
+    end
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem3'
+    end
+    object TabItem4: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem4'
+    end
+    object TabItem5: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem5'
+    end
+  end
+  object MultiView1: TMultiView
+    MasterButton = Image1
+    Mode = NavigationPane
+    NavigationPaneOptions.CollapsedWidth = 55.000000000000000000
+    ClipChildren = True
+    Size.Width = 220.000000000000000000
+    Size.Height = 667.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'MultiView1Style1'
+    TabOrder = 0
+    OnMouseLeave = MultiView1MouseLeave
+    object Image1: TImage
+      MultiResBitmap.Height = 48
+      MultiResBitmap.Width = 48
+      MultiResBitmap = <
+        item
+          Width = 48
+          Height = 48
+          PNG = {
+            89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+            87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+            0042494441546843EDD5B111C030080340F0FE3B272E687C1980F8F86FA45695
+            020060B0ACFC78B6AABF905BD5C3AABC960100B379E26E0600CCE689BB190000
+            40978817A5B30C16289261D40000000049454E44AE426082}
+          FileName = 
+            'C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Menu\black-48dp' +
+            '\2x\outline_menu_white_48dp.png'
+        end>
+      OnMouseEnter = Image1MouseEnter
+    end
+    object FlowLayout1: TFlowLayout
+      Position.Y = 56.000000000000000000
+      Size.Width = 220.000000000000000000
+      Size.Height = 553.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Justify = Left
+      JustifyLastLine = Left
+      FlowDirection = LeftToRight
+    end
+  end
+end
