@@ -44,7 +44,9 @@ type
     StyleBook1: TStyleBook;
     Image1: TImage;
     flowCategory: TFlowLayout;
-    Button1: TButton;
+    Layout2: TLayout;
+    Layout3: TLayout;
+    Layout4: TLayout;
     procedure FormCreate(Sender: TObject);
     function ChangeColour(colour, option: string): string;
     procedure rectSaveBtnMouseEnter(Sender: TObject);
@@ -85,12 +87,6 @@ implementation
 {$R *.fmx}
 { TfrmPreferences }
 
-procedure TfrmPreferences.Button1Click(Sender: TObject);
-begin
-  TSettingsTab.Free(NaviPanels);
-  SetLength(NaviPanels, 0);
-end;
-
 function TfrmPreferences.ChangeColour(colour, option: string): string;
 var
   colour_string: string;
@@ -117,7 +113,7 @@ begin
     try
       result := ShowModal = mrOk;
     finally
-      TSettingsTab.Free(NaviPanels);
+      TSettingsTab.Release(NaviPanels);
       SetLength(NaviPanels, 0);
       Free;
     end;
@@ -161,7 +157,7 @@ var
   I: Integer;
 begin
   SetLength(NaviPanels, tabcontrol_settings.TabCount);
-  for I := 0 to tabcontrol_settings.TabCount do
+  for I := 0 to tabcontrol_settings.TabCount - 1 do
   begin
     NaviPanels[I] := TSettingsTab.Create(Self, flowCategory);
     with NaviPanels[I] do
@@ -171,6 +167,9 @@ begin
       setTabControl(tabcontrol_settings);
     end;
   end;
+  NaviPanels[0].SetLabel('General');
+  NaviPanels[1].SetLabel('Interface');
+  NaviPanels[2].SetLabel('3');
 end;
 
 procedure TfrmPreferences.rectCustomScaleClick(Sender: TObject);

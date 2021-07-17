@@ -463,7 +463,7 @@ end;
 procedure TForm2.hideerror1;
 begin
   lblLoginError.Text := '';
-  rectErrorMoveUI.Position.Y := 115;
+  rectErrorMoveUI.Position.Y := 130;
   rectLoginUsername.Stroke.Color := StringToAlphacolor('#FF1A69B9');
   errorlogin1 := False;
 end;

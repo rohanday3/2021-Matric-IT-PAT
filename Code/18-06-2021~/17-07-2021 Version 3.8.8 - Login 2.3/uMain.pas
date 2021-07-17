@@ -111,7 +111,6 @@ type
     { Private declarations }
     arrNavipanel: array [1 .. 8] of TNaviPanel;
     arrDashpanel: array [1 .. 6] of TDashPanel;
-    arrSettingsPanel: array [1 .. 8] of TSettingsPanel;
     DonationFilterList, DonationList, donation_search_cells
       : array of array of string;
     sorttype: Integer;
@@ -137,6 +136,7 @@ type
     function GetScreenScale: Single;
     procedure AutoSizeCol(Grid: TStringGrid; Column: Integer);
     procedure WMGetMinMaxInfo(var MSG: Tmessage); message WM_GetMinMaxInfo;
+    procedure FreeDynamics;
 
   const
     MIN_HEIGHT: Integer = 600;
@@ -273,7 +273,7 @@ begin
   rectSearch.BringToFront;
   MIN_SIZE_ENABLED := true;
   MIN_SIZE_ALGO1 := False;
-  MIN_SIZE_ALGO2 := True;
+  MIN_SIZE_ALGO2 := true;
   donation_grid_head_size := 20;
   loading_status := 'Starting application...';
   loading_status := 'Loading navigation panel...';
@@ -300,8 +300,9 @@ end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
+  FreeDynamics;
   Hide;
-  Application.Free;
+  // Application.Free;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -352,6 +353,12 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TForm1.FreeDynamics;
+begin
+  TDashPanel.Release(arrDashpanel);
+  TNaviPanel.Release(arrNavipanel);
 end;
 
 function TForm1.GetScreenScale: Single;

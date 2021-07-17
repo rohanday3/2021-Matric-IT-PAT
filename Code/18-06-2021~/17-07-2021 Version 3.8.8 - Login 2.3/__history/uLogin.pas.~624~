@@ -167,7 +167,9 @@ type
   const
     iniWidth: integer = 455;
     iniHeight: integer = 635;
-    Appname: string = 'Robin';
+    Appname: string = 'Robin Hood';
+    clr_accent1: String = '#FF00f0cb';
+    clr_accent2: String = '#FF00c78c';
   public
     { Public declarations }
     class function Execute: Boolean;
@@ -203,7 +205,7 @@ begin
     Item := ComboBox.ListItems[i];
     Item.Font.Family := Family; // eg. 'Arial';
     Item.Font.Size := Size; // eg. 20;
-    Item.FontColor := StringToAlphaColor(Color);
+    Item.FontColor := StringToAlphacolor(Color);
     Item.StyledSettings := Item.StyledSettings - [TStyledSetting.Family,
       TStyledSetting.Size, TStyledSetting.FontColor];
     // Item.Text := '*'+Item.Text;
@@ -214,16 +216,16 @@ procedure TForm2.cmbAreaCodesChange(Sender: TObject);
 var
   s: string;
 begin
-  rectAreaCodeCombo.Fill.Color := StringToAlphaColor('#ffffffff');
-  rectAreaCodeLabel.Fill.Color := StringToAlphaColor('#ffffffff');
+  rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#ffffffff');
+  rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#ffffffff');
   s := cmbAreaCodes.Items[cmbAreaCodes.ItemIndex];
   lblAreaCodes.Text := Copy(s, Pos('+', s), Length(s) - Pos('+', s) + 1);
 end;
 
 procedure TForm2.cmbAreaCodesClick(Sender: TObject);
 begin
-  rectAreaCodeCombo.Fill.Color := StringToAlphaColor('#ffeeeeee');
-  rectAreaCodeLabel.Fill.Color := StringToAlphaColor('#ffeeeeee');
+  rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#ffeeeeee');
+  rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#ffeeeeee');
 end;
 
 procedure TForm2.cmbAreaCodesKeyDown(Sender: TObject; var Key: Word;
@@ -278,7 +280,7 @@ procedure TForm2.edtLoginUsernameClick(Sender: TObject);
 begin
   if not errorlogin1 then
     TRectangle(TEdit(Sender).Parent).Stroke.Color :=
-      StringToAlphaColor('#FF1A69B9');
+      StringToAlphacolor('#FF1A69B9');
 end;
 
 procedure TForm2.edtLoginUsernameExit(Sender: TObject);
@@ -313,7 +315,7 @@ procedure TForm2.edtLoginPasswordClick(Sender: TObject);
 begin
   if not errorlogin2 then
     TRectangle(TEdit(Sender).Parent).Stroke.Color :=
-      StringToAlphaColor('#FF1A69B9');
+      StringToAlphacolor('#FF1A69B9');
 end;
 
 procedure TForm2.edtLoginPasswordKeyDown(Sender: TObject; var Key: Word;
@@ -407,9 +409,11 @@ end;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin
+  ADOQuery1.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source='
+    + GetCurrentDir + '\robinhood.mdb' + ';Persist Security Info=False';
   ScaleScreen;
-  lblLoginSubtitle.Text:='to continue to ' + Appname;
-  lblWelcomeTitle.Text:='Welcome to ' + Appname;
+  lblLoginSubtitle.Text := 'to continue to ' + Appname;
+  lblWelcomeTitle.Text := 'Welcome to ' + Appname;
   login_state := 0;
   RectWelome.Width := 460;
   RectWelome.Height := 640;
@@ -460,7 +464,7 @@ procedure TForm2.hideerror1;
 begin
   lblLoginError.Text := '';
   rectErrorMoveUI.Position.Y := 115;
-  rectLoginUsername.Stroke.Color := StringToAlphaColor('#FF1A69B9');
+  rectLoginUsername.Stroke.Color := StringToAlphacolor('#FF1A69B9');
   errorlogin1 := False;
 end;
 
@@ -468,7 +472,7 @@ procedure TForm2.hideerror2;
 begin
   lblLogin2Error.Text := '';
   rectError2MoveUI.Position.Y := 130;
-  rectLogin2Password.Stroke.Color := StringToAlphaColor('#FF1A69B9');
+  rectLogin2Password.Stroke.Color := StringToAlphacolor('#FF1A69B9');
   errorlogin2 := False;
 end;
 
@@ -480,12 +484,12 @@ end;
 
 procedure TForm2.Image2MouseEnter(Sender: TObject);
 begin
-  rectLogin2BtnBack.Fill.Color := StringToAlphaColor('#FFe5e5e5');
+  rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFe5e5e5');
 end;
 
 procedure TForm2.Image2MouseLeave(Sender: TObject);
 begin
-  rectLogin2BtnBack.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+  rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
 procedure TForm2.lblUseEmailClick(Sender: TObject);
@@ -561,8 +565,8 @@ end;
 
 procedure TForm2.RectCreateAccountClick(Sender: TObject);
 begin
-  rectAreaCodeLabel.Fill.Color := StringToAlphaColor('#FFFFFFFF');
-  rectAreaCodeCombo.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+  rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#FFFFFFFF');
+  rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
 procedure TForm2.rectBtnSignInClick(Sender: TObject);
@@ -571,7 +575,7 @@ begin
   begin
     // hideerror2;
     rectLogin2Password.Stroke.Color := TAlphaColors.Green;
-    rectLogin2Password.Fill.Color := StringToAlphaColor('#9b37cf7b');
+    rectLogin2Password.Fill.Color := StringToAlphacolor('#9b37cf7b');
     Application.Hint := ADOQuery1.FieldByName('first_name').AsString;
     ModalResult := mrOk;
   end
@@ -587,8 +591,8 @@ end;
 
 procedure TForm2.rectCreateAccountUIpnlClick(Sender: TObject);
 begin
-  rectAreaCodeCombo.Fill.Color := StringToAlphaColor('#FFFFFFFF');
-  rectAreaCodeLabel.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+  rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#FFFFFFFF');
+  rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
 procedure TForm2.rectCreateAccountBackClick(Sender: TObject);
@@ -651,7 +655,7 @@ begin
   with TLabel(TRectangle(Sender).Children[0]) do
   begin
     Font.Style := [TFontStyle.fsUnderline];
-    FontColor := StringToAlphaColor('#FF666666');
+    FontColor := StringToAlphacolor('#FF666666');
   end;
 end;
 
@@ -660,30 +664,30 @@ begin
   with TLabel(TRectangle(Sender).Children[0]) do
   begin
     Font.Style := [];
-    FontColor := StringToAlphaColor('#FF1A69B9');
+    FontColor := StringToAlphacolor('#FF1A69B9');
   end;
 end;
 
 procedure TForm2.rectLogin2BtnBackMouseEnter(Sender: TObject);
 begin
-  rectLogin2BtnBack.Fill.Color := StringToAlphaColor('#FFe5e5e5');
+  rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFe5e5e5');
 end;
 
 procedure TForm2.rectLogin2BtnBackMouseLeave(Sender: TObject);
 begin
-  rectLogin2BtnBack.Fill.Color := StringToAlphaColor('#FFFFFFFF');
+  rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
 procedure TForm2.rectForgotPasswordMouseEnter(Sender: TObject);
 begin
   Label16.Font.Style := [TFontStyle.fsUnderline];
-  Label16.FontColor := StringToAlphaColor('#FF666666');
+  Label16.FontColor := StringToAlphacolor('#FF666666');
 end;
 
 procedure TForm2.rectForgotPasswordMouseLeave(Sender: TObject);
 begin
   Label16.Font.Style := [];
-  Label16.FontColor := StringToAlphaColor('#FF3E81C4');
+  Label16.FontColor := StringToAlphacolor('#FF3E81C4');
 end;
 
 procedure TForm2.rectLoginBtnBackClick(Sender: TObject);
@@ -697,12 +701,12 @@ end;
 
 procedure TForm2.rectLoginBtnBackMouseEnter(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FFb2b2b2');
+  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FFb2b2b2');
 end;
 
 procedure TForm2.rectLoginBtnBackMouseLeave(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FFcccccc');
+  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FFcccccc');
 end;
 
 procedure TForm2.rectBtnNextClick(Sender: TObject);
@@ -731,12 +735,12 @@ end;
 
 procedure TForm2.rectBtnNextMouseEnter(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FF165fa7');
+  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FF165fa7');
 end;
 
 procedure TForm2.rectBtnNextMouseLeave(Sender: TObject);
 begin
-  TRectangle(Sender).Fill.Color := StringToAlphaColor('#FF1a69b9');
+  TRectangle(Sender).Fill.Color := StringToAlphacolor('#FF1a69b9');
 end;
 
 procedure TForm2.ResetComboBox;
@@ -769,7 +773,7 @@ end;
 
 procedure TForm2.showerror1(error: integer);
 begin
-  rectLoginUsername.Stroke.Color := StringToAlphaColor('#FFde1916');
+  rectLoginUsername.Stroke.Color := StringToAlphacolor('#FFde1916');
   if error = 0 then
   begin
     lblLoginError.Text := 'That ' + Appname +
@@ -791,7 +795,7 @@ end;
 
 procedure TForm2.showerror2(error: integer);
 begin
-  rectLogin2Password.Stroke.Color := StringToAlphaColor('#FFde1916');
+  rectLogin2Password.Stroke.Color := StringToAlphacolor('#FFde1916');
   if error = 0 then
   begin
     lblLogin2Error.Text :=

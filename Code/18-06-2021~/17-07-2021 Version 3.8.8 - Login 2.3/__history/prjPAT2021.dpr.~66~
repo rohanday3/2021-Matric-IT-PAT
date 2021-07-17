@@ -5,16 +5,16 @@ uses
   FMX.Forms,
   Winapi.TlHelp32,
   Winapi.Windows,
-  uMain in 'uMain.pas' {Form1} ,
+  uMain in 'uMain.pas' {Form1},
   uNaviPanel in 'uNaviPanel.pas',
   uDashPanel in 'uDashPanel.pas',
   uDonationPanel in 'uDonationPanel.pas',
-  uLogin in 'uLogin.pas' {Form2} ,
-  Datamodule in 'Datamodule.pas' {DataModule1: TDataModule} ,
+  uLogin in 'uLogin.pas' {Form2},
+  Datamodule in 'Datamodule.pas' {DataModule1: TDataModule},
   uDonationsThread in 'uDonationsThread.pas',
-  uSplashscreen in 'uSplashscreen.pas' {Splashscreen} ,
+  uSplashscreen in 'uSplashscreen.pas' {Splashscreen},
   FMX.GIFImage in 'FMX.GIFImage.pas',
-  uPreferences in 'uPreferences.pas' {frmPreferences} ,
+  uPreferences in 'uPreferences.pas' {frmPreferences},
   uSettingsTab in 'uSettingsTab.pas';
 
 {$R *.res}
@@ -30,8 +30,8 @@ begin
   if (Wnd <> 0) then
   begin { Set Window to foreground }
     App := GetWindowLong(Wnd, GWL_HWNDPARENT);
-    if IsIconic(App) then
-      ShowWindow(App, SW_RESTORE);
+    // if IsIconic(App) then
+    ShowWindow(App, SW_RESTORE);
 
     SetForegroundwindow(App);
   end;

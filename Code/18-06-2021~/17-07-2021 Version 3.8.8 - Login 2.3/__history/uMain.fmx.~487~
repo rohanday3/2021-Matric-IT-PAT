@@ -389,18 +389,17 @@ object Form1: TForm1
         end
         object lblDatetime: TLabel
           Align = Right
-          Anchors = [akLeft, akTop, akRight, akBottom]
           ClipChildren = True
           StyledSettings = [Family]
-          Position.X = 687.000000000000000000
-          Size.Width = 120.000000000000000000
+          Margins.Right = 30.000000000000000000
+          Position.X = 625.000000000000000000
+          Size.Width = 400.000000000000000000
           Size.Height = 57.000000000000000000
           Size.PlatformDefault = False
           TextSettings.Font.Size = 18.000000000000000000
           TextSettings.Font.StyleExt = {00060000000000000004000000}
           TextSettings.FontColor = claWhite
           TextSettings.HorzAlign = Trailing
-          Visible = False
           TabOrder = 1
         end
         object lblAccount: TLabel
@@ -457,7 +456,7 @@ object Form1: TForm1
         Size.Width = 1305.000000000000000000
         Size.Height = 643.000000000000000000
         Size.PlatformDefault = False
-        TabIndex = 1
+        TabIndex = 0
         TabOrder = 2
         TabPosition = None
         OnChange = tContrMainChange
@@ -482,7 +481,7 @@ object Form1: TForm1
           CustomIcon = <
             item
             end>
-          IsSelected = False
+          IsSelected = True
           Size.Width = 8.000000000000000000
           Size.Height = 8.000000000000000000
           Size.PlatformDefault = False
@@ -506,7 +505,7 @@ object Form1: TForm1
           CustomIcon = <
             item
             end>
-          IsSelected = True
+          IsSelected = False
           Size.Width = 8.000000000000000000
           Size.Height = 8.000000000000000000
           Size.PlatformDefault = False
@@ -793,19 +792,19 @@ object Form1: TForm1
             end
           end
           object StringGrid1: TStringGrid
-            Anchors = [akLeft, akTop, akRight, akBottom]
+            Align = Client
             CanFocus = True
             ClipChildren = True
-            Position.Y = 136.000000000000000000
             Size.Width = 1305.000000000000000000
-            Size.Height = 507.000000000000000000
+            Size.Height = 506.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 1
             OnDrawColumnHeader = StringGrid1DrawColumnHeader
             OnDrawColumnCell = StringGrid1DrawColumnCell
             OnResize = StringGrid1Resize
+            OnCellDblClick = StringGrid1CellDblClick
             Viewport.Width = 1285.000000000000000000
-            Viewport.Height = 482.000000000000000000
+            Viewport.Height = 481.000000000000000000
             object StringColumn1: TStringColumn
               Header = 's'
               Size.Width = 150.000000000000000000
@@ -9437,6 +9436,7 @@ object Form1: TForm1
             end
             object lblNoRecords: TLabel
               Align = Bottom
+              Margins.Bottom = 10.000000000000000000
               Size.Width = 180.000000000000000000
               Size.Height = 17.000000000000000000
               Size.PlatformDefault = False

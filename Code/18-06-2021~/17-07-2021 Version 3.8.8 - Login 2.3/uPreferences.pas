@@ -61,7 +61,6 @@ type
     procedure rectCustomScaleClick(Sender: TObject);
     procedure ScaleRadioGroupChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     NaviPanels: array of TSettingsTab;
@@ -86,12 +85,6 @@ implementation
 
 {$R *.fmx}
 { TfrmPreferences }
-
-procedure TfrmPreferences.Button1Click(Sender: TObject);
-begin
-  TSettingsTab.Free(NaviPanels);
-  SetLength(NaviPanels, 0);
-end;
 
 function TfrmPreferences.ChangeColour(colour, option: string): string;
 var
@@ -119,7 +112,7 @@ begin
     try
       result := ShowModal = mrOk;
     finally
-      TSettingsTab.Free(NaviPanels);
+      TSettingsTab.Release(NaviPanels);
       SetLength(NaviPanels, 0);
       Free;
     end;

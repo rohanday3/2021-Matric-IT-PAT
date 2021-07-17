@@ -148,7 +148,6 @@
         </DCCReference>
         <DCCReference Include="uNaviPanel.pas"/>
         <DCCReference Include="uDashPanel.pas"/>
-        <DCCReference Include="uDonationPanel.pas"/>
         <DCCReference Include="uLogin.pas">
             <Form>Form2</Form>
         </DCCReference>

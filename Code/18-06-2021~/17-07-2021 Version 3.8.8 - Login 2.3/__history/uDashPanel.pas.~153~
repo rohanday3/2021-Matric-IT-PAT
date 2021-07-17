@@ -103,8 +103,8 @@ begin
   begin
     Parent := opanel;
     Direction := 60;
-    Softness:=0.7;
-    Opacity:=0.6;
+    Softness:=0.5;
+    Opacity:=0.5;
     Distance:=2;
     Enabled := False;
   end;
@@ -221,6 +221,8 @@ begin
   oFloatAnimationF.Start;
   oSizeAnimationF.Start;
   oshaddow.Enabled := True;
+  // olabel1.FontColor := talphacolors.Black;
+  // olabel2.FontColor := talphacolors.Dodgerblue;;
 end;
 
 procedure TDashPanel.onMouseLeave(Sender: TObject);
@@ -229,6 +231,8 @@ begin
   oFloatAnimationR.Start;
   oSizeAnimationR.Start;
   oshaddow.Enabled := False;
+  // olabel1.FontColor := talphacolors.White;
+  // olabel2.FontColor := talphacolors.White;
 end;
 
 procedure TDashPanel.onPanelClick(Sender: TObject);

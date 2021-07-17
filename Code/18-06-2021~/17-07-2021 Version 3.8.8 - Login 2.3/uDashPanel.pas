@@ -29,6 +29,8 @@ Type
     function GetTImage: TImage;
     procedure AnimationF;
     procedure AnimationR;
+    destructor Destroy; override;
+    class procedure Release(arr: array of TDashPanel);
   protected
     { protected fields }
     { protected methods }
@@ -103,9 +105,9 @@ begin
   begin
     Parent := opanel;
     Direction := 60;
-    Softness:=0.5;
-    Opacity:=0.5;
-    Distance:=2;
+    Softness := 0.5;
+    Opacity := 0.5;
+    Distance := 2;
     Enabled := False;
   end;
 
@@ -205,6 +207,22 @@ begin
   end;
 end;
 
+destructor TDashPanel.Destroy;
+begin
+  opanel.Free;
+  inherited;
+end;
+
+class procedure TDashPanel.Release(arr: array of TDashPanel);
+var
+  a: TDashPanel;
+begin
+  for a in arr do
+  begin
+    a.Destroy;
+  end;
+end;
+
 function TDashPanel.GetLabel1: string;
 begin
 
@@ -220,7 +238,7 @@ begin
   (ChangeColour(AlphaColorToString(opanel.fill.Color), 'lighten'));
   oFloatAnimationF.Start;
   oSizeAnimationF.Start;
-  oshaddow.Enabled := True;
+  oshaddow.Enabled := true;
   // olabel1.FontColor := talphacolors.Black;
   // olabel2.FontColor := talphacolors.Dodgerblue;;
 end;

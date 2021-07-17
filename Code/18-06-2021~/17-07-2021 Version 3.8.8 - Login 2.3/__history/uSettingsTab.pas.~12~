@@ -1,4 +1,4 @@
-unit uNaviPanel;
+unit uSettingsTab;
 
 interface
 
@@ -7,7 +7,7 @@ uses
   UITypes, FMX.TabControl, FMX.Multiview, FMX.Dialogs, System.SysUtils;
 
 Type
-  TNaviPanel = Class(TPanel)
+  TSettingsTab = Class(TObject)
   public
     { public fields }
     constructor Create(AOwner, AParent: TFmxObject);
@@ -20,6 +20,7 @@ Type
     procedure setTabControl(AObject: TTabControl);
     procedure resetColor;
     procedure setClicked;
+    destructor Destroy; override;
   protected
     { protected fields }
     { protected methods }
@@ -39,102 +40,115 @@ Type
 
 implementation
 
-{ TNaviPanel }
+{ TSettingsTab }
 
-constructor TNaviPanel.Create(AOwner, AParent: TFmxObject);
+constructor TSettingsTab.Create(AOwner, AParent: TFmxObject);
 begin
   selected := False;
   opanel := TRectangle.Create(AOwner);
   opanel.Parent := AParent;
-  opanel.Width := TFlowLayout(AParent).Width;
-  opanel.Height := 55;
+  opanel.Width := TFlowLayout(AParent).Width - 4;
+  opanel.Height := 18;
   opanel.Stroke.Thickness := 0;
   opanel.OnClick := onPanelClick;
-  opanel.Fill.Color := StringToAlphaColor('#FF222D31');
+  opanel.Fill.Color := StringToAlphaColor('#FF2b2b2b');
+  opanel.Margins.Left := 2;
+  opanel.onMouseEnter := onMouseEnter;
+  opanel.onMouseLeave := onMouseLeave;
   olabel := TLabel.Create(AOwner);
   olabel.Parent := opanel;
-  olabel.Position.X := 100;
-  olabel.Position.Y := 14;
+  olabel.Position.X := 20;
+  olabel.Position.Y := 0;
   olabel.StyledSettings := olabel.StyledSettings - [TStyledSetting.ssFamily,
     TStyledSetting.ssSize, TStyledSetting.FontColor];
   olabel.AutoSize := True;
-  olabel.TextSettings.Font.Size := 18;
+  olabel.TextSettings.Font.Size := 12;
   olabel.TextSettings.FontColor := TAlphaColors.White;
   olabel.Font.Family := 'Segoe UI';
   oimage := TImage.Create(AOwner);
   oimage.Parent := opanel;
-  oimage.Position.X := 6;
-  oimage.Position.Y := 7;
-  oimage.Width := 40;
-  oimage.Height := 40;
+  oimage.Position.X := 5;
+  oimage.Position.Y := 5;
+  oimage.Width := 5;
+  oimage.Height := 5;
   oimage.OnClick := opanel.OnClick;
   oimage.onMouseEnter := onMouseEnter;
   oimage.onMouseLeave := onMouseLeave;
 end;
 
-function TNaviPanel.GetLabel: string;
+destructor TSettingsTab.Destroy;
+begin
+  opanel.Free;
+  inherited;
+end;
+
+function TSettingsTab.GetLabel: string;
 begin
   Result := olabel.Text;
 end;
 
-function TNaviPanel.GetTImage: TImage;
+function TSettingsTab.GetTImage: TImage;
 begin
   Result := oimage;
 end;
 
-function TNaviPanel.GetTabIndex: integer;
+function TSettingsTab.GetTabIndex: integer;
 begin
   Result := tabcontrolindex;
 end;
 
-procedure TNaviPanel.onMouseEnter(Sender: TObject);
+procedure TSettingsTab.onMouseEnter(Sender: TObject);
 begin
   if (selected <> True) then
     // opanel.Fill.Color := StringToAlphaColor('#FF1D262B');
-    opanel.Fill.Color := StringToAlphaColor('#FF6d797e');
+    opanel.Fill.Color := StringToAlphaColor('#FF6699ba');
 end;
 
-procedure TNaviPanel.onMouseLeave(Sender: TObject);
+procedure TSettingsTab.onMouseLeave(Sender: TObject);
 begin
   if not selected then
-    opanel.Fill.Color := StringToAlphaColor('#FF222D31');
+    opanel.Fill.Color := StringToAlphaColor('#FF2b2b2b');
 end;
 
-procedure TNaviPanel.onPanelClick(Sender: TObject);
+procedure TSettingsTab.onPanelClick(Sender: TObject);
 begin
   TabControl.TabIndex := tabcontrolindex;
   selected := True;
-  opanel.Fill.Color := StringToAlphaColor('#FFF15A23');
+  opanel.Fill.Color := StringToAlphaColor('#FF5285a6');
 end;
 
-procedure TNaviPanel.resetColor;
+procedure TSettingsTab.resetColor;
 begin
-  opanel.Fill.Color := StringToAlphaColor('#FF222D31');
+  opanel.Fill.Color := StringToAlphaColor('#FF2b2b2b');
   selected := False;
 end;
 
-procedure TNaviPanel.setClicked;
+procedure TSettingsTab.setClicked;
 begin
   opanel.Fill.Color := StringToAlphaColor('#FFF15A23');
   selected := True;
 end;
 
-procedure TNaviPanel.SetImage(image: string);
+procedure TSettingsTab.SetImage(image: string);
 begin
   oimage.Bitmap.LoadFromFile(image);
 end;
 
-procedure TNaviPanel.SetLabel(caption: string);
+procedure TSettingsTab.SetLabel(caption: string);
 begin
   olabel.Text := caption;
+  oimage.Hint := caption;
+  oimage.ShowHint := True;
+  opanel.Hint := caption;
+  opanel.ShowHint := True;
 end;
 
-procedure TNaviPanel.setTabControl(AObject: TTabControl);
+procedure TSettingsTab.setTabControl(AObject: TTabControl);
 begin
   TabControl := AObject;
 end;
 
-procedure TNaviPanel.setTabIndex(index: integer);
+procedure TSettingsTab.setTabIndex(index: integer);
 begin
   tabcontrolindex := index;
 end;

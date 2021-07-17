@@ -20,7 +20,8 @@ Type
     procedure setTabControl(AObject: TTabControl);
     procedure resetColor;
     procedure setClicked;
-    class procedure Free(arr: array of TSettingsTab);
+    destructor Destroy; override;
+    class procedure Release(arr: array of TSettingsTab);
   protected
     { protected fields }
     { protected methods }
@@ -36,7 +37,6 @@ Type
     procedure onMouseEnter(Sender: TObject);
     procedure onMouseLeave(Sender: TObject);
     procedure onPanelClick(Sender: TObject);
-    procedure FreePanel;
   end;
 
 implementation
@@ -77,19 +77,10 @@ begin
   oimage.onMouseLeave := onMouseLeave;
 end;
 
-class procedure TSettingsTab.Free(arr: array of TSettingsTab);
-var
-  a: TSettingsTab;
+destructor TSettingsTab.Destroy;
 begin
-  for a in arr do
-  begin
-    a.FreePanel;
-  end;
-end;
-
-procedure TSettingsTab.FreePanel;
-begin
-opanel.Free;
+  opanel.Free;
+  inherited;
 end;
 
 function TSettingsTab.GetLabel: string;
@@ -125,6 +116,16 @@ begin
   TabControl.TabIndex := tabcontrolindex;
   selected := True;
   opanel.Fill.Color := StringToAlphaColor('#FF5285a6');
+end;
+
+class procedure TSettingsTab.Release(arr: array of TSettingsTab);
+var
+  a: TSettingsTab;
+begin
+  for a in arr do
+  begin
+    a.Destroy;
+  end;
 end;
 
 procedure TSettingsTab.resetColor;

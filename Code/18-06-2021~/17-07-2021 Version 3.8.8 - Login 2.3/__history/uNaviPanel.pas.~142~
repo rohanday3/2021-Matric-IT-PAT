@@ -20,6 +20,8 @@ Type
     procedure setTabControl(AObject: TTabControl);
     procedure resetColor;
     procedure setClicked;
+    class procedure Release(arr: array of TNaviPanel);
+    destructor Destroy; override;
   protected
     { protected fields }
     { protected methods }
@@ -35,6 +37,8 @@ Type
     procedure onMouseEnter(Sender: TObject);
     procedure onMouseLeave(Sender: TObject);
     procedure onPanelClick(Sender: TObject);
+    procedure FreePanel;
+    class procedure Release(arr: array of TNaviPanel);
   end;
 
 implementation
@@ -55,8 +59,8 @@ begin
   opanel.onMouseLeave := onMouseLeave;
   olabel := TLabel.Create(AOwner);
   olabel.Parent := opanel;
-  olabel.Position.X := 100;
-  olabel.Position.Y := 14;
+  olabel.Position.X := 70;
+  olabel.Position.Y := 15;
   olabel.StyledSettings := olabel.StyledSettings - [TStyledSetting.ssFamily,
     TStyledSetting.ssSize, TStyledSetting.FontColor];
   olabel.AutoSize := True;
@@ -72,6 +76,22 @@ begin
   oimage.OnClick := opanel.OnClick;
   oimage.onMouseEnter := onMouseEnter;
   oimage.onMouseLeave := onMouseLeave;
+end;
+
+class procedure TNaviPanel.Release(arr: array of TNaviPanel);
+var
+  a: TNaviPanel;
+begin
+  for a in arr do
+  begin
+    a.Destroy;
+  end;
+end;
+
+destructor TNaviPanel.Destroy;
+begin
+  opanel.Free;
+  inherited;
 end;
 
 function TNaviPanel.GetLabel: string;
@@ -129,6 +149,10 @@ end;
 procedure TNaviPanel.SetLabel(caption: string);
 begin
   olabel.Text := caption;
+  oimage.Hint := caption;
+  oimage.ShowHint := True;
+  opanel.Hint := caption;
+  opanel.ShowHint := True;
 end;
 
 procedure TNaviPanel.setTabControl(AObject: TTabControl);

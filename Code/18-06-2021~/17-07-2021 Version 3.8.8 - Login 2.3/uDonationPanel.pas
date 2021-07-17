@@ -17,6 +17,7 @@ Type
     procedure SetLabelQuantity(caption: string);
     procedure setColor(Color: TAlphaColor);
     procedure resize;
+    class procedure Free(arr: array of TDonationPanel);
   protected
     { protected fields }
     { protected methods }
@@ -32,6 +33,7 @@ Type
     opanelDesc: TRectangle;
     opanelQuantity: TRectangle;
     { private methods }
+    procedure FreePanel;
   end;
 
 implementation
@@ -143,6 +145,22 @@ begin
   olabelQuantity.FontColor := StringToAlphaColor('#FF008800');
   olabelQuantity.Font.Size := 14;
 
+end;
+
+class procedure TDonationPanel.Free(arr: array of TDonationPanel);
+var
+  a: TDonationPanel;
+begin
+  for a in arr do
+  begin
+    a.FreePanel;
+    a.FreeInstance;
+  end;
+end;
+
+procedure TDonationPanel.FreePanel;
+begin
+  opanel.Free;
 end;
 
 procedure TDonationPanel.resize;

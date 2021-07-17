@@ -12,7 +12,7 @@ uses
   FMX.Ani, uDonationsThread, uSplashscreen, System.Diagnostics,
   System.Timespan, System.Rtti, FMX.Grid.Style, FMX.ScrollBox, FMX.Grid,
   System.StrUtils, winApi.Windows, FMX.Platform, uSettingsPanel, FMX.GIFImage,
-  FMX.DateTimeCtrls, System.Dateutils, uPreferences;
+  FMX.DateTimeCtrls, System.Dateutils, uPreferences, messages;
 
 type
   TForm1 = class(TForm)
@@ -111,7 +111,6 @@ type
     { Private declarations }
     arrNavipanel: array [1 .. 8] of TNaviPanel;
     arrDashpanel: array [1 .. 6] of TDashPanel;
-    arrSettingsPanel: array [1 .. 8] of TSettingsPanel;
     DonationFilterList, DonationList, donation_search_cells
       : array of array of string;
     sorttype: Integer;
@@ -120,6 +119,7 @@ type
     MIN_SIZE_ENABLED: Boolean;
     donation_grid_head_size: Integer;
     CurAccount: string;
+    MIN_SIZE_ALGO1, MIN_SIZE_ALGO2: Boolean;
     procedure LoadDashboard;
     procedure LoadNavigationPanel;
     procedure HighlightStrings(searchstring: string);
@@ -135,6 +135,8 @@ type
     procedure ScaleScreen;
     function GetScreenScale: Single;
     procedure AutoSizeCol(Grid: TStringGrid; Column: Integer);
+    procedure WMGetMinMaxInfo(var MSG: Tmessage); message WM_GetMinMaxInfo;
+    procedure FreeDynamics;
 
   const
     MIN_HEIGHT: Integer = 600;
@@ -270,6 +272,8 @@ begin
     MultiView1.Width;
   rectSearch.BringToFront;
   MIN_SIZE_ENABLED := true;
+  MIN_SIZE_ALGO1 := False;
+  MIN_SIZE_ALGO2 := True;
   donation_grid_head_size := 20;
   loading_status := 'Starting application...';
   loading_status := 'Loading navigation panel...';
@@ -296,6 +300,7 @@ end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
+  FreeDynamics;
   Hide;
   Application.Free;
 end;
@@ -307,28 +312,54 @@ var
 begin
   MultiView1.HideMaster;
 
-  {
-    for i := 0 to StringGrid1.ColumnCount - 1 do
-    begin
+  for i := 0 to StringGrid1.ColumnCount - 1 do
+  begin
     StringGrid1.Columns[i].Width := StringGrid1.Width / StringGrid1.ColumnCount;
-    end;
-  }
+  end;
 
   if MIN_SIZE_ENABLED then
   begin
-    If (ClientWidth < MIN_WIDTH) AND (tContrMain.TabIndex = 1) Then
-    Begin
-      ClientWidth := MIN_WIDTH;
-      Mouse_Event(MOUSEEVENTF_ABSOLUTE or MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-    End;
+    if MIN_SIZE_ALGO1 then
+    begin
+      If (ClientWidth < MIN_WIDTH) AND (tContrMain.TabIndex = 1) Then
+      Begin
+        ClientWidth := MIN_WIDTH;
+        Mouse_Event(MOUSEEVENTF_ABSOLUTE or MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+      End;
 
-    If (ClientHeight < MIN_HEIGHT) AND (tContrMain.TabIndex = 1) Then
-    Begin
-      ClientHeight := MIN_HEIGHT;
-      Mouse_Event(MOUSEEVENTF_ABSOLUTE or MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-    End;
+      If (ClientHeight < MIN_HEIGHT) AND (tContrMain.TabIndex = 1) Then
+      Begin
+        ClientHeight := MIN_HEIGHT;
+        Mouse_Event(MOUSEEVENTF_ABSOLUTE or MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+      End;
+    end;
+    if MIN_SIZE_ALGO2 then
+    begin
+      if ClientHeight < MIN_HEIGHT then
+      begin
+        ClientHeight := MIN_HEIGHT;
+        FillMemory(@LInput, SizeOf(LInput), 0);
+        LInput.Itype := INPUT_MOUSE;
+        LInput.mi.dwFlags := MOUSEEVENTF_ABSOLUTE or MOUSEEVENTF_LEFTUP;
+        SendInput(1, LInput, SizeOf(LInput));
+      end;
+      if ClientWidth < MIN_WIDTH then
+      begin
+        ClientWidth := MIN_WIDTH;
+        FillMemory(@LInput, SizeOf(LInput), 0);
+        LInput.Itype := INPUT_MOUSE;
+        LInput.mi.dwFlags := MOUSEEVENTF_ABSOLUTE or MOUSEEVENTF_LEFTUP;
+        SendInput(1, LInput, SizeOf(LInput));
+      end;
+    end;
   end;
+end;
 
+procedure TForm1.FreeDynamics;
+begin
+TDashPanel.Free(arrDashpanel);
+arrNavipanel.
+TNaviPanel.Free(arrNavipanel);
 end;
 
 function TForm1.GetScreenScale: Single;
@@ -937,6 +968,24 @@ begin
   lblDatetime.Text := FormatDateTime('dddddd tt', today);
 end;
 
+procedure TForm1.WMGetMinMaxInfo(var MSG: Tmessage);
+begin
+  inherited;
+  with PMinMaxInfo(MSG.lparam)^ do
+  begin
+    with ptMinTrackSize do
+    begin
+      X := 300;
+      Y := 150;
+    end;
+    with ptMaxTrackSize do
+    begin
+      X := 350;
+      Y := 250;
+    end;
+  end;
+end;
+
 procedure TForm1.AutoSizeCol(Grid: TStringGrid; Column: Integer);
 var
   i: Integer;
@@ -949,7 +998,7 @@ begin
     if W > WMax then
       WMax := W;
   end;
-  Grid.Columns[Column].Width := WMax + 5;
+  Grid.Columns[Column].Width := WMax + 40;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);

@@ -7,7 +7,7 @@ uses
   UITypes, FMX.TabControl, FMX.Forms;
 
 Type
-  TDonationPanel = Class(TPanel)
+  TDonationPanel = Class(TObject)
   public
     { public fields }
     constructor Create(AOwner, AParent: TFmxObject);
@@ -15,7 +15,9 @@ Type
     procedure SetLabelTime(caption: string);
     procedure SetLabelDesc(caption: string);
     procedure SetLabelQuantity(caption: string);
+    procedure setColor(Color: TAlphaColor);
     procedure resize;
+    class procedure Free(arr: array of TDonationPanel);
   protected
     { protected fields }
     { protected methods }
@@ -31,7 +33,7 @@ Type
     opanelDesc: TRectangle;
     opanelQuantity: TRectangle;
     { private methods }
-    procedure setColor(Color: TAlphaColor);
+    procedure FreePanel;
   end;
 
 implementation
@@ -145,9 +147,28 @@ begin
 
 end;
 
+class procedure TDonationPanel.Free(arr: array of TDonationPanel);
+var
+  a: TDonationPanel;
+begin
+  for a in arr do
+  begin
+    a.FreePanel;
+  end;
+end;
+
+procedure TDonationPanel.FreePanel;
+begin
+  opanel.Free;
+end;
+
 procedure TDonationPanel.resize;
 begin
-  opanel.Width := TFlowLayout(opanel.Parent).Width;
+  try
+    opanel.Width := TFlowLayout(opanel.Parent).Width;
+  except
+
+  end;
 end;
 
 procedure TDonationPanel.setColor(Color: TAlphaColor);
@@ -157,22 +178,22 @@ end;
 
 procedure TDonationPanel.SetLabelDesc(caption: string);
 begin
-
+  olabelDesc.Text := caption;
 end;
 
 procedure TDonationPanel.SetLabelName(caption: string);
 begin
-
+  olabelName.Text := caption;
 end;
 
 procedure TDonationPanel.SetLabelQuantity(caption: string);
 begin
-
+  olabelQuantity.Text := caption;
 end;
 
 procedure TDonationPanel.SetLabelTime(caption: string);
 begin
-
+  olabelTime.Text := caption;
 end;
 
 end.

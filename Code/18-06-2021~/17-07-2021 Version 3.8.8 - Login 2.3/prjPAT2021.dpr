@@ -8,7 +8,6 @@ uses
   uMain in 'uMain.pas' {Form1},
   uNaviPanel in 'uNaviPanel.pas',
   uDashPanel in 'uDashPanel.pas',
-  uDonationPanel in 'uDonationPanel.pas',
   uLogin in 'uLogin.pas' {Form2},
   Datamodule in 'Datamodule.pas' {DataModule1: TDataModule},
   uDonationsThread in 'uDonationsThread.pas',
