@@ -23,9 +23,9 @@ I chose to create an application to assist with inventory management, donation m
 <img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Login2.png" width="350" title="Login screen 2">*Login screen 2* 
 
 
-<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Sign-in.png" width="300" description="Sign-in-1">*Sign-in username*
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/Sign-in.png" width="350" description="Sign-in-1">*Sign-in username*
 
-<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/password.png" width="300" description="Sign-in-1">*Sign-in password*
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/password.png" width="350" description="Sign-in-1">*Sign-in password*
 
-<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/advanced-settings.png" width="300" description="Sign-in-1">*Advanced settings*
+<img src="https://github.com/rohanday3/2021-Matric-IT-PAT/blob/main/GUI%20Sample/advanced-settings.png" width="500" description="Sign-in-1">*Advanced settings*
 
