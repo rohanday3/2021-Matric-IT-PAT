@@ -1,3 +1,20 @@
+﻿{ ******************************************************************************
+  ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤIT MATRIC PAT 2021 - Robin Hood
+  ㅤㅤㅤㅤㅤCopyright (C) 2021 by Rohan Dayaram <rohanday4@gmail.com>
+  ㅤㅤㅤㅤㅤㅤㅤhttps://github.com/rohanday3/2021-Matric-IT-PAT
+  ******************************************************************************
+  Robin Hood is a multi-purpose company management system for the financial and
+  inventory systems etc of the Robin Hood© foundation which is for the purposes
+  of my matric pat, an NGO dedicated to feeding homeless children under the ages
+  of 3.  The  company needed a system to manage their inventory,  payments  and
+  other systems which would otherwise be managed by staff and recorded on paper.
+  The design is a modern one with a  dashboard and a multiview drawer  which is
+  used to navigate the other tabs.  Many additional "nice to have" features are
+  included as well which are docuemented in the help tab as well as the feature
+  docuement included in the same folder as the project and can also be found on
+  my github page stated above.
+  ****************************************************************************** }
+
 unit uLogin;
 
 interface
@@ -11,7 +28,7 @@ uses
   FMX.Grid.Style, Data.Bind.EngExt, FMX.Bind.DBEngExt, FMX.Bind.Grid,
   System.Bindings.Outputs, FMX.Bind.Editors, Data.Bind.Components,
   Data.Bind.Grid, Data.Bind.DBScope, FMX.ScrollBox, FMX.Grid, Data.DB,
-  Data.Win.ADODB, System.NetEncoding, FMX.GIFImage;
+  Data.Win.ADODB, System.NetEncoding, FMX.GIFImage, IniFiles;
 
 type
   TForm2 = class(TForm)
@@ -26,10 +43,10 @@ type
     zoomfromcenteradjust: TFloatAnimation;
     fadeoutrectPos: TFloatAnimation;
     fadeoutrectOpacity: TFloatAnimation;
-    fadeoutLabel3Opacity: TFloatAnimation;
-    fadeoutLabe3Pos: TFloatAnimation;
-    fadeoutLabel2Opacity: TFloatAnimation;
-    fadeoutLabel2Pos: TFloatAnimation;
+    fadeoutlblWelcomeSubtitleOpacity: TFloatAnimation;
+    fadeoutlblWelcomeSubtitlePos: TFloatAnimation;
+    fadeoutlblWelcomeTitleOpacity: TFloatAnimation;
+    fadeoutlblWelcomeTitlePos: TFloatAnimation;
     lblWelcome2: TLabel;
     rectWelcomeBtn2: TRectangle;
     lblWelcomeBtn2: TLabel;
@@ -100,7 +117,7 @@ type
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
-    procedure fadeoutLabel2PosFinish(Sender: TObject);
+    procedure fadeoutlblWelcomeTitlePosFinish(Sender: TObject);
     procedure rectWelcomeBtn2Click(Sender: TObject);
     procedure edtLoginUsernameClick(Sender: TObject);
     procedure edtLoginUsernameExit(Sender: TObject);
@@ -137,14 +154,16 @@ type
     procedure loginhideRect2HeightFinish(Sender: TObject);
     procedure rectBtnSignInClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure edtLoginUsernameKeyDown(Sender: TObject; var Key: Word;
-      var KeyChar: Char; Shift: TShiftState);
     procedure edtLoginPasswordKeyDown(Sender: TObject; var Key: Word;
       var KeyChar: Char; Shift: TShiftState);
     procedure lblUseEmailClick(Sender: TObject);
     procedure lblUseEmailMouseEnter(Sender: TObject);
     procedure edtLoginPasswordClick(Sender: TObject);
     procedure edtLoginPasswordTyping(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
+    procedure loginshowImage1HeightFinish(Sender: TObject);
+    procedure loginhideImage1HeightFinish(Sender: TObject);
   private
     { Private declarations }
     iconstarty: Single;
@@ -163,6 +182,11 @@ type
     function GetVersionNumber: string;
     procedure ScaleScreen;
     function GetScreenScale: Single;
+    procedure resetUsernameScreen;
+    procedure resetPasswordScreen;
+    procedure resetCreateScreen;
+    procedure SaveSettingString(Section, Name, Value: string);
+    function LoadSettingString(Section, Name, Value: string): string;
 
   const
     iniWidth: integer = 455;
@@ -170,6 +194,7 @@ type
     Appname: string = 'Robin Hood';
     clr_accent1: String = '#FF00f0cb';
     clr_accent2: String = '#FF00c78c';
+    CONFIG_FILE_NAME = 'config.ini';
   public
     { Public declarations }
     class function Execute: Boolean;
@@ -185,6 +210,7 @@ var
   CountryCodes: TStringList;
   CountryCodesFiltered: TStringList;
   FormWidth, FormHeight: integer;
+  phone: Boolean;
 
 implementation
 
@@ -288,15 +314,6 @@ begin
   TRectangle(TEdit(Sender).Parent).Stroke.Color := TAlphaColors.black;
 end;
 
-procedure TForm2.edtLoginUsernameKeyDown(Sender: TObject; var Key: Word;
-  var KeyChar: Char; Shift: TShiftState);
-begin
-  if (Key = 13) and (login_state = 1) then
-  begin
-    rectBtnNextClick(nil);
-  end;
-end;
-
 procedure TForm2.edtLoginUsernameTyping(Sender: TObject);
 begin
   if errorlogin1 then
@@ -351,7 +368,7 @@ begin
     end;
 end;
 
-procedure TForm2.fadeoutLabel2PosFinish(Sender: TObject);
+procedure TForm2.fadeoutlblWelcomeTitlePosFinish(Sender: TObject);
 begin
   //
   lblWelcome2.Visible := True;
@@ -359,6 +376,7 @@ begin
   lblVersion.Visible := True;
   rectWelcomeBtn1.Cursor := crDefault;
   rectWelcomeBtn1.Enabled := False;
+  login_state := 0;
 end;
 
 procedure TForm2.FilterComboBox(ComboBox: TComboBox; Key: String);
@@ -408,13 +426,14 @@ begin
 end;
 
 procedure TForm2.FormCreate(Sender: TObject);
+var
+  databasepath: string;
 begin
-  ADOQuery1.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source='
-    + GetCurrentDir + '\robinhood.mdb' + ';Persist Security Info=False';
   ScaleScreen;
   lblLoginSubtitle.Text := 'to continue to ' + Appname;
   lblWelcomeTitle.Text := 'Welcome to ' + Appname;
-  login_state := 0;
+  login_state := -1;
+  phone := True;
   RectWelome.Width := 460;
   RectWelome.Height := 640;
   rectWelcomeBtn1.Visible := False;
@@ -430,8 +449,76 @@ begin
   rectLogin2.BringToFront;
   rectLogin.BringToFront;
   RectWelome.BringToFront;
+  rectWelcomeBtn1.SetFocus;
   hideerror1;
   hideerror2;
+
+  if not FileExists(GetCurrentDir + '\' + CONFIG_FILE_NAME) then
+  begin
+    SaveSettingString('General', 'database_path',
+      GetCurrentDir + '\robinhood.mdb');
+    SaveSettingString('Interface', 'Scaling', '0');
+  end;
+
+  databasepath := LoadSettingString('General', 'database_path',
+    GetCurrentDir + '\robinhood.mdb');
+
+  // TODO: Save the new file location to the config
+  if not FileExists(databasepath) then
+  begin
+    if MessageDlg(databasepath +
+      ' could not be found. Would you like to select it now? (If you do not select a valid database file now the application will close)',
+      TMsgDlgType.mtWarning, mbYesNo, 0) = 6 then
+    begin
+      with TOpenDialog.Create(nil) do
+      begin
+        Filter := 'Microsoft Access Database (*.mdb)|*.MDB';
+        InitialDir := GetCurrentDir;
+        if Execute then
+        begin
+          ADOQuery1.ConnectionString :=
+            'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + FileName +
+            ';Persist Security Info=False';
+          SaveSettingString('General', 'database_path', FileName);
+        end
+        else
+        begin
+          ShowMessage('No file was chosen. The application will close.');
+          Application.Terminate;
+        end;
+        Free;
+      end;
+    end
+    else
+    begin
+      ShowMessage('No file was chosen. The application will close.');
+      Application.Terminate;
+    end;
+  end
+  else
+  begin
+    ADOQuery1.ConnectionString :=
+      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + databasepath +
+      ';Persist Security Info=False';
+  end;
+end;
+
+procedure TForm2.FormKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
+  Shift: TShiftState);
+begin
+  if Key = 13 then
+  begin
+    case login_state of
+      - 1:
+        rectWelcomeBtn1Click(nil);
+      0:
+        rectWelcomeBtn2Click(nil);
+      1:
+        rectBtnNextClick(nil);
+      2:
+        rectBtnSignInClick(nil);
+    end;
+  end;
 end;
 
 procedure TForm2.FormPaint(Sender: TObject; Canvas: TCanvas;
@@ -463,7 +550,7 @@ end;
 procedure TForm2.hideerror1;
 begin
   lblLoginError.Text := '';
-  rectErrorMoveUI.Position.Y := 130;
+  rectErrorMoveUI.Position.Y := 120;
   rectLoginUsername.Stroke.Color := StringToAlphacolor('#FF1A69B9');
   errorlogin1 := False;
 end;
@@ -480,6 +567,8 @@ procedure TForm2.Image2Click(Sender: TObject);
 begin
   // Rectangle12.Visible := False;
   floatRect11PosF.Start;
+  edtLoginUsername.SetFocus;
+  login_state := 1;
 end;
 
 procedure TForm2.Image2MouseEnter(Sender: TObject);
@@ -493,27 +582,38 @@ begin
 end;
 
 procedure TForm2.lblUseEmailClick(Sender: TObject);
-var
-  phone: Boolean;
 const
-  width1: integer = 311;
-  width2: integer = 407;
+  edtWidth1: integer = 311;
+  edtWidth2: integer = 407;
   xpos1: integer = 120;
   xpos2: integer = 24;
+  lblWidth1: integer = 145;
+  lblWidth2: integer = 200;
+
   lbl1: string = 'Use your email instead';
   lbl2: string = 'Use a phone number instead';
+  edtHint1: string = 'someone@example.com';
+  edtHint2: string = 'Phone number';
 begin
-  ShowMessage(BoolToStr(phone));
+  resetCreateScreen;
   if phone then
   begin
-    rectCreateAccountPhone.Width := width2;
+    { enter email number }
+    rectUseEmail.Width := 180;
+    edtCreateAccountPhone.TextPrompt := edtHint1;
+    rectAreaCodeCombo.Visible := False;
+    rectCreateAccountPhone.Width := edtWidth2;
     rectCreateAccountPhone.Position.X := xpos2;
     lblUseEmail.Text := lbl2;
     phone := False;
   end
   else
   begin
-    rectCreateAccountPhone.Width := width1;
+    { enter phone number }
+    rectUseEmail.Width := 145;
+    edtCreateAccountPhone.TextPrompt := edtHint2;
+    rectAreaCodeCombo.Visible := True;
+    rectCreateAccountPhone.Width := edtWidth1;
     rectCreateAccountPhone.Position.X := xpos1;
     lblUseEmail.Text := lbl1;
     phone := True;
@@ -555,12 +655,34 @@ begin
   StyleComboBoxItems(cmbAreaCodes, 'Calibri', 16, '#ff000000');
 end;
 
+function TForm2.LoadSettingString(Section, Name, Value: string): string;
+var
+  ini: TIniFile;
+begin
+  ini := TIniFile.Create(GetCurrentDir + '\' + CONFIG_FILE_NAME);
+  try
+    Result := ini.ReadString(Section, Name, Value);
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure TForm2.loginhideImage1HeightFinish(Sender: TObject);
+begin
+  login_state := 0;
+end;
+
 procedure TForm2.loginhideRect2HeightFinish(Sender: TObject);
 begin
   lblWelcome2.Visible := True;
   lblVersion.Visible := True;
   rectWelcomeBtn2.Visible := True;
   rectWelcomeBtn2.Enabled := True;
+end;
+
+procedure TForm2.loginshowImage1HeightFinish(Sender: TObject);
+begin
+  login_state := 1;
 end;
 
 procedure TForm2.RectCreateAccountClick(Sender: TObject);
@@ -617,10 +739,10 @@ procedure TForm2.rectWelcomeBtn1Click(Sender: TObject);
 begin
   fadeoutrectPos.Start;
   fadeoutrectOpacity.Start;
-  fadeoutLabel3Opacity.Start;
-  fadeoutLabe3Pos.Start;
-  fadeoutLabel2Opacity.Start;
-  fadeoutLabel2Pos.Start;
+  fadeoutlblWelcomeSubtitleOpacity.Start;
+  fadeoutlblWelcomeSubtitlePos.Start;
+  fadeoutlblWelcomeTitleOpacity.Start;
+  fadeoutlblWelcomeTitlePos.Start;
 end;
 
 procedure TForm2.rectWelcomeBtn2Click(Sender: TObject);
@@ -633,12 +755,14 @@ begin
   loginshowRect2Height.Start;
   loginshowImage1Pos.Start;
   loginshowImage1Height.Start;
-  login_state := 1;
+  resetUsernameScreen;
+  edtLoginUsername.SetFocus;
 end;
 
 procedure TForm2.rectBtnCreateAccountClick(Sender: TObject);
 begin
   //
+  resetCreateScreen;
   rectLoginUIPnl.Visible := False;
   RectCreateAccount.BringToFront;
   rectCreateAccountUIpnl.Visible := False;
@@ -720,7 +844,8 @@ begin
     // RectWelome.SendToBack;
     rectLogin2UI.Visible := False;
     floatRectLoginPosF.Start;
-    edtLoginPassword.SetFocus;
+    resetPasswordScreen;
+    edtLoginPasswordClick(edtLoginPassword);
     login_state := 2;
   end
   else
@@ -747,6 +872,36 @@ procedure TForm2.ResetComboBox;
 begin
   ComboboxSearch := '';
   LoadCountryCodes;
+end;
+
+procedure TForm2.resetCreateScreen;
+begin
+  rectCreateAccountPhone.Stroke.Color := TAlphaColors.black;
+  edtCreateAccountPhone.Text := '';
+end;
+
+procedure TForm2.resetPasswordScreen;
+begin
+  rectLogin2.Stroke.Color := TAlphaColors.black;
+  edtLoginPassword.Text := '';
+end;
+
+procedure TForm2.resetUsernameScreen;
+begin
+  rectLogin.Stroke.Color := TAlphaColors.black;
+  edtLoginUsername.Text := '';
+end;
+
+procedure TForm2.SaveSettingString(Section, Name, Value: string);
+var
+  ini: TIniFile;
+begin
+  ini := TIniFile.Create(GetCurrentDir + '\' + CONFIG_FILE_NAME);
+  try
+    ini.WriteString(Section, Name, Value);
+  finally
+    ini.Free;
+  end;
 end;
 
 procedure TForm2.ScaleScreen;

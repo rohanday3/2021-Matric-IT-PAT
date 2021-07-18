@@ -22,9 +22,6 @@ Coordinates=582,221,137,36
 [float]
 Coordinates=64,434,40,36
 
-[fadeoutLabel2Pos]
-Coordinates=582,276,118,36
-
 [RectCreateAccount]
 Coordinates=296,414,126,36
 
@@ -45,12 +42,6 @@ Coordinates=757,111,110,36
 
 [loginshowRect2Height]
 Coordinates=757,166,143,36
-
-[fadeoutLabe3Pos]
-Coordinates=757,221,115,36
-
-[fadeoutLabel3Opacity]
-Coordinates=757,276,140,36
 
 [zoomfromcenteradjust]
 Coordinates=757,331,142,36
@@ -84,9 +75,6 @@ Coordinates=938,166,134,36
 
 [fadeoutrectOpacity]
 Coordinates=938,221,123,36
-
-[fadeoutLabel2Opacity]
-Coordinates=938,276,140,36
 
 [floatRectLoginPosF]
 Coordinates=938,331,127,36
@@ -245,4 +233,16 @@ Coordinates=336,300,44,58
 
 [timerAnimation]
 Coordinates=457,489,55,36
+
+[fadeoutlblWelcomeTitleOpacity]
+Coordinates=938,276,140,36
+
+[fadeoutlblWelcomeTitlePos]
+Coordinates=582,276,118,36
+
+[fadeoutlblWelcomeSubtitlePos]
+Coordinates=757,221,115,36
+
+[fadeoutlblWelcomeSubtitleOpacity]
+Coordinates=757,276,140,36
 

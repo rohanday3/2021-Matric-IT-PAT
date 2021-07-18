@@ -3,3 +3,5 @@ Captcha
 Help us make sure you're not a robot
 enter the characters you see
 Setting to allow customizing the dashboard (Add more dashpanels with color and image customization)
+Customise dashpanels (font, color, fontsize etc) with live demo
+set location of config and database files in settings menu

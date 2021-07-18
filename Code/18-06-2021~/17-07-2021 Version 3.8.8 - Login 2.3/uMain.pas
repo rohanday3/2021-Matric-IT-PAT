@@ -1,3 +1,20 @@
+﻿{ ******************************************************************************
+  ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤIT MATRIC PAT 2021 - Robin Hood
+  ㅤㅤㅤㅤㅤCopyright (C) 2021 by Rohan Dayaram <rohanday4@gmail.com>
+  ㅤㅤㅤㅤㅤㅤㅤhttps://github.com/rohanday3/2021-Matric-IT-PAT
+  ******************************************************************************
+  Robin Hood is a multi-purpose company management system for the financial and
+  inventory systems etc of the Robin Hood© foundation which is for the purposes
+  of my matric pat, an NGO dedicated to feeding homeless children under the ages
+  of 3.  The  company needed a system to manage their inventory,  payments  and
+  other systems which would otherwise be managed by staff and recorded on paper.
+  The design is a modern one with a  dashboard and a multiview drawer  which is
+  used to navigate the other tabs.  Many additional "nice to have" features are
+  included as well which are docuemented in the help tab as well as the feature
+  docuement included in the same folder as the project and can also be found on
+  my github page stated above.
+  ****************************************************************************** }
+
 unit uMain;
 
 interface
@@ -119,7 +136,7 @@ type
     MIN_SIZE_ENABLED: Boolean;
     donation_grid_head_size: Integer;
     CurAccount: string;
-    MIN_SIZE_ALGO1, MIN_SIZE_ALGO2: Boolean;
+    MIN_SIZE_ALGO1, MIN_SIZE_ALGO2, DATE_TIME_ENABLED: Boolean;
     procedure LoadDashboard;
     procedure LoadNavigationPanel;
     procedure HighlightStrings(searchstring: string);
@@ -141,7 +158,7 @@ type
   const
     MIN_HEIGHT: Integer = 600;
     MIN_WIDTH: Integer = 1020;
-    iniWidth: Integer = 1360;
+    iniWidth: Integer = 1440;
     iniHeight: Integer = 750;
   public
     { Public declarations }
@@ -271,7 +288,8 @@ begin
   rectSearch.Position.X := pnlDonationQuery.Width - rectSearch.Width -
     MultiView1.Width;
   rectSearch.BringToFront;
-  MIN_SIZE_ENABLED := true;
+  MIN_SIZE_ENABLED := False;
+  DATE_TIME_ENABLED := true;
   MIN_SIZE_ALGO1 := False;
   MIN_SIZE_ALGO2 := true;
   donation_grid_head_size := 20;
@@ -283,7 +301,7 @@ begin
   Application.Hint := '';
   lblTab.Text := arrNavipanel[tContrMain.TabIndex + 1].GetLabel;
   loading_status := 'Loading botom panel...';
-  lblCopyright.Text := 'Copyright � ' + FormatDateTime('yyyy', Now) +
+  lblCopyright.Text := 'Copyright © ' + FormatDateTime('yyyy', Now) +
     '. All rights reserved.';
   loading_status := 'loading dashboard panel...';
   LoadDashboard;
@@ -300,9 +318,10 @@ end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  FreeDynamics;
   Hide;
+  FreeDynamics;
   // Application.Free;
+  { Free dynamic objects }
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -316,6 +335,11 @@ begin
   begin
     StringGrid1.Columns[i].Width := StringGrid1.Width / StringGrid1.ColumnCount;
   end;
+
+  if DATE_TIME_ENABLED AND (Self.Width > 700) then
+    lblDatetime.Visible := true
+  else
+    lblDatetime.Visible := False;
 
   if MIN_SIZE_ENABLED then
   begin

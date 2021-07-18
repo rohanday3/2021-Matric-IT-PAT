@@ -1,3 +1,20 @@
+﻿{ ******************************************************************************
+  ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤIT MATRIC PAT 2021 - Robin Hood
+  ㅤㅤㅤㅤㅤCopyright (C) 2021 by Rohan Dayaram <rohanday4@gmail.com>
+  ㅤㅤㅤㅤㅤㅤㅤhttps://github.com/rohanday3/2021-Matric-IT-PAT
+  ******************************************************************************
+  Robin Hood is a multi-purpose company management system for the financial and
+  inventory systems etc of the Robin Hood© foundation which is for the purposes
+  of my matric pat, an NGO dedicated to feeding homeless children under the ages
+  of 3.  The  company needed a system to manage their inventory,  payments  and
+  other systems which would otherwise be managed by staff and recorded on paper.
+  The design is a modern one with a  dashboard and a multiview drawer  which is
+  used to navigate the other tabs.  Many additional "nice to have" features are
+  included as well which are docuemented in the help tab as well as the feature
+  docuement included in the same folder as the project and can also be found on
+  my github page stated above.
+  ****************************************************************************** }
+
 unit uPreferences;
 
 interface
@@ -8,7 +25,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.Platform, FMX.Objects, System.uiconsts, FMX.TabControl,
   FMX.Controls.Presentation, FMX.StdCtrls, System.ImageList, FMX.ImgList,
-  FMX.ListBox, uSettingsTab;
+  FMX.ListBox, uSettingsTab, IniFiles;
 
 type
   TfrmPreferences = class(TForm)
@@ -36,9 +53,9 @@ type
     Label1: TLabel;
     imgScale: TImage;
     ImageList1: TImageList;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
+    scale_rad_0: TRadioButton;
+    scale_rad_1: TRadioButton;
+    scale_rad_2: TRadioButton;
     cmbScale: TComboBox;
     rectCustomScale: TRectangle;
     StyleBook1: TStyleBook;
@@ -61,12 +78,16 @@ type
     procedure rectCustomScaleClick(Sender: TObject);
     procedure ScaleRadioGroupChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tabcontrol_settingsChange(Sender: TObject);
   private
     { Private declarations }
     NaviPanels: array of TSettingsTab;
     procedure ScaleScreen;
     function GetScreenScale: Single;
     procedure LoadSettingsNavi;
+    procedure LoadSettings;
+    procedure SaveSettingString(Section, Name, Value: string);
+    function LoadSettingString(Section, Name, Value: string): string;
   public
     { Public declarations }
     class function Execute: boolean;
@@ -80,11 +101,15 @@ var
 const
   iniWidth: Integer = 717;
   iniHeight: Integer = 564;
+  CONFIG_FILE_NAME = 'config.ini';
 
 implementation
 
 {$R *.fmx}
 { TfrmPreferences }
+
+uses
+  uMain;
 
 function TfrmPreferences.ChangeColour(colour, option: string): string;
 var
@@ -132,6 +157,8 @@ begin
   clrAccent2 := StringToAlphaColor('#FF2b2b2b');
   clrAccent3 := StringToAlphaColor('#FF5285a6');
 
+  LoadSettings;
+  rectSaveBtn.Enabled := False;
   LoadSettingsNavi;
 end;
 
@@ -149,6 +176,18 @@ end;
 procedure TfrmPreferences.Image1Click(Sender: TObject);
 begin
   cmbScale.DropDown;
+end;
+
+procedure TfrmPreferences.LoadSettings;
+begin
+  case strtoint(LoadSettingString('Interface', 'Scaling', '0')) of
+    0:
+      scale_rad_0.IsChecked := True;
+    1:
+      scale_rad_1.IsChecked := True;
+    2:
+      scale_rad_2.IsChecked := True;
+  end;
 end;
 
 procedure TfrmPreferences.LoadSettingsNavi;
@@ -169,6 +208,19 @@ begin
   NaviPanels[0].SetLabel('General');
   NaviPanels[1].SetLabel('Interface');
   NaviPanels[2].SetLabel('3');
+end;
+
+function TfrmPreferences.LoadSettingString(Section, Name,
+  Value: string): string;
+var
+  ini: TIniFile;
+begin
+  ini := TIniFile.Create(GetCurrentDir + '\' + CONFIG_FILE_NAME);
+  try
+    result := ini.ReadString(Section, Name, Value);
+  finally
+    ini.Free;
+  end;
 end;
 
 procedure TfrmPreferences.rectCustomScaleClick(Sender: TObject);
@@ -230,10 +282,24 @@ begin
 
 end;
 
+procedure TfrmPreferences.SaveSettingString(Section, Name, Value: string);
+var
+  ini: TIniFile;
+begin
+  ini := TIniFile.Create(GetCurrentDir + '\' + CONFIG_FILE_NAME);
+  try
+    ini.WriteString(Section, Name, Value);
+  finally
+    ini.Free;
+  end;
+end;
+
 procedure TfrmPreferences.ScaleRadioGroupChange(Sender: TObject);
 begin
   bChanged := True;
   rectSaveBtn.Enabled := True;
+  if not scale_rad_1.IsChecked then
+    rectCustomScale.Enabled := False;
 end;
 
 procedure TfrmPreferences.ScaleScreen;
@@ -256,6 +322,20 @@ begin
   Self.Width := Round(iniWidth * (ScreenSize.Width / 3840) * (2.25 / SysScale));
   Self.Height := Round(iniHeight * (ScreenSize.Height / 2160) *
     (2.25 / SysScale));
+end;
+
+procedure TfrmPreferences.tabcontrol_settingsChange(Sender: TObject);
+var
+  I: Integer;
+begin
+  lblCategoryHeader.Text := NaviPanels[tabcontrol_settings.TabIndex].GetLabel;
+  for I := 0 to Length(NaviPanels) - 1 do
+  begin
+    if NaviPanels[I].GetTabIndex <> tabcontrol_settings.TabIndex then
+    begin
+      NaviPanels[I].resetColor;
+    end;
+  end;
 end;
 
 end.
