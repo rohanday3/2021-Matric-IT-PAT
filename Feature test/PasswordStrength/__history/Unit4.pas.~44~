@@ -1,0 +1,174 @@
+unit Unit4;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Edit,
+  FMX.Objects, FMX.Controls.Presentation, FMX.StdCtrls, FMX.Ani, UIConsts,
+  Unit1, Windows, StrUtils;
+
+type
+  TForm4 = class(TForm)
+    rectCreateAccountPassword: TRectangle;
+    floatCreateAccountPassF: TFloatAnimation;
+    floatCreateAccountPassR: TFloatAnimation;
+    rectCreateAccountPassUI: TRectangle;
+    lblCreateAccountPasswordSubtitle: TLabel;
+    lblCreateAccountPasswordTitle: TLabel;
+    floatCreateAccountPassUIF: TFloatAnimation;
+    floatCreateAccountPassUIR: TFloatAnimation;
+    rectCreateAccountPasswordError: TRectangle;
+    rectCreatePasswordBtnNext: TRectangle;
+    lblCreatePasswordBtnNext: TLabel;
+    rectCreateShowPassword: TRectangle;
+    rectCreateShowPasswordBox: TRectangle;
+    imgCreateShowPasswordBox: TImage;
+    lblCreateShowPassword: TLabel;
+    rectEdtCreateAccountPassword: TRectangle;
+    edtCreateAccountPassword: TEdit;
+    rectCreateBtnBackP: TRectangle;
+    floatCreateBackF: TFloatAnimation;
+    floatCreateBackR: TFloatAnimation;
+    rectCreateBtnBack: TRectangle;
+    imgCreateBtnBack: TImage;
+    lblCreateBtnBack: TLabel;
+    lblCreateAccountPasswordError: TLabel;
+    procedure rectCreateShowPasswordClick(Sender: TObject);
+    procedure rectCreateShowPasswordMouseEnter(Sender: TObject);
+    procedure rectCreateShowPasswordMouseLeave(Sender: TObject);
+    procedure edtCreateAccountPasswordTyping(Sender: TObject);
+  private
+    { Private declarations }
+    procedure password_strength(Password: string);
+    function StrInArray(const Value: String;
+      const ArrayOfString: Array of String): Boolean;
+  public
+    { Public declarations }
+  end;
+
+var
+  Form4: TForm4;
+
+implementation
+
+{$R *.fmx}
+
+procedure TForm4.edtCreateAccountPasswordTyping(Sender: TObject);
+var
+  frmPass: TForm1;
+begin
+  frmPass := TForm1.Create(self);
+  frmPass.Position := TFormPosition.Designed;
+  frmPass.Left := round(rectCreateAccountPassword.AbsoluteToLocal(edtCreateAccountPassword.Position.Point).X);
+  frmPass.Top := round(rectCreateAccountPassword.AbsoluteToLocal(edtCreateAccountPassword.Position.Point).Y);
+  frmPass.Show;
+end;
+
+procedure TForm4.password_strength(Password: string);
+var
+  Len, number, upp, low, special: Boolean;
+  s: char;
+  k: char;
+  points: integer;
+const
+  numbers = [0 .. 9];
+  special_char = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+    '_', '-', '+', '=', '{', '}', '[', ']', '|', '\', ':', ';', '"', '''', '>',
+    '<', '.', ',', '?', '/'];
+
+begin
+  // Verify the strength of 'password'
+  // Returns a dict indicating the wrong criteria
+  // A password is considered strong if:
+  // 8 characters length or more
+  // 1 digit or more
+  // 1 symbol or more
+  // 1 uppercase letter or more
+  // 1 lowercase letter or more
+  //
+  // Uppercase letters: A-Z
+  // Lowercase letters: a-z
+  // Numbers: 0-9
+  // Symbols: ~`!@#$%^&*()_-+={[}]|\:;"'<,>.?/
+
+  if (Length(Password) >= 8) then
+    Len := True;
+
+  for s in Password do
+  begin
+    try
+      if strtoint(s) in numbers then
+        number := True;
+    except
+
+    end;
+    if s = UpperCase(s) then
+      upp := True;
+    if s = Lowercase(s) then
+      low := True;
+    for k in special_char do
+      if s = k then
+        special := True;
+  end;
+
+  if upp then
+    Inc(points, 20);
+
+  if low then
+    Inc(points, 20);
+
+  if special then
+    Inc(points, 20);
+
+  if Len then
+    Inc(points, 20);
+
+  if number then
+    Inc(points, 20);
+
+end;
+
+procedure TForm4.rectCreateShowPasswordClick(Sender: TObject);
+begin
+  if rectCreateShowPasswordBox.Fill.Color = StringToAlphacolor('#ffffffff') then
+  begin
+    rectCreateShowPasswordBox.Fill.Color := StringToAlphacolor('#ff135fc9');
+    edtCreateAccountPassword.Password := False;
+  end
+  else
+  begin
+    rectCreateShowPasswordBox.Fill.Color := StringToAlphacolor('#ffffffff');
+    edtCreateAccountPassword.Password := True;
+  end;
+end;
+
+procedure TForm4.rectCreateShowPasswordMouseEnter(Sender: TObject);
+begin
+  if rectCreateShowPasswordBox.Fill.Color = StringToAlphacolor('#ff1a79ff') then
+    rectCreateShowPasswordBox.Fill.Color := StringToAlphacolor('#ff135fc9');
+end;
+
+procedure TForm4.rectCreateShowPasswordMouseLeave(Sender: TObject);
+begin
+  if rectCreateShowPasswordBox.Fill.Color = StringToAlphacolor('#ff135fc9') then
+    rectCreateShowPasswordBox.Fill.Color := StringToAlphacolor('#ff1a79ff');
+end;
+
+function TForm4.StrInArray(const Value: String;
+  const ArrayOfString: array of String): Boolean;
+var
+  Loop: String;
+begin
+  for Loop in ArrayOfString do
+  begin
+    if Value = Loop then
+    begin
+      Exit(True);
+    end;
+  end;
+  result := False;
+end;
+
+end.

@@ -1,0 +1,78 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 186
+  ClientWidth = 261
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object lblHeader: TLabel
+    StyledSettings = [Family, FontColor]
+    Position.X = 16.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 217.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 14.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'The password must have:'
+    TabOrder = 1
+  end
+  object lblLength: TLabel
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 48.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 185.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 14.000000000000000000
+    Text = 'At least 8 characters'
+    TabOrder = 6
+  end
+  object lblNumber: TLabel
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 48.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 185.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 14.000000000000000000
+    Text = 'At least one number'
+    TabOrder = 5
+  end
+  object lblUpp: TLabel
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 48.000000000000000000
+    Position.Y = 96.000000000000000000
+    Size.Width = 185.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 14.000000000000000000
+    Text = 'At least one uppercase letter'
+    TabOrder = 4
+  end
+  object lblLow: TLabel
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 48.000000000000000000
+    Position.Y = 120.000000000000000000
+    Size.Width = 185.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 14.000000000000000000
+    Text = 'At least one lowercase letter'
+    TabOrder = 3
+  end
+  object lblSpecial: TLabel
+    StyledSettings = [Family, Style, FontColor]
+    Position.X = 48.000000000000000000
+    Position.Y = 144.000000000000000000
+    Size.Width = 193.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.Size = 14.000000000000000000
+    Text = 'At least one special character'
+    TabOrder = 2
+  end
+end

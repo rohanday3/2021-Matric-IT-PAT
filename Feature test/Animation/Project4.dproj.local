@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/07/31 16:40:34.000.007,=C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit4.pas</Transaction>
+    <Transaction>2021/07/31 16:52:49.000.267,C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit4.fmx=C:\Users\DELL\Documents\2021-Matric-IT-PAT\Feature test\Animation\Unit4.fmx</Transaction>
+    <Transaction>2021/07/31 16:52:49.000.267,C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Unit4.pas=C:\Users\DELL\Documents\2021-Matric-IT-PAT\Feature test\Animation\Unit4.pas</Transaction>
+    <Transaction>2021/07/31 16:52:51.000.670,C:\Users\DELL\Documents\Embarcadero\Studio\Projects\Project4.dproj=C:\Users\DELL\Documents\2021-Matric-IT-PAT\Feature test\Animation\Project4.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

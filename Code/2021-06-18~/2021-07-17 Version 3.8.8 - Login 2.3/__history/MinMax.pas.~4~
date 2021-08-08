@@ -1,0 +1,43 @@
+unit MinMax;
+
+interface
+
+uses
+  SysUtils, WinTypes, WinProcs, Messages, Classes, FMX.Graphics, FMX.Controls,
+  FMX.Forms, FMX.Dialogs;
+
+type
+  TForm1 = class(TForm)
+  private
+    { Private declarations }
+    procedure WMGetMinMaxInfo(var MSG: Tmessage); message WM_GetMinMaxInfo;
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.DFM}
+
+procedure TForm1.WMGetMinMaxInfo(var MSG: Tmessage);
+Begin
+  inherited;
+  with PMinMaxInfo(MSG.lparam)^ do
+  begin
+    with ptMinTrackSize do
+    begin
+      X := 1020;
+      Y := 600;
+    end;
+    with ptMaxTrackSize do
+    begin
+      X := 1360;
+      Y := 750;
+    end;
+  end;
+end;
+
+end.

@@ -1,0 +1,32 @@
+"C:\Users\DELL\Documents\2021-Matric-IT-PAT\Code\2021-06-18~\2021-07-17 Version 3.8.8 - Login 2.3\Win32\Debug\robinhood.mdb"
+"C:\Users\DELL\Documents\2021-Matric-IT-PAT\Code\2021-06-18~\2021-07-17 Version 3.8.8 - Login 2.3\Win32\Debugrobinhood.mdb"
+"C:\Users\DELL\Documents\2021-Matric-IT-PAT\Code\2021-06-18~\2021-07-17 Version 3.8.8 - Login 2.3\Win32\...\robinhood.mdb"
+
+function TForm4.shortenPath(PATH: string; rect_width: integer;
+  AFont: TFont = nil): string;
+var
+  p, p2: integer;
+  tempstr, endstr: string;
+  lbl: TLabel;
+begin
+  lbl := TLabel.Create(Self);
+  lbl.Parent := Self;
+  lbl.WordWrap := False;
+  lbl.AutoSize := True;
+  if AFont <> nil then
+  begin
+    lbl.Font := AFont;
+  end;
+  TLabel(lbl).Text := PATH;
+  while TLabel(lbl).Width > rect_width do
+  begin
+    p := LastDelimiter('\', PATH);
+    tempstr := Copy(PATH, 0, p - 1);
+    p2 := LastDelimiter('\', tempstr);
+    TLabel(lbl).Text := Copy(PATH, 0, p2) + '...' + Copy(PATH, p, length(PATH));
+    PATH := Copy(PATH, 0, p2 - 1) + '...' + Copy(PATH, p, length(PATH));
+  end;
+  endstr := TLabel(lbl).Text;
+  lbl.Free;
+  result := endstr;;
+end;
