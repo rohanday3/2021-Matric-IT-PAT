@@ -157,6 +157,14 @@ type
     lblPassStrength: TLabel;
     imgPassStrengthHelp: TImage;
     rectCreateAccountName: TRectangle;
+    lblCreateAccountNameSubtitle: TLabel;
+    lblCreateAccountNameTitle: TLabel;
+    rectCreateAccountNameFirstName: TRectangle;
+    edtCreateAccountNameFirstName: TEdit;
+    rectCreateAccountNameLastName: TRectangle;
+    edtCreateAccountNameLastName: TEdit;
+    Rectangle1: TRectangle;
+    Label1: TLabel;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
@@ -582,6 +590,7 @@ begin
   Phone := True;
   RectWelome.Width := 460;
   RectWelome.Height := 640;
+  rectCreateAccountName.Position.X:=455;
   rectWelcomeBtn1.Visible := False;
   lblWelcomeTitle.Visible := False;
   lblWelcomeSubtitle.Visible := False;
@@ -1050,12 +1059,9 @@ end;
 
 function TForm2.password_strength(Password: string): integer;
 var
-  Len, number, upp, low, special, req: Boolean;
+  Len, number, upp, low, special: Boolean;
   s: Char;
-  k: Char;
-  n: Char;
   points: integer;
-  j: TObject;
 const
   numbers = ['0' .. '9'];
   special_char = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
@@ -1131,7 +1137,6 @@ end;
 procedure TForm2.rectCreatePasswordBtnNextClick(Sender: TObject);
 var
   pass: string;
-  c: Char;
   error: integer;
 const
   numbers = ['0' .. '9'];
