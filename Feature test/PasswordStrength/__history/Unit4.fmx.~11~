@@ -1,0 +1,384 @@
+object Form4: TForm4
+  Left = 0
+  Top = 0
+  Caption = 'Form4'
+  ClientHeight = 562
+  ClientWidth = 456
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object rectCreateAccountPassword: TRectangle
+    Fill.Color = claWhite
+    Position.Y = -3.000000000000000000
+    Size.Width = 455.000000000000000000
+    Size.Height = 563.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Thickness = 0.000000000000000000
+    object floatCreateAccountPassF: TFloatAnimation
+      Duration = 0.200000002980232200
+      PropertyName = 'Position.X'
+      StartValue = 455.000000000000000000
+      StopValue = 0.000000000000000000
+    end
+    object floatCreateAccountPassR: TFloatAnimation
+      Duration = 0.200000002980232200
+      PropertyName = 'Position.X'
+      StartValue = 0.000000000000000000
+      StopValue = 455.000000000000000000
+    end
+    object rectCreateAccountPassUI: TRectangle
+      Fill.Color = claWhite
+      Size.Width = 457.000000000000000000
+      Size.Height = 403.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      object lblCreateAccountPasswordSubtitle: TLabel
+        StyledSettings = [Family, FontColor]
+        Position.X = 32.000000000000000000
+        Position.Y = 120.000000000000000000
+        Size.Width = 329.000000000000000000
+        Size.Height = 49.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 15.000000000000000000
+        TextSettings.Font.StyleExt = {00030000000000000004000000}
+        Text = 'Enter the password you could like to use with your account.'
+        TabOrder = 0
+      end
+      object lblCreateAccountPasswordTitle: TLabel
+        StyledSettings = [Family, FontColor]
+        Position.X = 32.000000000000000000
+        Position.Y = 70.000000000000000000
+        Size.Width = 209.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 24.000000000000000000
+        TextSettings.Font.StyleExt = {00060000000000000004000000}
+        Text = 'Create a password'
+        TabOrder = 1
+      end
+      object floatCreateAccountPassUIF: TFloatAnimation
+        Duration = 0.200000002980232200
+        PropertyName = 'Position.X'
+        StartValue = 455.000000000000000000
+        StopValue = 0.000000000000000000
+      end
+      object floatCreateAccountPassUIR: TFloatAnimation
+        Duration = 0.200000002980232200
+        PropertyName = 'Position.X'
+        StartValue = 0.000000000000000000
+        StopValue = 455.000000000000000000
+      end
+      object rectCreateAccountPasswordError: TRectangle
+        Fill.Color = x00E0E0E0
+        Position.X = 32.000000000000000000
+        Position.Y = 185.000000000000000000
+        Size.Width = 409.000000000000000000
+        Size.Height = 128.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Thickness = 0.000000000000000000
+        object rectCreatePasswordBtnNext: TRectangle
+          Cursor = crHandPoint
+          Fill.Color = xFF0067B8
+          Position.X = 296.000000000000000000
+          Position.Y = 130.000000000000000000
+          Size.Width = 113.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Thickness = 0.000000000000000000
+          object lblCreatePasswordBtnNext: TLabel
+            Align = Client
+            StyledSettings = [Family]
+            Margins.Bottom = 2.000000000000000000
+            Size.Width = 113.000000000000000000
+            Size.Height = 30.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 16.000000000000000000
+            TextSettings.FontColor = claWhite
+            TextSettings.HorzAlign = Center
+            Text = 'Next'
+            TabOrder = 0
+          end
+        end
+        object rectCreateShowPassword: TRectangle
+          Cursor = crHandPoint
+          Fill.Color = x00E0E0E0
+          Position.Y = 95.000000000000000000
+          Size.Width = 145.000000000000000000
+          Size.Height = 25.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Thickness = 0.000000000000000000
+          OnClick = rectCreateShowPasswordClick
+          OnMouseEnter = rectCreateShowPasswordMouseEnter
+          OnMouseLeave = rectCreateShowPasswordMouseLeave
+          object rectCreateShowPasswordBox: TRectangle
+            Fill.Color = claWhite
+            Position.Y = 2.000000000000000000
+            Size.Width = 21.000000000000000000
+            Size.Height = 21.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.200000002980232200
+            Stroke.Join = Round
+            XRadius = 3.000000000000000000
+            YRadius = 3.000000000000000000
+            object imgCreateShowPasswordBox: TImage
+              MultiResBitmap.Height = 24
+              MultiResBitmap.Width = 24
+              MultiResBitmap = <
+                item
+                  Width = 96
+                  Height = 96
+                  PNG = {
+                    89504E470D0A1A0A0000000D4948445200000060000000600806000000E29877
+                    38000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                    052F49444154785EEDDC59685C551CC7F1CCA4911A1BA8ADCB43C55015AD0A2A
+                    A845050922487D290862B50FD2E24AF1A9F820167D5004856A2B881BA8C537ED
+                    833B2A2E85E29316C4BD88B8A3B87792893399C9E2F7CCFDA5D23493DC397726
+                    C9CCFC3E30DCCCE49EFFBDE777EEDC7367497ACCCCCCCCCCCCCCCCCCCCCCCCCC
+                    CC5A27A7A5CD303535750CB76BF87179B8CBAD3797CBEDE5560CBFB7169B9898
+                    78840198E941FDDA5A89A06F2D140A1349E6FFE3B1F1C9C9C99BB49AB502010F
+                    91F5A124F2A3954AA5BF58E70AAD6ECD44B083D56AF56B655DD7F8F8F8E7AC7B
+                    BA9A593390EB72CEFBEF2711CF8F755F671006D4DCB222D0A7956D6AB47954CD
+                    A3E5B5EC6A1CC9DBF3F9FC2DBABBA0BA7E0008FFEA62B178BFEE2EB8AE1E00C2
+                    3F8B09F5C98181817E3DB4E0BA7600C204CA6D4F5F5FDFA97A685174ED003087
+                    3ED1DBDB7B89EEDA42E2C8BF27B98E89E7CBD04884766DA15018538E51FC422C
+                    12A19D3F3636F6AB728CE2B7222211DA6A8EDC8F956314BF191789EC729CB35F
+                    4A62CCC46F47C720FC871460346AECE5E83F56252D2DB2DB124E1D498CD10E10
+                    FE292A696911DAA561D2548851C2A44D1DBF5E6814A1ADA956AB5F29C728E172
+                    953A9B5572E9625F97D487FBEC4F1FE7ECB76B296640F8F7AAA43582F01F5386
+                    D1A8F13C8B3E95B4B4386AEF48228CC7EB850FA873924A5A5A847665B1581C51
+                    8E512A95CA0F2C2E50494B8BD04E63D2FDB69662A4E1E1E15106317C19ABFDD1
+                    9173E9D3817019C851F5133F1FE2B1EBF4EBA6A2763FA78DFD21C42CD8BF3B55
+                    B2BDD191D54C62FBD4AFC3B8AC2BB168FAD39B6D3D976C211E359E62D1FE9F8F
+                    D0897009F86CAD57B3E0D9F03D03B44AAB6746C9BB92CAF1D8DF77581CAF92ED
+                    8D70EF4EBA551F1D7E57AB67C2B636EA59154D5FC45AA792ED8D4036114825E9
+                    DADC1884DD6A16856D9DC3B3E967958B15E6A50D2AD9DEE8C8FA880F3BB6A879
+                    4368B79249F7A3A4443CF6799B4AB637FAB28C23FAD5A45BE9F16CF997102E56
+                    99D468FA6252211EFBBB4BE5DA1FFD0903F04AD2B5C6700EFE86413851A5E6C5
+                    76EE53D3683A5856A864FBA333D10310D0F62D16F3BEA1C740DD90768EA98753
+                    D767D459AB929D817EF566198080F63B556E5684761173CC6F5A3D4AB95CFE83
+                    3A432AD939E85BE601E0C8269BC91B55F2083C7E3247EEA7D3EBD51A348876E1
+                    03F5AD2AD979E8DC6DB1E14C2B954A7F53E788499987C3E0BE96AC118F1A0FA8
+                    64E7A293BBD5DF864D0F1E93F297E18857C95073576D850CA8F1028BF0D78E9D
+                    8FCEBE99743B1E35DE08B518889B1998A3FE58AE119CBA3EA4CE9ADACE7503FA
+                    7C0247F11749F7E3107A9941D8C72BDD1FF5501426ED5F087FBD76AD7BD0F70B
+                    B9E2F833896171844124FC4DDAA5EE43E7AF27844CD7EC59B0FD1DDA95EE4508
+                    99BF061E690FB765DA8DEEC6B93CF387258D60D2DDCFC0A77E6BA3E391493F83
+                    103EF0683926FFEF08FF3C6DDAA611CA60780F4639B5C4C8C84891ED6CD4266D
+                    26C2B92CEB7B3973A1FE766DCAEA21A4CDE1F25099350DA7B8C759F87F1FA5C1
+                    20EC48626B0EC20FDF015DA9F2361FC2CA13DA33B5F43262D23DC8809EA9D296
+                    16A1AD6210DE538E514AA5D23FD4B94A25AD5184773647F0BCFF9B6736CC2334
+                    9FBC5DA52C16216E181D1D2D28D7D478F63CAC12961583B04DB9A642F82FD3E6
+                    3835B76620D4541FBAF062EE13C21F54336B16B25DC120CCF9BDA272B9FC3BE1
+                    5FAE26D66C84BBB6DEDB154CBA557E3FEB07F6D644843C14BE3AA2DC0FE3D9B1
+                    68FFD1AAD596DCCB7706612B999F91CBE52AE13E3F877F19BC339FCF0FD75630
+                    3333333333333333333333334BAFA7E73FAD09AF9085394B5F0000000049454E
+                    44AE426082}
+                  FileName = 
+                    'C:\Users\DELL\Documents\2021-Matric-IT-PAT\Assets\Icons\Checkbox' +
+                    ' Tick\white-24dp\1x\tick.png'
+                end>
+              Align = Client
+              Size.Width = 21.000000000000000000
+              Size.Height = 21.000000000000000000
+              Size.PlatformDefault = False
+              OnClick = rectCreateShowPasswordClick
+              OnMouseEnter = rectCreateShowPasswordMouseEnter
+              OnMouseLeave = rectCreateShowPasswordMouseLeave
+            end
+          end
+          object lblCreateShowPassword: TLabel
+            Cursor = crHandPoint
+            StyledSettings = [Family, FontColor]
+            Position.X = 30.000000000000000000
+            Position.Y = 3.000000000000000000
+            Size.Width = 107.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Size = 15.000000000000000000
+            TextSettings.Font.StyleExt = {00030000000000000004000000}
+            Text = 'Show password'
+            TabOrder = 1
+          end
+        end
+        object rectEdtCreateAccountPassword: TRectangle
+          Fill.Color = x00FFFFFF
+          Position.Y = -10.000000000000000000
+          Sides = [Bottom]
+          Size.Width = 409.000000000000000000
+          Size.Height = 50.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Thickness = 0.699999988079071000
+          object edtCreateAccountPassword: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            StyleLookup = 'transparentedit'
+            TabOrder = 0
+            Password = True
+            TextSettings.Font.Size = 15.000000000000000000
+            Position.Y = 16.000000000000000000
+            Size.Width = 409.000000000000000000
+            Size.Height = 33.000000000000000000
+            Size.PlatformDefault = False
+            TextPrompt = 'Create password'
+            StyledSettings = []
+            CheckSpelling = True
+            OnTyping = edtCreateAccountPasswordTyping
+          end
+        end
+        object rectPassStrength: TRectangle
+          Fill.Color = x00E0E0E0
+          Position.Y = 46.000000000000000000
+          Size.Width = 409.000000000000000000
+          Size.Height = 35.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Thickness = 0.000000000000000000
+          object rectPassStrength1: TRectangle
+            Position.Y = 1.000000000000000000
+            Size.Width = 72.000000000000000000
+            Size.Height = 8.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.000000000000000000
+          end
+          object rectPassStrength2: TRectangle
+            Position.X = 84.250000000000000000
+            Position.Y = 1.000000000000000000
+            Size.Width = 72.000000000000000000
+            Size.Height = 8.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.000000000000000000
+          end
+          object rectPassStrength5: TRectangle
+            Position.X = 337.000000000000000000
+            Position.Y = 1.000000000000000000
+            Size.Width = 72.000000000000000000
+            Size.Height = 8.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.000000000000000000
+          end
+          object rectPassStrength4: TRectangle
+            Position.X = 252.750000000000000000
+            Position.Y = 1.000000000000000000
+            Size.Width = 72.000000000000000000
+            Size.Height = 8.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.000000000000000000
+          end
+          object rectPassStrength3: TRectangle
+            Position.X = 168.500000000000000000
+            Position.Y = 1.000000000000000000
+            Size.Width = 72.000000000000000000
+            Size.Height = 8.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.000000000000000000
+          end
+          object lblPassStrength: TLabel
+            StyledSettings = [Family, Style, FontColor]
+            Position.Y = 18.000000000000000000
+            TextSettings.Font.Size = 14.000000000000000000
+            Text = 'Too short'
+            TabOrder = 5
+          end
+        end
+      end
+    end
+    object rectCreateBtnBackP: TRectangle
+      Fill.Color = x00E0E0E0
+      Opacity = 0.000000000000000000
+      Position.X = 24.000000000000000000
+      Position.Y = 30.000000000000000000
+      Size.Width = 273.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      object floatCreateBackF: TFloatAnimation
+        Delay = 0.200000002980232200
+        Duration = 0.150000005960464500
+        PropertyName = 'Opacity'
+        StartValue = 0.000000000000000000
+        StopValue = 1.000000000000000000
+      end
+      object floatCreateBackR: TFloatAnimation
+        Delay = 0.200000002980232200
+        Duration = 0.200000002980232200
+        PropertyName = 'Opacity'
+        StartValue = 1.000000000000000000
+        StopValue = 0.000000000000000000
+      end
+      object rectCreateBtnBack: TRectangle
+        Cursor = crHandPoint
+        Fill.Color = claWhite
+        Position.X = 3.000000000000000000
+        Size.Width = 25.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Thickness = 0.000000000000000000
+        XRadius = 12.500000000000000000
+        YRadius = 12.500000000000000000
+        object imgCreateBtnBack: TImage
+          MultiResBitmap.Height = 96
+          MultiResBitmap.Width = 96
+          MultiResBitmap = <
+            item
+              Width = 96
+              Height = 96
+              PNG = {
+                89504E470D0A1A0A0000000D4948445200000060000000600806000000E29877
+                38000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+                014549444154785EEDD74D4A03511085D1C6A1BA46C7EE4211D155F9EFBEB41E
+                A6218310F2B05F57699F034542C8E8BBD02113000000000040713771B73F6F59
+                5B8BFFB5BBBBF601EBD98F3FDF7D1C2B38147FBE8738063A167FBEC738063825
+                FE7CD7712CA827FE67DC651C0B113F91F889C44F247E22F113899F48FC44E227
+                123F91F889C44F247E22F113899F48FC44E227123F91F889C44F247E22F113F5
+                C4FF2F57C616E3B72B61ABF1DBA5DB72FC76BF72B67BE58FF3082AC08F70015B
+                1CA19C9E11FC111BC4080518A1809E113EE28C3080110AE819E13DEE228E8519
+                A1002314D033C25B9C11063042014628C00805F48CF01A6784018C5040CF082F
+                71E7712CCC080518A1002314D033C2739C11063042014628A06784A738230CD0
+                33C2551C039C3242FB0E031D1B41FC951C1A41FC95ED8F207E92165E7C000000
+                0000A0B069FA0687CCE6021AD3FD1E0000000049454E44AE426082}
+              FileName = 
+                'C:\Users\DELL\Documents\IT PAT 2021\Assets\Icons\Arrow left\blac' +
+                'k-48dp\2x\outline_arrow_back_black_48dp.png'
+            end>
+          Align = Client
+          Cursor = crHandPoint
+          Opacity = 0.500000000000000000
+          Margins.Left = 3.000000000000000000
+          Margins.Top = 4.000000000000000000
+          Margins.Right = 4.000000000000000000
+          Margins.Bottom = 4.000000000000000000
+          Size.Width = 18.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+        end
+      end
+      object lblCreateBtnBack: TLabel
+        StyledSettings = [Family, Style, FontColor]
+        Position.X = 35.000000000000000000
+        Position.Y = 2.500000000000000000
+        Size.Width = 200.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 14.000000000000000000
+        Text = 'uname'
+        TabOrder = 1
+      end
+    end
+    object lblCreateAccountPasswordError: TLabel
+      StyledSettings = [Family]
+      Position.X = 32.000000000000000000
+      Position.Y = 176.000000000000000000
+      Size.Width = 407.000000000000000000
+      Size.Height = 65.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'Label13Style1'
+      TextSettings.Font.Size = 15.000000000000000000
+      TextSettings.FontColor = xFFDE1916
+      TextSettings.VertAlign = Leading
+      Text = 
+        'The phone number you entered isn'#39't valid. Your phone number can ' +
+        'contain numbers and spaces.'
+      Visible = False
+      TabOrder = 0
+    end
+  end
+end

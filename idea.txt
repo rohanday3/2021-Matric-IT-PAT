@@ -1,9 +1,0 @@
-You've tried to sign in too many times with an incorrect account or password.
-Captcha
-Help us make sure you're not a robot
-enter the characters you see
-Setting to allow customizing the dashboard (Add more dashpanels with color and image customization)
-Customise dashpanels (font, color, fontsize etc) with live demo
-set location of config and database files in settings menu
-Case sensitive, Wrap around etc for search
-Redo the error message system in the login form using align
