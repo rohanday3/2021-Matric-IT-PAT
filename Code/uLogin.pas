@@ -163,8 +163,12 @@ type
     edtCreateAccountNameFirstName: TEdit;
     rectCreateAccountNameLastName: TRectangle;
     edtCreateAccountNameLastName: TEdit;
-    Rectangle1: TRectangle;
-    Label1: TLabel;
+    rectCreateAccountNameBtnNext: TRectangle;
+    lblCreateAccountNameBtnNext: TLabel;
+    floatCreateAccountNameF: TFloatAnimation;
+    floatCreateAccountNameR: TFloatAnimation;
+    floatCreateAccountPassUIF2: TFloatAnimation;
+    floatCreateAccountPassUIR2: TFloatAnimation;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
@@ -227,6 +231,9 @@ type
     procedure edtCreateAccountPhoneTyping(Sender: TObject);
     procedure rectCreatePasswordBtnNextClick(Sender: TObject);
     procedure edtCreateAccountPasswordTyping(Sender: TObject);
+    procedure floatCreateAccountPassUIF2Finish(Sender: TObject);
+    procedure floatCreateAccountNameRFinish(Sender: TObject);
+    procedure rectCreateAccountNameBtnNextClick(Sender: TObject);
   private
     { Private declarations }
     iconstarty: Single;
@@ -263,6 +270,7 @@ type
     function FormatPhone(Phone: string): string;
     function password_strength(Password: string): integer;
     procedure passStrengthMeter(strength: integer);
+    procedure rectCreateBtnBackClick2(Sender: TObject);
 
   const
     iniWidth: integer = 455;
@@ -305,12 +313,11 @@ begin
   for i := 0 to ComboBox.Count - 1 do
   begin
     Item := ComboBox.ListItems[i];
-    Item.Font.Family := Family; // eg. 'Arial';
-    Item.Font.Size := Size; // eg. 20;
+    Item.Font.Family := Family;
+    Item.Font.Size := Size;
     Item.FontColor := StringToAlphacolor(Color);
     Item.StyledSettings := Item.StyledSettings - [TStyledSetting.Family,
       TStyledSetting.Size, TStyledSetting.FontColor];
-    // Item.Text := '*'+Item.Text;
   end;
 end;
 
@@ -333,13 +340,12 @@ end;
 procedure TForm2.cmbAreaCodesKeyDown(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 begin
-  if Inttostr(Key) = Inttostr(8) then // Backspace
+// TODO: Add to settings (toggle feature)
+
+  if Inttostr(Key) = Inttostr(8) then
     ComboboxSearch := Copy(ComboboxSearch, 0, Length(ComboboxSearch) - 1)
-  else if Inttostr(Key) = Inttostr(16) then // Shift key press
-    // Enable for debugging ShowMessage(ComboboxSearch)
   else
     ComboboxSearch := ComboboxSearch + KeyChar;
-  // ShowMessage(Inttostr(Key))
 
   // Remove spaces
   ComboboxSearch := StringReplace(ComboboxSearch, ' ', '', [rfReplaceAll]);
@@ -530,9 +536,19 @@ begin
   StyleComboBoxItems(ComboBox, 'Calibri', 16, '#ff000000');
 end;
 
+procedure TForm2.floatCreateAccountNameRFinish(Sender: TObject);
+begin
+  floatCreateAccountPassUIR2.Start;
+end;
+
 procedure TForm2.floatCreateAccountPassRFinish(Sender: TObject);
 begin
   floatRectCreateAccountR.Start;
+end;
+
+procedure TForm2.floatCreateAccountPassUIF2Finish(Sender: TObject);
+begin
+  floatCreateAccountNameF.Start;
 end;
 
 procedure TForm2.floatCreateAccountPassUIRFinish(Sender: TObject);
@@ -590,7 +606,7 @@ begin
   Phone := True;
   RectWelome.Width := 460;
   RectWelome.Height := 640;
-  rectCreateAccountName.Position.X:=455;
+  rectCreateAccountName.Position.X := 455;
   rectWelcomeBtn1.Visible := False;
   lblWelcomeTitle.Visible := False;
   lblWelcomeSubtitle.Visible := False;
@@ -625,7 +641,6 @@ begin
   databasepath := LoadSettingString('General', 'database_path',
     GetCurrentDir + '\robinhood.mdb');
 
-  // TODO: Save the new file location to the config
   if not FileExists(databasepath) then
   begin
     if MessageDlg(databasepath +
@@ -704,11 +719,9 @@ begin
   try
     GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVCTRYNAME, Buffer, Size);
     Result := Copy(Buffer, 0, 2);
-    { return US / use  Result := Buffer to return USA }
   finally
     FreeMem(Buffer);
   end;
-
 end;
 
 function TForm2.GetScreenScale: Single;
@@ -726,8 +739,6 @@ function TForm2.GetVersionNumber: string;
 begin
   Result := Inttostr(TOSVersion.Major) + '.' + Inttostr(TOSVersion.Minor) + '.'
     + Inttostr(TOSVersion.Build);
-  // ShowMessage();
-  // GetEnvironmentVariable()
 end;
 
 procedure TForm2.hideerror1;
@@ -774,7 +785,6 @@ end;
 
 procedure TForm2.imgLogin2BtnBackClick(Sender: TObject);
 begin
-  // Rectangle12.Visible := False;
   floatRect11PosF.Start;
   edtLoginUsername.SetFocus;
   floatRectUsernameBackOpacityR.Start;
@@ -870,7 +880,7 @@ begin
     Exit; // too short
 
   i := Pos('.', serverPart);
-  // must have dot and at least 3 places from end
+  // must have dot and at least 2 places from end
   if (i = 0) or (i > (Length(serverPart) - 2)) then
     Exit;
 
@@ -1098,7 +1108,6 @@ begin
     if s in numbers then
     begin
       number := True;
-      // Break
     end;
     if s = UpperCase(s) then
       upp := True;
@@ -1107,7 +1116,6 @@ begin
     if s in special_char then
     begin
       special := True;
-      // Break;
     end;
   end;
 
@@ -1122,8 +1130,6 @@ begin
   if special then
     Inc(points);
   Result := points;
-  // ShowMessage('Length: ' + BoolToStr(Len) + #13 + 'Number: ' + BoolToStr(number)
-  // + #13 + 'Uppercasse: ' + BoolToStr(upp) + #13 + 'Lowercase: ' + BoolToStr(low) + #13 + 'Special: ' + BoolToStr(special) + #13 + 'Score: ' + IntToStr(points));
 
 end;
 
@@ -1132,6 +1138,14 @@ begin
   floatCreateAccountPassUIR.Start;
   floatCreateBackR.Start;
   login_state := 3;
+end;
+
+procedure TForm2.rectCreateBtnBackClick2(Sender: TObject);
+begin
+  rectCreateBtnBack.OnClick := rectCreateBtnBackClick;
+  imgCreateBtnBack.OnClick := rectCreateBtnBackClick;
+  floatCreateAccountNameR.Start;
+  login_state := 4;
 end;
 
 procedure TForm2.rectCreatePasswordBtnNextClick(Sender: TObject);
@@ -1158,8 +1172,14 @@ begin
     error := 0;
 
   if error > -1 then
+  begin
     showerror4(error);
-
+    Exit;
+  end;
+  login_state := 5;
+  rectCreateBtnBack.OnClick := rectCreateBtnBackClick2;
+  imgCreateBtnBack.OnClick := rectCreateBtnBackClick2;
+  floatCreateAccountPassUIF2.Start;
 end;
 
 procedure TForm2.rectCreateShowPasswordClick(Sender: TObject);
@@ -1199,7 +1219,6 @@ procedure TForm2.rectBtnSignInClick(Sender: TObject);
 begin
   if confirmPassword then
   begin
-    // hideerror2;
     rectLogin2Password.Stroke.Color := TAlphaColors.green;
     rectLogin2Password.Fill.Color := StringToAlphacolor('#9b37cf7b');
     Application.Hint := ADOQuery1.FieldByName('first_name').AsString;
@@ -1213,6 +1232,11 @@ begin
     else
       showerror2(1);
   end;
+end;
+
+procedure TForm2.rectCreateAccountNameBtnNextClick(Sender: TObject);
+begin
+  //
 end;
 
 procedure TForm2.rectCreateAccountUIpnlClick(Sender: TObject);
@@ -1423,11 +1447,9 @@ procedure TForm2.rectBtnNextClick(Sender: TObject);
 begin
   if confirmAccount then
   begin
-    // hideerror;
     lblUsernameBackBtn.Text := edtLoginUsername.Text;
     rectLogin2.BringToFront;
     rectLogin.BringToFront;
-    // RectWelome.SendToBack;
     rectLogin2UI.Visible := False;
     floatRectLoginPosF.Start;
     resetPasswordScreen;
@@ -1520,7 +1542,6 @@ begin
   begin
     lblLoginError.Text := 'That ' + Appname +
       ' account does not exist. Enter a different account or get a new one';
-    // red(get a new one).
     rectErrorMoveUI.Position.Y := 160;
     last_error1 := 0;
   end
@@ -1542,7 +1563,6 @@ begin
   begin
     lblLogin2Error.Text :=
       'Your account or password is incorrect. If you don''t remember your password, reset it.';
-    // red(get a new one).
     rectError2MoveUI.Position.Y := 165;
     last_error2 := 0;
   end
@@ -1571,7 +1591,6 @@ begin
   begin
     lblCreateAccountError.Text :=
       'The phone number you entered isn''t valid. Your phone number can contain numbers and spaces.';
-    // red(get a new one).
     rectCreateAccountError.Position.Y := 155;
     last_error3 := 0;
   end

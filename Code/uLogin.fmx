@@ -28852,7 +28852,7 @@ object Form2: TForm2
       end
       object rectCreateAccountPassUI: TRectangle
         Fill.Color = claWhite
-        Size.Width = 457.000000000000000000
+        Size.Width = 910.000000000000000000
         Size.Height = 403.000000000000000000
         Size.PlatformDefault = False
         Stroke.Thickness = 0.000000000000000000
@@ -29152,6 +29152,19 @@ object Form2: TForm2
             end
           end
         end
+        object floatCreateAccountPassUIF2: TFloatAnimation
+          Duration = 0.200000002980232200
+          OnFinish = floatCreateAccountPassUIF2Finish
+          PropertyName = 'Position.X'
+          StartValue = 0.000000000000000000
+          StopValue = -455.000000000000000000
+        end
+        object floatCreateAccountPassUIR2: TFloatAnimation
+          Duration = 0.200000002980232200
+          PropertyName = 'Position.X'
+          StartValue = -455.000000000000000000
+          StopValue = 0.000000000000000000
+        end
       end
       object rectCreateBtnBackP: TRectangle
         Fill.Color = x00E0E0E0
@@ -29284,7 +29297,7 @@ object Form2: TForm2
           Size.PlatformDefault = False
           TextSettings.Font.Size = 24.000000000000000000
           TextSettings.Font.StyleExt = {00060000000000000004000000}
-          Text = 'Create a password'
+          Text = 'What'#39's your name?'
           TabOrder = 1
         end
         object rectCreateAccountNameFirstName: TRectangle
@@ -29337,7 +29350,7 @@ object Form2: TForm2
             OnExit = edtLoginUsernameExit
           end
         end
-        object Rectangle1: TRectangle
+        object rectCreateAccountNameBtnNext: TRectangle
           Cursor = crHandPoint
           Fill.Color = xFF0067B8
           Position.X = 320.000000000000000000
@@ -29346,10 +29359,10 @@ object Form2: TForm2
           Size.Height = 32.000000000000000000
           Size.PlatformDefault = False
           Stroke.Thickness = 0.000000000000000000
-          OnClick = rectCreatePasswordBtnNextClick
+          OnClick = rectCreateAccountNameBtnNextClick
           OnMouseEnter = rectBtnNextMouseEnter
           OnMouseLeave = rectBtnNextMouseLeave
-          object Label1: TLabel
+          object lblCreateAccountNameBtnNext: TLabel
             Align = Client
             StyledSettings = [Family]
             Margins.Bottom = 2.000000000000000000
@@ -29362,6 +29375,19 @@ object Form2: TForm2
             Text = 'Next'
             TabOrder = 0
           end
+        end
+        object floatCreateAccountNameF: TFloatAnimation
+          Duration = 0.200000002980232200
+          PropertyName = 'Position.X'
+          StartValue = 455.000000000000000000
+          StopValue = 0.000000000000000000
+        end
+        object floatCreateAccountNameR: TFloatAnimation
+          Duration = 0.200000002980232200
+          OnFinish = floatCreateAccountNameRFinish
+          PropertyName = 'Position.X'
+          StartValue = 0.000000000000000000
+          StopValue = 455.000000000000000000
         end
       end
     end
