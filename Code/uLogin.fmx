@@ -29300,82 +29300,6 @@ object Form2: TForm2
           Text = 'What'#39's your name?'
           TabOrder = 1
         end
-        object rectCreateAccountNameFirstName: TRectangle
-          Fill.Color = x00FFFFFF
-          Position.X = 24.000000000000000000
-          Position.Y = 72.000000000000000000
-          Sides = [Bottom]
-          Size.Width = 409.000000000000000000
-          Size.Height = 50.000000000000000000
-          Size.PlatformDefault = False
-          Stroke.Thickness = 0.699999988079071000
-          object edtCreateAccountNameFirstName: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            StyleLookup = 'transparentedit'
-            TabOrder = 0
-            TextSettings.Font.Size = 15.000000000000000000
-            Position.Y = 16.000000000000000000
-            Size.Width = 409.000000000000000000
-            Size.Height = 33.000000000000000000
-            Size.PlatformDefault = False
-            TextPrompt = 'First name'
-            StyledSettings = []
-            OnTyping = edtCreateAccountPasswordTyping
-            OnClick = edtLoginUsernameClick
-            OnExit = edtLoginUsernameExit
-          end
-        end
-        object rectCreateAccountNameLastName: TRectangle
-          Fill.Color = x00FFFFFF
-          Position.X = 24.000000000000000000
-          Position.Y = 126.000000000000000000
-          Sides = [Bottom]
-          Size.Width = 409.000000000000000000
-          Size.Height = 50.000000000000000000
-          Size.PlatformDefault = False
-          Stroke.Thickness = 0.699999988079071000
-          object edtCreateAccountNameLastName: TEdit
-            Touch.InteractiveGestures = [LongTap, DoubleTap]
-            StyleLookup = 'transparentedit'
-            TabOrder = 0
-            TextSettings.Font.Size = 15.000000000000000000
-            Position.Y = 16.000000000000000000
-            Size.Width = 409.000000000000000000
-            Size.Height = 33.000000000000000000
-            Size.PlatformDefault = False
-            TextPrompt = 'Last name'
-            StyledSettings = []
-            OnTyping = edtCreateAccountPasswordTyping
-            OnClick = edtLoginUsernameClick
-            OnExit = edtLoginUsernameExit
-          end
-        end
-        object rectCreateAccountNameBtnNext: TRectangle
-          Cursor = crHandPoint
-          Fill.Color = xFF0067B8
-          Position.X = 320.000000000000000000
-          Position.Y = 220.000000000000000000
-          Size.Width = 113.000000000000000000
-          Size.Height = 32.000000000000000000
-          Size.PlatformDefault = False
-          Stroke.Thickness = 0.000000000000000000
-          OnClick = rectCreateAccountNameBtnNextClick
-          OnMouseEnter = rectBtnNextMouseEnter
-          OnMouseLeave = rectBtnNextMouseLeave
-          object lblCreateAccountNameBtnNext: TLabel
-            Align = Client
-            StyledSettings = [Family]
-            Margins.Bottom = 2.000000000000000000
-            Size.Width = 113.000000000000000000
-            Size.Height = 30.000000000000000000
-            Size.PlatformDefault = False
-            TextSettings.Font.Size = 16.000000000000000000
-            TextSettings.FontColor = claWhite
-            TextSettings.HorzAlign = Center
-            Text = 'Next'
-            TabOrder = 0
-          end
-        end
         object floatCreateAccountNameF: TFloatAnimation
           Duration = 0.200000002980232200
           PropertyName = 'Position.X'
@@ -29388,6 +29312,124 @@ object Form2: TForm2
           PropertyName = 'Position.X'
           StartValue = 0.000000000000000000
           StopValue = 455.000000000000000000
+        end
+        object rectCreateAccountNameError: TRectangle
+          Fill.Color = x00E0E0E0
+          Position.X = 24.000000000000000000
+          Position.Y = 80.000000000000000000
+          Size.Width = 409.000000000000000000
+          Size.Height = 217.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Thickness = 0.000000000000000000
+          object rectCreateAccountNameFirstName: TRectangle
+            Align = Top
+            Fill.Color = x00FFFFFF
+            Margins.Bottom = 15.000000000000000000
+            Position.Y = 20.000000000000000000
+            Sides = [Bottom]
+            Size.Width = 409.000000000000000000
+            Size.Height = 34.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.699999988079071000
+            object edtCreateAccountNameFirstName: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              Align = Bottom
+              StyleLookup = 'transparentedit'
+              TabOrder = 0
+              TextSettings.Font.Size = 15.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 409.000000000000000000
+              Size.Height = 33.000000000000000000
+              Size.PlatformDefault = False
+              TextPrompt = 'First name'
+              StyledSettings = []
+              OnTyping = edtCreateAccountNameFirstNameTyping
+              OnClick = edtLoginUsernameClick
+              OnExit = edtLoginUsernameExit
+            end
+          end
+          object rectCreateAccountNameLastName: TRectangle
+            Align = Top
+            Fill.Color = x00FFFFFF
+            Position.Y = 89.000000000000000000
+            Sides = [Bottom]
+            Size.Width = 409.000000000000000000
+            Size.Height = 34.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.699999988079071000
+            object edtCreateAccountNameLastName: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              Align = Bottom
+              StyleLookup = 'transparentedit'
+              TabOrder = 0
+              TextSettings.Font.Size = 15.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 409.000000000000000000
+              Size.Height = 33.000000000000000000
+              Size.PlatformDefault = False
+              TextPrompt = 'Last name'
+              StyledSettings = []
+              OnTyping = edtCreateAccountNameLastNameTyping
+              OnClick = edtLoginUsernameClick
+              OnExit = edtLoginUsernameExit
+            end
+          end
+          object rectCreateAccountNameBtnNext: TRectangle
+            Align = Top
+            Cursor = crHandPoint
+            Fill.Color = xFF0067B8
+            Margins.Left = 296.000000000000000000
+            Margins.Top = 30.000000000000000000
+            Position.X = 296.000000000000000000
+            Position.Y = 153.000000000000000000
+            Size.Width = 113.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Thickness = 0.000000000000000000
+            OnClick = rectCreateAccountNameBtnNextClick
+            OnMouseEnter = rectBtnNextMouseEnter
+            OnMouseLeave = rectBtnNextMouseLeave
+            object lblCreateAccountNameBtnNext: TLabel
+              Align = Client
+              StyledSettings = [Family]
+              Margins.Bottom = 2.000000000000000000
+              Size.Width = 113.000000000000000000
+              Size.Height = 30.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.Size = 16.000000000000000000
+              TextSettings.FontColor = claWhite
+              TextSettings.HorzAlign = Center
+              Text = 'Next'
+              TabOrder = 0
+            end
+          end
+          object lblCreateAccountNameErrorFirst: TLabel
+            Align = Top
+            StyledSettings = [Family]
+            Size.Width = 409.000000000000000000
+            Size.Height = 20.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'Label13Style1'
+            TextSettings.Font.Size = 15.000000000000000000
+            TextSettings.FontColor = xFFDE1916
+            TextSettings.VertAlign = Leading
+            Text = 'This information is required.'
+            TabOrder = 3
+          end
+          object lblCreateAccountNameErrorLast: TLabel
+            Align = Top
+            StyledSettings = [Family]
+            Position.Y = 69.000000000000000000
+            Size.Width = 409.000000000000000000
+            Size.Height = 20.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = 'Label13Style1'
+            TextSettings.Font.Size = 15.000000000000000000
+            TextSettings.FontColor = xFFDE1916
+            TextSettings.VertAlign = Leading
+            Text = 'This information is required.'
+            TabOrder = 4
+          end
         end
       end
     end

@@ -32,6 +32,9 @@ uses
   Windows, Math;
 
 type
+  TErrors = array [0 .. 1] of integer;
+
+type
   TForm2 = class(TForm)
     rectWelcomeBtn1: TRectangle;
     lblWelcomeBtn1: TLabel;
@@ -169,6 +172,9 @@ type
     floatCreateAccountNameR: TFloatAnimation;
     floatCreateAccountPassUIF2: TFloatAnimation;
     floatCreateAccountPassUIR2: TFloatAnimation;
+    rectCreateAccountNameError: TRectangle;
+    lblCreateAccountNameErrorFirst: TLabel;
+    lblCreateAccountNameErrorLast: TLabel;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
@@ -234,6 +240,8 @@ type
     procedure floatCreateAccountPassUIF2Finish(Sender: TObject);
     procedure floatCreateAccountNameRFinish(Sender: TObject);
     procedure rectCreateAccountNameBtnNextClick(Sender: TObject);
+    procedure edtCreateAccountNameFirstNameTyping(Sender: TObject);
+    procedure edtCreateAccountNameLastNameTyping(Sender: TObject);
   private
     { Private declarations }
     iconstarty: Single;
@@ -243,10 +251,12 @@ type
     procedure hideerror2;
     procedure hideerror3;
     procedure hideerror4;
+    procedure hideerror5(opt: integer = 0);
     procedure showerror1(error: integer);
     procedure showerror2(error: integer);
     procedure showerror3(error: integer; s: string = '');
     procedure showerror4(error: integer);
+    procedure showerror5(error: TErrors);
     procedure LoadCountryCodes;
     procedure LoadCountryCodeFiles;
     procedure StyleComboBoxItems(ComboBox: TComboBox; Family: string;
@@ -271,6 +281,7 @@ type
     function password_strength(Password: string): integer;
     procedure passStrengthMeter(strength: integer);
     procedure rectCreateBtnBackClick2(Sender: TObject);
+    function TErrorsCreate(arr: array of integer): TErrors;
 
   const
     iniWidth: integer = 455;
@@ -286,8 +297,9 @@ type
 
 var
   Form2: TForm2;
-  errorlogin1, errorlogin2, errorlogin3, errorlogin4: Boolean;
+  errorlogin1, errorlogin2, errorlogin3, errorlogin4, errorlogin5: Boolean;
   last_error1, last_error2, last_error3, last_error4, login_state: integer;
+  last_error5: TErrors;
   CreateAccountForward: Boolean;
   CurrentListItem: integer;
   ComboboxSearch: string;
@@ -321,6 +333,15 @@ begin
   end;
 end;
 
+function TForm2.TErrorsCreate(arr: array of integer): TErrors;
+var
+  errors: TErrors;
+begin
+  errors[0] := arr[0];
+  errors[1] := arr[1];
+  Result := errors;
+end;
+
 procedure TForm2.cmbAreaCodesChange(Sender: TObject);
 var
   s: string;
@@ -340,7 +361,7 @@ end;
 procedure TForm2.cmbAreaCodesKeyDown(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 begin
-// TODO: Add to settings (toggle feature)
+  // TODO: Add to settings (toggle feature)
 
   if Inttostr(Key) = Inttostr(8) then
     ComboboxSearch := Copy(ComboboxSearch, 0, Length(ComboboxSearch) - 1)
@@ -428,6 +449,34 @@ begin
     end
     else
       showerror1(2);
+  end;
+end;
+
+procedure TForm2.edtCreateAccountNameFirstNameTyping(Sender: TObject);
+begin
+  if errorlogin5 then
+  begin
+    if Length(edtCreateAccountNameFirstName.Text) > 0 then
+    begin
+      hideerror5(1);
+      errorlogin5 := True;
+    end
+    else
+      showerror5(TErrorsCreate([0, -1]));
+  end;
+end;
+
+procedure TForm2.edtCreateAccountNameLastNameTyping(Sender: TObject);
+begin
+  if errorlogin5 then
+  begin
+    if Length(edtCreateAccountNameLastName.Text) > 0 then
+    begin
+      hideerror5(2);
+      errorlogin5 := True;
+    end
+    else
+      showerror5(TErrorsCreate([-1, 0]));
   end;
 end;
 
@@ -625,6 +674,7 @@ begin
   hideerror2;
   hideerror3;
   hideerror4;
+  hideerror5;
 
   imgPassStrengthHelp.Hint := 'A password is considered strong if:' + #13 +
     '8 characters length or more' + #13 + '1 digit or more' + #13 +
@@ -771,6 +821,21 @@ begin
   rectCreateAccountPasswordError.Position.Y := 170;
   rectEdtCreateAccountPassword.Stroke.Color := StringToAlphacolor('#FF1A69B9');
   errorlogin4 := False;
+end;
+
+procedure TForm2.hideerror5(opt: integer = 0);
+begin
+  case opt of
+    0:
+      begin
+        lblCreateAccountNameErrorFirst.Height := 1;
+        lblCreateAccountNameErrorLast.Height := 1;
+      end;
+    1:
+      lblCreateAccountNameErrorFirst.Height := 1;
+    2:
+      lblCreateAccountNameErrorLast.Height := 1;
+  end;
 end;
 
 procedure TForm2.imgCreateBtnBackMouseEnter(Sender: TObject);
@@ -1235,8 +1300,37 @@ begin
 end;
 
 procedure TForm2.rectCreateAccountNameBtnNextClick(Sender: TObject);
+var
+  first_name, last_name: string;
+  c: Char;
+  error_first, error_last: integer;
+const
+  LowercaseChar = ['a' .. 'z'];
 begin
-  //
+  error_first := -1;
+  error_last := -1;
+  first_name := Lowercase(edtCreateAccountNameFirstName.Text);
+  last_name := Lowercase(edtCreateAccountNameLastName.Text);
+
+  for c in first_name do
+    if not(c in LowercaseChar) then
+      error_first := 1;
+
+  for c in last_name do
+    if not(c in LowercaseChar) then
+      error_last := 1;
+
+  if Length(first_name) = 0 then
+    error_first := 0;
+  if Length(last_name) = 0 then
+    error_last := 0;
+
+  if (error_first > -1) or (error_last > -1) then
+  begin
+    showerror5(TErrorsCreate([error_first, error_last]));
+    Exit;
+  end;
+  errorlogin5 := False;
 end;
 
 procedure TForm2.rectCreateAccountUIpnlClick(Sender: TObject);
@@ -1538,119 +1632,150 @@ end;
 procedure TForm2.showerror1(error: integer);
 begin
   rectLoginUsername.Stroke.Color := StringToAlphacolor('#FFde1916');
-  if error = 0 then
-  begin
-    lblLoginError.Text := 'That ' + Appname +
-      ' account does not exist. Enter a different account or get a new one';
-    rectErrorMoveUI.Position.Y := 160;
-    last_error1 := 0;
-  end
-  else if error = 1 then
-  begin
-    lblLoginError.Text := 'Enter a valid username or email address';
-    rectErrorMoveUI.Position.Y := 135;
-    last_error1 := 1;
-  end
+  case error of
+    0:
+      begin
+        lblLoginError.Text := 'That ' + Appname +
+          ' account does not exist. Enter a different account or get a new one';
+        rectErrorMoveUI.Position.Y := 160;
+      end;
+    1:
+      begin
+        lblLoginError.Text := 'Enter a valid username or email address';
+        rectErrorMoveUI.Position.Y := 135;
+      end;
   else
     showerror1(last_error1);
+  end;
+  last_error1 := error;
   errorlogin1 := True;
 end;
 
 procedure TForm2.showerror2(error: integer);
 begin
   rectLogin2Password.Stroke.Color := StringToAlphacolor('#FFde1916');
-  if error = 0 then
-  begin
-    lblLogin2Error.Text :=
-      'Your account or password is incorrect. If you don''t remember your password, reset it.';
-    rectError2MoveUI.Position.Y := 165;
-    last_error2 := 0;
-  end
-  else if error = 1 then
-  begin
-    lblLogin2Error.Text := 'Please enter the password for your ' + Appname +
-      ' account.';
-    rectError2MoveUI.Position.Y := 147;
-    last_error2 := 1;
-  end
-  else if error = 2 then
-  begin
-    lblLogin2Error.Text := 'You have not selected a country code.';
-    rectError2MoveUI.Position.Y := 147;
-    last_error2 := 1;
-  end
+  case error of
+    0:
+      begin
+        lblLogin2Error.Text :=
+          'Your account or password is incorrect. If you don''t remember your password, reset it.';
+        rectError2MoveUI.Position.Y := 165;
+      end;
+    1:
+      begin
+        lblLogin2Error.Text := 'Please enter the password for your ' + Appname +
+          ' account.';
+        rectError2MoveUI.Position.Y := 147;
+      end;
+    2:
+      begin
+        lblLogin2Error.Text := 'You have not selected a country code.';
+        rectError2MoveUI.Position.Y := 147;
+      end;
   else
     showerror2(last_error2);
+  end;
+  last_error2 := error;
   errorlogin2 := True;
 end;
 
 procedure TForm2.showerror3(error: integer; s: string = '');
 begin
   rectCreateAccountPhone.Stroke.Color := StringToAlphacolor('#FFde1916');
-  if error = 0 then
-  begin
-    lblCreateAccountError.Text :=
-      'The phone number you entered isn''t valid. Your phone number can contain numbers and spaces.';
-    rectCreateAccountError.Position.Y := 155;
-    last_error3 := 0;
-  end
-  else if error = 1 then
-  begin
-    lblCreateAccountError.Text := 'A phone number is required';
-    rectCreateAccountError.Position.Y := 135;
-    last_error3 := 1;
-  end
-  else if error = 2 then
-  begin
-    lblCreateAccountError.Text := 'Enter the email address in the format' + #13
-      + 'someone@example.com.';
-    rectCreateAccountError.Position.Y := 145;
-    last_error3 := 2;
-  end
-  else if error = 3 then
-  begin
-    lblCreateAccountError.Text := 'An email address is required';
-    rectCreateAccountError.Position.Y := 120;
-    last_error3 := 3;
-  end
-  else if (error = 4) and (Phone) then
-  begin
-    lblCreateAccountError.Text := s + ' is already a ' + Appname + ' account.';
-    rectCreateAccountError.Position.Y := 140;
-    last_error3 := 4;
-  end
-  else if (error = 4) and (not Phone) then
-  begin
-    lblCreateAccountError.Text := s + ' is already a ' + Appname + ' account.';
-    rectCreateAccountError.Position.Y := 125;
-    last_error3 := 4;
-  end
+  case error of
+    0:
+      begin
+        lblCreateAccountError.Text :=
+          'The phone number you entered isn''t valid. Your phone number can contain numbers and spaces.';
+        rectCreateAccountError.Position.Y := 155;
+      end;
+    1:
+      begin
+        lblCreateAccountError.Text := 'A phone number is required';
+        rectCreateAccountError.Position.Y := 135;
+      end;
+    2:
+      begin
+        lblCreateAccountError.Text := 'Enter the email address in the format' +
+          #13 + 'someone@example.com.';
+        rectCreateAccountError.Position.Y := 145;
+      end;
+    3:
+      begin
+        lblCreateAccountError.Text := 'An email address is required';
+        rectCreateAccountError.Position.Y := 120;
+      end;
+    4:
+      begin
+        if Phone then
+        begin
+          lblCreateAccountError.Text := s + ' is already a ' + Appname +
+            ' account.';
+          rectCreateAccountError.Position.Y := 140;
+        end
+        else
+        begin
+          lblCreateAccountError.Text := s + ' is already a ' + Appname +
+            ' account.';
+          rectCreateAccountError.Position.Y := 125;
+        end;
+      end;
   else
     showerror3(last_error3);
+  end;
+  last_error3 := error;
   errorlogin3 := True;
 end;
 
 procedure TForm2.showerror4(error: integer);
 begin
   rectEdtCreateAccountPassword.Stroke.Color := StringToAlphacolor('#FFde1916');
-  if error = 0 then
-  begin
-    lblCreateAccountPasswordError.Text := 'A password is required.';
-    rectCreateAccountPasswordError.Position.Y := 190;
-    last_error4 := 0;
-  end
-  else if error = 1 then
-  begin
-    lblCreateAccountPasswordError.Text :=
-      'Passwords must have at least 8 characters and contain at' + #13 +
-      'least two of the following: uppercase letters, lowercase' + #13 +
-      'letters, numbers, and symbols.';
-    rectCreateAccountPasswordError.Position.Y := 230;
-    last_error4 := 1;
-  end
+  case error of
+    0:
+      begin
+        lblCreateAccountPasswordError.Text := 'A password is required.';
+        rectCreateAccountPasswordError.Position.Y := 190;
+      end;
+    1:
+      begin
+        lblCreateAccountPasswordError.Text :=
+          'Passwords must have at least 8 characters and contain at' + #13 +
+          'least two of the following: uppercase letters, lowercase' + #13 +
+          'letters, numbers, and symbols.';
+        rectCreateAccountPasswordError.Position.Y := 230;
+      end;
   else
     showerror4(last_error4);
+  end;
+  last_error4 := error;
   errorlogin4 := True;
+end;
+
+procedure TForm2.showerror5(error: TErrors);
+// [First name error, Last name error]
+const
+  err: array [0 .. 1] of string = ('This information is required.',
+    'Your name contains characters that are not allowed.');
+var
+  i: integer;
+begin
+  if error[0] > -1 then
+  begin
+    with lblCreateAccountNameErrorFirst do
+    begin
+      Height := 20;
+      Text := err[error[0]]
+    end;
+  end;
+  if error[1] > -1 then
+    with lblCreateAccountNameErrorLast do
+    begin
+      Height := 20;
+      Text := err[error[1]]
+    end;
+
+  last_error5 := error;
+  errorlogin5 := True;
 end;
 
 procedure TForm2.timerAnimationTimer(Sender: TObject);
