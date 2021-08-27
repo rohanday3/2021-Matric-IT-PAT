@@ -193,6 +193,10 @@ type
     lblAddImageSubtitle: TLabel;
     rectImgDragDrop: TRectangle;
     lblDragDrop: TLabel;
+    tblUsers: TADOTable;
+    rectCreateAccountUsername: TRectangle;
+    edtCreateAccountUsername: TEdit;
+    Label1: TLabel;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
@@ -343,7 +347,8 @@ var
   Phone: Boolean;
   gradientDragDrop: TGradient;
   customImage: Boolean;
-  db_first_name, db_email, db_last_name, db_phone, db_username, db_password, db_picture : string;
+  db_first_name, db_email, db_last_name, db_phone, db_username, db_password,
+    db_picture: string;
 
 implementation
 
@@ -765,6 +770,10 @@ begin
           ADOQuery1.ConnectionString :=
             'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + FileName +
             ';Persist Security Info=False';
+          tblUsers.ConnectionString :=
+            'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + FileName +
+            ';Persist Security Info=False';
+          tblUsers.TableName := 'Users';
           SaveSettingString('General', 'database_path', FileName);
         end
         else
@@ -786,6 +795,9 @@ begin
     ADOQuery1.ConnectionString :=
       'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' + databasepath +
       ';Persist Security Info=False';
+    tblUsers.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source='
+      + databasepath + ';Persist Security Info=False';
+    tblUsers.TableName := 'Users';
   end;
 end;
 
@@ -1321,6 +1333,7 @@ begin
     showerror4(error);
     Exit;
   end;
+  db_password := pass;
   login_state := 5;
   rectCreateBtnBack.OnClick := rectCreateBtnBackClick2;
   imgCreateBtnBack.OnClick := rectCreateBtnBackClick2;
@@ -1411,7 +1424,8 @@ begin
     Exit;
   end;
   errorlogin5 := False;
-
+  db_first_name := first_name;
+  db_last_name := last_name;
   rectCreateAccountPassword.Visible := False;
   RectWelome.Visible := False;
   rectCreateAccountPicture.BringToFront;
@@ -1506,6 +1520,8 @@ begin
       showerror3(4, lblAreaCodes.Text + uname);
       Exit;
     end;
+    db_phone := area + '-' + FormatPhone(uname);
+    db_email := '';
     uname := lblAreaCodes.Text + uname;
 
   end
@@ -1527,7 +1543,8 @@ begin
       showerror3(4, uname);
       Exit;
     end;
-
+    db_email := uname;
+    db_phone := '';
   end;
 
   rectCreateAccountPassUI.Position.X := 455;
@@ -1605,6 +1622,27 @@ end;
 procedure TForm2.rectBtnFinishClick(Sender: TObject);
 begin
   // Create record and save image
+
+  if customImage then
+  begin
+    circleProfilePicture.Fill.Bitmap.Bitmap.SaveToFile
+      (GetCurrentDir + '\accounts\' + db_username + '.png');
+    db_picture := GetCurrentDir + '\accounts\' + db_username + '.png';
+  end
+  else
+    db_picture := '';
+  tblUsers.Open;
+  tblUsers.Last;
+  tblUsers.Insert;
+  tblUsers['first_name'] := db_first_name;
+  tblUsers['email'] := db_email;
+  tblUsers['last_name'] := db_last_name;
+  tblUsers['phone'] := db_phone;
+  tblUsers['username'] := db_username;
+  tblUsers['password'] := db_password;
+  tblUsers['picture'] := db_picture;
+  tblUsers.Post;
+  tblUsers.Close;
 end;
 
 procedure TForm2.rectLogin2BtnBackMouseEnter(Sender: TObject);
@@ -1673,6 +1711,7 @@ begin
   circleProfilePicture.Fill.Bitmap.Bitmap := imglstProfile.Source.Items[0]
     .MultiResBitmap.Bitmaps[1];
   customImage := False;
+  db_picture := '';
 
 end;
 
