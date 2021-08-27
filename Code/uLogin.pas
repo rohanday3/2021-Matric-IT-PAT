@@ -29,7 +29,8 @@ uses
   System.Bindings.Outputs, FMX.Bind.Editors, Data.Bind.Components,
   Data.Bind.Grid, Data.Bind.DBScope, FMX.ScrollBox, FMX.Grid, Data.DB,
   Data.Win.ADODB, System.NetEncoding, FMX.GIFImage, IniFiles, FMX.ExtCtrls,
-  Windows, Math;
+  Windows, Math, System.ImageList, FMX.ImgList, FMX.Effects, StrUtils,
+  IdGlobalProtocols;
 
 type
   TErrors = array [0 .. 1] of integer;
@@ -134,7 +135,6 @@ type
     rectCreateShowPassword: TRectangle;
     rectCreateShowPasswordBox: TRectangle;
     lblCreateShowPassword: TLabel;
-    ColorAnimation1: TColorAnimation;
     imgCreateShowPasswordBox: TImage;
     floatRectCreateAccountF: TFloatAnimation;
     floatRectCreateAccountR: TFloatAnimation;
@@ -175,6 +175,24 @@ type
     rectCreateAccountNameError: TRectangle;
     lblCreateAccountNameErrorFirst: TLabel;
     lblCreateAccountNameErrorLast: TLabel;
+    rectCreateAccountPicture: TRectangle;
+    lblCreateAccountPictureSubtitle: TLabel;
+    lblCreateAccountPictureTitle: TLabel;
+    circleProfilePicture: TCircle;
+    lblCreateAccountPictureRemove: TLabel;
+    lblCreateAccountPictureUpload: TLabel;
+    rectlblCreateAccountPictureUpload: TRectangle;
+    rectlblCreateAccountPictureRemove: TRectangle;
+    imglstProfile: TImageList;
+    rectSkip: TRectangle;
+    lblSkip: TLabel;
+    rectBtnFinish: TRectangle;
+    lblFinish: TLabel;
+    GlowEffect1: TGlowEffect;
+    lblAddImage: TLabel;
+    lblAddImageSubtitle: TLabel;
+    rectImgDragDrop: TRectangle;
+    lblDragDrop: TLabel;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
@@ -242,6 +260,21 @@ type
     procedure rectCreateAccountNameBtnNextClick(Sender: TObject);
     procedure edtCreateAccountNameFirstNameTyping(Sender: TObject);
     procedure edtCreateAccountNameLastNameTyping(Sender: TObject);
+    procedure circleProfilePictureClick(Sender: TObject);
+    procedure rectlblCreateAccountPictureRemoveClick(Sender: TObject);
+    procedure rectBtnFinishClick(Sender: TObject);
+    procedure rectImgDragDropDragOver(Sender: TObject; const Data: TDragObject;
+      const Point: TPointF; var Operation: TDragOperation);
+    procedure rectImgDragDropDragLeave(Sender: TObject);
+    procedure rectImgDragDropDragDrop(Sender: TObject; const Data: TDragObject;
+      const Point: TPointF);
+    procedure rectCreateAccountPictureDragOver(Sender: TObject;
+      const Data: TDragObject; const Point: TPointF;
+      var Operation: TDragOperation);
+    procedure rectCreateAccountPictureDragLeave(Sender: TObject);
+    procedure rectCreateAccountPictureDragDrop(Sender: TObject;
+      const Data: TDragObject; const Point: TPointF);
+    procedure rectCreateAccountPictureDragEnd(Sender: TObject);
   private
     { Private declarations }
     iconstarty: Single;
@@ -282,6 +315,7 @@ type
     procedure passStrengthMeter(strength: integer);
     procedure rectCreateBtnBackClick2(Sender: TObject);
     function TErrorsCreate(arr: array of integer): TErrors;
+    procedure loadImageProfilePicture(imagepath: string);
 
   const
     iniWidth: integer = 455;
@@ -307,6 +341,9 @@ var
   CountryCodesFiltered: TStringList;
   FormWidth, FormHeight: integer;
   Phone: Boolean;
+  gradientDragDrop: TGradient;
+  customImage: Boolean;
+  db_first_name, db_email, db_last_name, db_phone, db_username, db_password, db_picture : string;
 
 implementation
 
@@ -340,6 +377,18 @@ begin
   errors[0] := arr[0];
   errors[1] := arr[1];
   Result := errors;
+end;
+
+procedure TForm2.circleProfilePictureClick(Sender: TObject);
+begin
+  with TOpenDialog.Create(nil) do
+  begin
+    Filter := 'Image Files|*.bmp;*.gif;*.jpeg;*.jpg;*.ico;*.png;*.tiff|All Files|*.*';
+    if Execute then
+    begin
+      loadImageProfilePicture(FileName);
+    end;
+  end;
 end;
 
 procedure TForm2.cmbAreaCodesChange(Sender: TObject);
@@ -675,6 +724,16 @@ begin
   hideerror3;
   hideerror4;
   hideerror5;
+  customImage := False;
+
+  gradientDragDrop := TGradient.Create;
+  with gradientDragDrop do
+  begin
+    Color := StringToAlphacolor('#FF3ABCF3');
+    Color1 := StringToAlphacolor('#FF207BD6');
+    Style := TGradientStyle.Linear;
+    RadialTransform.RotationAngle := 25;
+  end;
 
   imgPassStrengthHelp.Hint := 'A password is considered strong if:' + #13 +
     '8 characters length or more' + #13 + '1 digit or more' + #13 +
@@ -748,6 +807,8 @@ begin
         rectCreateAccountBtnNextClick(nil);
       4:
         rectCreatePasswordBtnNextClick(nil);
+      5:
+        rectCreateAccountNameBtnNextClick(nil);
     end;
   end;
 end;
@@ -1035,6 +1096,25 @@ begin
   StyleComboBoxItems(cmbAreaCodes, 'Calibri', 16, '#ff000000');
 end;
 
+procedure TForm2.loadImageProfilePicture(imagepath: string);
+var
+  bytes: integer;
+  megabytes: real;
+begin
+  bytes := filesizebyname(imagepath);
+  megabytes := bytes / 1000000;
+  if megabytes > 4 then
+  begin
+    ShowMessage('Try another image. File size must be less than 4 MB.');
+    Exit
+  end;
+  circleProfilePicture.Fill.Bitmap.Bitmap.LoadFromFile(imagepath);
+  rectlblCreateAccountPictureUpload.Position.X := 126;
+  rectlblCreateAccountPictureRemove.Position.X := 227;
+  lblCreateAccountPictureRemove.Visible := True;
+  customImage := True;
+end;
+
 function TForm2.LoadSettingString(Section, Name, Value: string): string;
 var
   ini: TIniFile;
@@ -1136,7 +1216,7 @@ function TForm2.password_strength(Password: string): integer;
 var
   Len, number, upp, low, special: Boolean;
   s: Char;
-  points: integer;
+  Points: integer;
 const
   numbers = ['0' .. '9'];
   special_char = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
@@ -1163,7 +1243,7 @@ begin
   // Numbers: 0-9
   // Symbols: ~`!@#$%^&*()_-+={[}]|\:;"'<,>.?/
 
-  points := 0;
+  Points := 0;
 
   if (Length(Password) >= 8) then
     Len := True;
@@ -1185,16 +1265,16 @@ begin
   end;
 
   if Len then
-    Inc(points);
+    Inc(Points);
   if number then
-    Inc(points);
+    Inc(Points);
   if upp then
-    Inc(points);
+    Inc(Points);
   if low then
-    Inc(points);
+    Inc(Points);
   if special then
-    Inc(points);
-  Result := points;
+    Inc(Points);
+  Result := Points;
 
 end;
 
@@ -1331,6 +1411,32 @@ begin
     Exit;
   end;
   errorlogin5 := False;
+
+  rectCreateAccountPassword.Visible := False;
+  RectWelome.Visible := False;
+  rectCreateAccountPicture.BringToFront;
+end;
+
+procedure TForm2.rectCreateAccountPictureDragDrop(Sender: TObject;
+  const Data: TDragObject; const Point: TPointF);
+begin
+  rectImgDragDrop.SendToBack;
+end;
+
+procedure TForm2.rectCreateAccountPictureDragEnd(Sender: TObject);
+begin
+  rectImgDragDrop.SendToBack;
+end;
+
+procedure TForm2.rectCreateAccountPictureDragLeave(Sender: TObject);
+begin
+  rectImgDragDrop.SendToBack;
+end;
+
+procedure TForm2.rectCreateAccountPictureDragOver(Sender: TObject;
+  const Data: TDragObject; const Point: TPointF; var Operation: TDragOperation);
+begin
+  rectImgDragDrop.BringToFront;
 end;
 
 procedure TForm2.rectCreateAccountUIpnlClick(Sender: TObject);
@@ -1496,6 +1602,11 @@ begin
   end;
 end;
 
+procedure TForm2.rectBtnFinishClick(Sender: TObject);
+begin
+  // Create record and save image
+end;
+
 procedure TForm2.rectLogin2BtnBackMouseEnter(Sender: TObject);
 begin
   rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFe5e5e5');
@@ -1516,6 +1627,53 @@ procedure TForm2.rectForgotPasswordMouseLeave(Sender: TObject);
 begin
   Label16.Font.Style := [];
   Label16.FontColor := StringToAlphacolor('#FF3E81C4');
+end;
+
+procedure TForm2.rectImgDragDropDragDrop(Sender: TObject;
+  const Data: TDragObject; const Point: TPointF);
+begin
+  rectImgDragDrop.Fill.Kind := TBrushKind.None;
+  lblDragDrop.Visible := False;
+  if MatchText(ExtractFileExt(Data.Files[0]), ['.bmp', '.gif', '.jpeg', '.jpg',
+    '.ico', '.png', '.tiff']) then
+  begin
+    loadImageProfilePicture(Data.Files[0]);
+  end;
+  rectImgDragDrop.SendToBack;
+end;
+
+procedure TForm2.rectImgDragDropDragLeave(Sender: TObject);
+begin
+  rectImgDragDrop.Fill.Kind := TBrushKind.None;
+  lblDragDrop.Visible := False;
+  rectImgDragDrop.SendToBack;
+end;
+
+procedure TForm2.rectImgDragDropDragOver(Sender: TObject;
+  const Data: TDragObject; const Point: TPointF; var Operation: TDragOperation);
+begin
+  rectImgDragDrop.BringToFront;
+  if MatchText(ExtractFileExt(Data.Files[0]), ['.bmp', '.gif', '.jpeg', '.jpg',
+    '.ico', '.png', '.tiff']) then
+  begin
+    Operation := TDragOperation.Copy;
+    rectImgDragDrop.Fill.Kind := TBrushKind.Gradient;
+    rectImgDragDrop.Fill.Gradient := gradientDragDrop;
+    lblDragDrop.Visible := True;
+  end
+  else
+    Operation := TDragOperation.None;
+
+end;
+
+procedure TForm2.rectlblCreateAccountPictureRemoveClick(Sender: TObject);
+begin
+  rectlblCreateAccountPictureUpload.Position.X := 179;
+  lblCreateAccountPictureRemove.Visible := False;
+  circleProfilePicture.Fill.Bitmap.Bitmap := imglstProfile.Source.Items[0]
+    .MultiResBitmap.Bitmaps[1];
+  customImage := False;
+
 end;
 
 procedure TForm2.rectLoginBtnBackClick(Sender: TObject);
