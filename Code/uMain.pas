@@ -95,14 +95,6 @@ type
     procedure tContrMainChange(Sender: TObject);
     procedure imgNaviBarMouseEnter(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    // procedure DonationsFlowResize;
-    // procedure rectDonHeadTimeMouseEnter(Sender: TObject);
-    // procedure rectDonHeadTimeMouseLeave(Sender: TObject);
-    // procedure rectDonHeadDescMouseDown(Sender: TObject; Button: TMouseButton;
-    // Shift: TShiftState; X, Y: Single);
-    // procedure rectDonHeadTimeClick(Sender: TObject);
-    // procedure rectDonHeadTimeMouseUp(Sender: TObject; Button: TMouseButton;
-    // Shift: TShiftState; X, Y: Single);
     procedure FormDestroy(Sender: TObject);
     procedure cmbShowNumRecChange(Sender: TObject);
     procedure StringGrid1DrawColumnHeader(Sender: TObject;

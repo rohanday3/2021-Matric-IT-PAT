@@ -4,15 +4,6 @@ Coordinates=457,111,80,36
 [loginshowImage1Pos]
 Coordinates=582,1,137,36
 
-[floatRectLogin2PosF]
-Coordinates=582,56,134,36
-
-[Label11]
-Coordinates=273,10,60,58
-
-[floatRectLogin2PosR]
-Coordinates=582,111,135,36
-
 [floatRect11PosR]
 Coordinates=582,166,111,36
 
@@ -99,7 +90,7 @@ Coordinates=458,232,164,36
 Visible=False
 
 []
-Coordinates=921,300,90,36
+Coordinates=582,111,135,36
 Visible=True
 
 [rectBtnSignIn]
@@ -245,4 +236,7 @@ Coordinates=757,276,140,36
 
 [imgLogin2BtnBack]
 Coordinates=702,232,57,58
+
+[lblBtnNext]
+Coordinates=273,10,60,58
 

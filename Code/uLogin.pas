@@ -32,11 +32,12 @@ uses
   Windows, Math, System.ImageList, FMX.ImgList, FMX.Effects, StrUtils,
   IdGlobalProtocols;
 
+// Custom type for storing error state
 type
-  TErrors = array [0 .. 1] of integer;
+  TErrors = array [0 .. 2] of integer;
 
 type
-  TForm2 = class(TForm)
+  TfrmLogin = class(TForm)
     rectWelcomeBtn1: TRectangle;
     lblWelcomeBtn1: TLabel;
     RectWelome: TRectangle;
@@ -68,7 +69,7 @@ type
     lblBtnCreateAccount: TLabel;
     rectBtnNext: TRectangle;
     rectLoginBtnBack: TRectangle;
-    Label11: TLabel;
+    lblBtnNext: TLabel;
     lblLoginBack: TLabel;
     rectBtnCreateAccount: TRectangle;
     lblLoginError: TLabel;
@@ -90,8 +91,6 @@ type
     floatRectLogin2FadeR: TFloatAnimation;
     rectLogin2UI: TRectangle;
     rectLoginUIPnl: TRectangle;
-    floatRectLogin2PosF: TFloatAnimation;
-    floatRectLogin2PosR: TFloatAnimation;
     floatRect11PosF: TFloatAnimation;
     floatRect11PosR: TFloatAnimation;
     RectCreateAccount: TRectangle;
@@ -197,6 +196,8 @@ type
     rectCreateAccountUsername: TRectangle;
     edtCreateAccountUsername: TEdit;
     Label1: TLabel;
+    floatRectLoginFadeR: TFloatAnimation;
+    floatRectLogin2FadeF: TFloatAnimation;
     procedure zoomFinish(Sender: TObject);
     procedure floatFinish(Sender: TObject);
     procedure rectWelcomeBtn1Click(Sender: TObject);
@@ -237,8 +238,6 @@ type
     procedure loginhideRect2HeightFinish(Sender: TObject);
     procedure rectBtnSignInClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure edtLoginPasswordKeyDown(Sender: TObject; var Key: Word;
-      var KeyChar: Char; Shift: TShiftState);
     procedure lblUseEmailClick(Sender: TObject);
     procedure edtLoginPasswordClick(Sender: TObject);
     procedure edtLoginPasswordTyping(Sender: TObject);
@@ -284,16 +283,16 @@ type
     iconstarty: Single;
     function confirmAccount: Boolean;
     function confirmPassword: Boolean;
-    procedure hideerror1;
-    procedure hideerror2;
-    procedure hideerror3;
-    procedure hideerror4;
-    procedure hideerror5(opt: integer = 0);
-    procedure showerror1(error: integer);
-    procedure showerror2(error: integer);
-    procedure showerror3(error: integer; s: string = '');
-    procedure showerror4(error: integer);
-    procedure showerror5(error: TErrors);
+    procedure hideerrorLoginU;
+    procedure hideerrorLoginP;
+    procedure hideerrorCreate1;
+    procedure hideerrorCreateP;
+    procedure hideerrorCreateName(opt: integer = 0);
+    procedure showerrorLoginU(error: integer);
+    procedure showerrorLoginP(error: integer);
+    procedure showerrorCreate1(error: integer; s: string = '');
+    procedure showerrorCreateP(error: integer);
+    procedure showerrorCreateName(error: TErrors);
     procedure LoadCountryCodes;
     procedure LoadCountryCodeFiles;
     procedure StyleComboBoxItems(ComboBox: TComboBox; Family: string;
@@ -322,31 +321,61 @@ type
     procedure loadImageProfilePicture(imagepath: string);
 
   const
-    iniWidth: integer = 455;
-    iniHeight: integer = 635;
-    Appname: string = 'Robin Hood';
-    clr_accent1: String = '#FF00f0cb';
-    clr_accent2: String = '#FF00c78c';
-    CONFIG_FILE_NAME = 'config.ini';
+    // ALL GLOBAL CONSTANT VARIABLE NAMES ARE IN CAPS.
+    // Size of the form when designed for a 3840 * 2160 screen. Used for scaling.
+    I_INI_FORM_WIDTH: integer = 455;
+    I_INI_FORM_HEIGHT: integer = 635;
+    S_APP_NAME: string = 'Robin Hood';
+    F_CONFIG_FILE = 'config.ini';
   public
     { Public declarations }
     class function Execute: Boolean;
   end;
 
 var
-  Form2: TForm2;
-  errorlogin1, errorlogin2, errorlogin3, errorlogin4, errorlogin5: Boolean;
-  last_error1, last_error2, last_error3, last_error4, login_state: integer;
-  last_error5: TErrors;
-  CreateAccountForward: Boolean;
-  CurrentListItem: integer;
-  ComboboxSearch: string;
-  CountryCodes: TStringList;
-  CountryCodesFiltered: TStringList;
-  FormWidth, FormHeight: integer;
-  Phone: Boolean;
-  gradientDragDrop: TGradient;
-  customImage: Boolean;
+  frmLogin: TfrmLogin;
+
+  // ==================== Error variables ====================
+  {
+    [u] Username
+    [p] Password
+    [1] Phone/Email
+    [n] Name
+  }
+  b_err_login_u, b_err_login_p, b_err_create_1, b_err_create_p,
+    b_err_create_n: Boolean;
+  i_prev_err_login_u, i_prev_err_login_p, i_prev_err_create_1,
+    i_prev_err_create_p: integer;
+  arr_prev_err_create_n: TErrors;
+
+  // ================ Position in login form =================
+  {
+    [-1] rectWelcome1
+    [0] rectWelcome2
+    [1] rectLogin
+    [2] rectLogin2
+    [3] rectCreateAccount
+    [4] rectCreateAccountPassword
+    [5] rectCreateAccountName
+  }
+  i_login_state: integer;
+
+  // ================= Country Code Search ===================
+  s_ctry_code_search: string;
+  slst_ctry_codes: TStringList;
+  slst_ctry_codes_ftrd: TStringList;
+
+  i_form_width, i_form_height: integer;
+
+  // Phone number or email chosen to create account
+  b_phone: Boolean;
+
+  grad_drag_drop: TGradient;
+
+  // Custom profile picture image chosen
+  b_custom_image: Boolean;
+
+  // =================== Create account ======================
   db_first_name, db_email, db_last_name, db_phone, db_username, db_password,
     db_picture: string;
 
@@ -357,9 +386,9 @@ uses
 
 {$R *.fmx}
 
-Procedure TForm2.StyleComboBoxItems(ComboBox: TComboBox; Family: string;
+// Change the font etc. of items in combobox
+Procedure TfrmLogin.StyleComboBoxItems(ComboBox: TComboBox; Family: string;
   Size: Single; Color: string);
-
 var
   Item: TListBoxItem;
   i: integer;
@@ -375,7 +404,7 @@ begin
   end;
 end;
 
-function TForm2.TErrorsCreate(arr: array of integer): TErrors;
+function TfrmLogin.TErrorsCreate(arr: array of integer): TErrors;
 var
   errors: TErrors;
 begin
@@ -384,52 +413,59 @@ begin
   Result := errors;
 end;
 
-procedure TForm2.circleProfilePictureClick(Sender: TObject);
+procedure TfrmLogin.circleProfilePictureClick(Sender: TObject);
 begin
   with TOpenDialog.Create(nil) do
   begin
     Filter := 'Image Files|*.bmp;*.gif;*.jpeg;*.jpg;*.ico;*.png;*.tiff|All Files|*.*';
     if Execute then
     begin
+      // A procedure to load an image to the circle is beneficial is more than
+      // one way to select an image (DragDrop)
       loadImageProfilePicture(FileName);
     end;
   end;
 end;
 
-procedure TForm2.cmbAreaCodesChange(Sender: TObject);
+procedure TfrmLogin.cmbAreaCodesChange(Sender: TObject);
 var
   s: string;
 begin
+  // The Country code needs to be displayed without the name of the country
+  // normally the combobox will display the whole item when selected.
   rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#ffffffff');
   rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#ffffffff');
   s := cmbAreaCodes.Items[cmbAreaCodes.ItemIndex];
   lblAreaCodes.Text := Copy(s, Pos('+', s), Length(s) - Pos('+', s) + 1);
 end;
 
-procedure TForm2.cmbAreaCodesClick(Sender: TObject);
+procedure TfrmLogin.cmbAreaCodesClick(Sender: TObject);
 begin
   rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#ffeeeeee');
   rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#ffeeeeee');
 end;
 
-procedure TForm2.cmbAreaCodesKeyDown(Sender: TObject; var Key: Word;
+procedure TfrmLogin.cmbAreaCodesKeyDown(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 begin
   // TODO: Add to settings (toggle feature)
 
   if Inttostr(Key) = Inttostr(8) then
-    ComboboxSearch := Copy(ComboboxSearch, 0, Length(ComboboxSearch) - 1)
+    s_ctry_code_search := Copy(s_ctry_code_search, 0,
+      Length(s_ctry_code_search) - 1)
   else
-    ComboboxSearch := ComboboxSearch + KeyChar;
+    s_ctry_code_search := s_ctry_code_search + KeyChar;
 
   // Remove spaces
-  ComboboxSearch := StringReplace(ComboboxSearch, ' ', '', [rfReplaceAll]);
+  s_ctry_code_search := StringReplace(s_ctry_code_search, ' ', '',
+    [rfReplaceAll]);
 
-  FilterComboBox(cmbAreaCodes, ComboboxSearch)
+  FilterComboBox(cmbAreaCodes, s_ctry_code_search)
 end;
 
-function TForm2.confirmAccount: Boolean;
+function TfrmLogin.confirmAccount: Boolean;
 begin
+  // Check if account exists
   ADOQuery1.Close;
   ADOQuery1.SQL.Clear;
   ADOQuery1.SQL.Add('SELECT * FROM Users Where (username = :User)');
@@ -448,8 +484,10 @@ begin
     Result := False;
 end;
 
-function TForm2.confirmPassword: Boolean;
+function TfrmLogin.confirmPassword: Boolean;
 begin
+  // Encrypt the password entered and compare it with the encrypted password
+  // stored in the database.
   if TNetEncoding.Base64.EncodeBytesToString
     (TEncoding.UTF8.GetBytes(edtLoginPassword.Text)) = ADOQuery1.FieldByName
     ('password').AsString then
@@ -459,7 +497,9 @@ begin
 
 end;
 
-function TForm2.CountryCodeToString(CountryCode: string): string;
+// Part 3/3 of a larger function to automatically detect the country and selects
+// the corresponding country code.
+function TfrmLogin.CountryCodeToString(CountryCode: string): string;
 var
   csv: TextFile;
   line: string;
@@ -480,233 +520,240 @@ begin
   end;
 end;
 
-procedure TForm2.edtLoginUsernameClick(Sender: TObject);
+procedure TfrmLogin.edtLoginUsernameClick(Sender: TObject);
 begin
-  if not errorlogin1 then
+  if not b_err_login_u then
     TRectangle(TEdit(Sender).Parent).Stroke.Color :=
       StringToAlphacolor('#FF1A69B9');
 end;
 
-procedure TForm2.edtLoginUsernameExit(Sender: TObject);
+procedure TfrmLogin.edtLoginUsernameExit(Sender: TObject);
 begin
   TRectangle(TEdit(Sender).Parent).Stroke.Color := TAlphaColors.black;
 end;
 
-procedure TForm2.edtLoginUsernameTyping(Sender: TObject);
+procedure TfrmLogin.edtLoginUsernameTyping(Sender: TObject);
 begin
-  if errorlogin1 then
+  if b_err_login_u then
   begin
     if Length(edtLoginUsername.Text) > 0 then
     begin
-      hideerror1;
-      errorlogin1 := True;
+      hideerrorLoginU;
+      b_err_login_u := True;
     end
     else
-      showerror1(2);
+      showerrorLoginU(2);
   end;
 end;
 
-procedure TForm2.edtCreateAccountNameFirstNameTyping(Sender: TObject);
+procedure TfrmLogin.edtCreateAccountNameFirstNameTyping(Sender: TObject);
 begin
-  if errorlogin5 then
+  if b_err_create_n then
   begin
     if Length(edtCreateAccountNameFirstName.Text) > 0 then
     begin
-      hideerror5(1);
-      errorlogin5 := True;
+      hideerrorCreateName(1);
+      b_err_create_n := True;
     end
     else
-      showerror5(TErrorsCreate([0, -1]));
+      showerrorCreateName(TErrorsCreate([0, -1]));
   end;
 end;
 
-procedure TForm2.edtCreateAccountNameLastNameTyping(Sender: TObject);
+procedure TfrmLogin.edtCreateAccountNameLastNameTyping(Sender: TObject);
 begin
-  if errorlogin5 then
+  if b_err_create_n then
   begin
     if Length(edtCreateAccountNameLastName.Text) > 0 then
     begin
-      hideerror5(2);
-      errorlogin5 := True;
+      hideerrorCreateName(2);
+      b_err_create_n := True;
     end
     else
-      showerror5(TErrorsCreate([-1, 0]));
+      showerrorCreateName(TErrorsCreate([-1, 0]));
   end;
 end;
 
-procedure TForm2.edtCreateAccountPasswordTyping(Sender: TObject);
+procedure TfrmLogin.edtCreateAccountPasswordTyping(Sender: TObject);
 begin
-  if errorlogin4 then
+  if b_err_create_p then
   begin
     if Length(edtCreateAccountPassword.Text) > 0 then
     begin
-      hideerror4;
-      errorlogin4 := True;
+      hideerrorCreateP;
+      b_err_create_p := True;
     end
     else
-      showerror4(0);
+      showerrorCreateP(0);
   end;
   passStrengthMeter(password_strength(edtCreateAccountPassword.Text));
 end;
 
-procedure TForm2.edtCreateAccountPhoneTyping(Sender: TObject);
+procedure TfrmLogin.edtCreateAccountPhoneTyping(Sender: TObject);
 begin
-  if errorlogin3 then
+  if b_err_create_1 then
   begin
     if Length(edtCreateAccountPhone.Text) > 0 then
     begin
-      hideerror3;
-      errorlogin3 := True;
+      hideerrorCreate1;
+      b_err_create_1 := True;
     end
-    else if Phone then
-      showerror3(1)
+    else if b_phone then
+      showerrorCreate1(1)
     else
-      showerror3(3);
+      showerrorCreate1(3);
   end;
 end;
 
-procedure TForm2.edtLoginPasswordClick(Sender: TObject);
+procedure TfrmLogin.edtLoginPasswordClick(Sender: TObject);
 begin
-  if not errorlogin2 then
+  if not b_err_login_p then
     TRectangle(TEdit(Sender).Parent).Stroke.Color :=
       StringToAlphacolor('#FF1A69B9');
 end;
 
-procedure TForm2.edtLoginPasswordKeyDown(Sender: TObject; var Key: Word;
-  var KeyChar: Char; Shift: TShiftState);
+procedure TfrmLogin.edtLoginPasswordTyping(Sender: TObject);
 begin
-  if (Key = 13) and (login_state = 2) then
-  begin
-    rectBtnSignInClick(nil);
-  end;
-end;
-
-procedure TForm2.edtLoginPasswordTyping(Sender: TObject);
-begin
-  if errorlogin2 then
+  if b_err_login_p then
   begin
     if Length(edtLoginPassword.Text) > 0 then
     begin
-      hideerror2;
-      errorlogin2 := True;
+      hideerrorLoginP;
+      b_err_login_p := True;
     end
     else
-      showerror2(2);
+      showerrorLoginP(2);
   end;
 end;
 
-class function TForm2.Execute: Boolean;
+{
+  Allows the login program to be created with a function whose result indicates
+  if the login was successful.
+
+  UPSIDE:
+  This means that the login screen can be created very quickly, as the rest of
+  the application does not have to be loaded until the application recognises
+  a valid user login.
+
+  DOWNSIDE:
+  The datamodule cannot be used since it has not been created yet. This means
+  adoquery and adotable components need to be created in the login form which
+  decreases the usefulness of having a datamodule.
+}
+class function TfrmLogin.Execute: Boolean;
 begin
-  with TForm2.Create(nil) do
+  with TfrmLogin.Create(nil) do
     try
       Result := ShowModal = mrOk;
     finally
+      // The login form is no longer needed after the user signs in.
       Free;
     end;
 end;
 
-procedure TForm2.fadeoutlblWelcomeTitlePosFinish(Sender: TObject);
+procedure TfrmLogin.fadeoutlblWelcomeTitlePosFinish(Sender: TObject);
 begin
-  //
   lblWelcome2.Visible := True;
   rectWelcomeBtn2.Visible := True;
   lblVersion.Visible := True;
   rectWelcomeBtn1.Cursor := crDefault;
   rectWelcomeBtn1.Enabled := False;
-  login_state := 0;
+  i_login_state := 0;
 end;
 
-procedure TForm2.FilterComboBox(ComboBox: TComboBox; Key: String);
+procedure TfrmLogin.FilterComboBox(ComboBox: TComboBox; Key: String);
 var
   i: integer;
 begin
   if Key = '' then
   begin
-    ComboBox.Items.AddStrings(CountryCodes);
+    ComboBox.Items.AddStrings(slst_ctry_codes);
     StyleComboBoxItems(ComboBox, 'Calibri', 16, '#ff000000');
     Exit;
   end;
-  CountryCodesFiltered := TStringList.Create;
+  slst_ctry_codes_ftrd := TStringList.Create;
 
-  CountryCodesFiltered.Clear;
+  slst_ctry_codes_ftrd.Clear;
 
-  for i := 0 to CountryCodes.Count - 1 do
-    if Pos(Lowercase(Key), Lowercase(CountryCodes[i])) > 0 then
-      CountryCodesFiltered.Add(CountryCodes[i]);
+  for i := 0 to slst_ctry_codes.Count - 1 do
+    if Pos(Lowercase(Key), Lowercase(slst_ctry_codes[i])) > 0 then
+      slst_ctry_codes_ftrd.Add(slst_ctry_codes[i]);
 
   ComboBox.Items.Clear;
-  ComboBox.Items.AddStrings(CountryCodesFiltered);
+  ComboBox.Items.AddStrings(slst_ctry_codes_ftrd);
   StyleComboBoxItems(ComboBox, 'Calibri', 16, '#ff000000');
 end;
 
-procedure TForm2.floatCreateAccountNameRFinish(Sender: TObject);
+procedure TfrmLogin.floatCreateAccountNameRFinish(Sender: TObject);
 begin
   floatCreateAccountPassUIR2.Start;
 end;
 
-procedure TForm2.floatCreateAccountPassRFinish(Sender: TObject);
+procedure TfrmLogin.floatCreateAccountPassRFinish(Sender: TObject);
 begin
   floatRectCreateAccountR.Start;
 end;
 
-procedure TForm2.floatCreateAccountPassUIF2Finish(Sender: TObject);
+procedure TfrmLogin.floatCreateAccountPassUIF2Finish(Sender: TObject);
 begin
   floatCreateAccountNameF.Start;
 end;
 
-procedure TForm2.floatCreateAccountPassUIRFinish(Sender: TObject);
+procedure TfrmLogin.floatCreateAccountPassUIRFinish(Sender: TObject);
 begin
   RectCreateAccount.BringToFront;
   floatRectCreateAccountR.Start;
 end;
 
-procedure TForm2.floatFinish(Sender: TObject);
+procedure TfrmLogin.floatFinish(Sender: TObject);
 begin
   lblWelcomeTitle.Visible := True;
   lblWelcomeSubtitle.Visible := True;
   rectWelcomeBtn1.Visible := True;
 end;
 
-procedure TForm2.floatRect11PosFFinish(Sender: TObject);
+procedure TfrmLogin.floatRect11PosFFinish(Sender: TObject);
 begin
   floatRectLoginPosR.Start;
+  floatRectLoginFadeR.Start;
 end;
 
-procedure TForm2.floatRectCreateAccountFFinish(Sender: TObject);
+procedure TfrmLogin.floatRectCreateAccountFFinish(Sender: TObject);
 begin
   rectCreateAccountPassword.BringToFront;
   floatCreateAccountPassUIF.Start;
   floatCreateBackF.Start;
 end;
 
-procedure TForm2.floatRectLoginPosFFinish(Sender: TObject);
+procedure TfrmLogin.floatRectLoginPosFFinish(Sender: TObject);
 begin
   rectLogin2UI.Visible := True;
   floatRect11PosR.Start;
+  floatRectLogin2FadeR.Start;
   floatRectUsernameBackOpacityF.Start;
 end;
 
-procedure TForm2.floatRectLoginPosRFinish(Sender: TObject);
+procedure TfrmLogin.floatRectLoginPosRFinish(Sender: TObject);
 begin
   rectLoginUIPnl.Visible := True;
 end;
 
-function TForm2.FormatPhone(Phone: string): string;
+function TfrmLogin.FormatPhone(Phone: string): string;
 begin
   Result := Phone;
   Insert('-', Result, 4);
   Insert('-', Result, 8);
 end;
 
-procedure TForm2.FormCreate(Sender: TObject);
+procedure TfrmLogin.FormCreate(Sender: TObject);
 var
   databasepath: string;
 begin
   ScaleScreen;
-  lblLoginSubtitle.Text := 'to continue to ' + Appname;
-  lblWelcomeTitle.Text := 'Welcome to ' + Appname;
-  login_state := -1;
-  Phone := True;
+  lblLoginSubtitle.Text := 'to continue to ' + S_APP_NAME;
+  lblWelcomeTitle.Text := 'Welcome to ' + S_APP_NAME;
+  i_login_state := -1;
+  b_phone := True;
   RectWelome.Width := 460;
   RectWelome.Height := 640;
   rectCreateAccountName.Position.X := 455;
@@ -724,15 +771,16 @@ begin
   rectLogin.BringToFront;
   RectWelome.BringToFront;
   rectWelcomeBtn1.SetFocus;
-  hideerror1;
-  hideerror2;
-  hideerror3;
-  hideerror4;
-  hideerror5;
-  customImage := False;
+  hideerrorLoginU;
+  hideerrorLoginP;
+  hideerrorCreate1;
+  hideerrorCreateP;
+  hideerrorCreateName;
+  b_custom_image := False;
+  rectLogin2UI.Opacity := 0;
 
-  gradientDragDrop := TGradient.Create;
-  with gradientDragDrop do
+  grad_drag_drop := TGradient.Create;
+  with grad_drag_drop do
   begin
     Color := StringToAlphacolor('#FF3ABCF3');
     Color1 := StringToAlphacolor('#FF207BD6');
@@ -745,7 +793,7 @@ begin
     '1 symbol or more' + #13 + '1 uppercase letter or more' + #13 +
     '1 lowercase letter or more';
 
-  if not FileExists(GetCurrentDir + '\' + CONFIG_FILE_NAME) then
+  if not FileExists(GetCurrentDir + '\' + F_CONFIG_FILE) then
   begin
     SaveSettingString('General', 'database_path',
       GetCurrentDir + '\robinhood.mdb');
@@ -801,12 +849,13 @@ begin
   end;
 end;
 
-procedure TForm2.FormKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
-  Shift: TShiftState);
+// Allows the enter key to "press" the next button on the current screen.
+procedure TfrmLogin.FormKeyDown(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
 begin
   if Key = 13 then
   begin
-    case login_state of
+    case i_login_state of
       - 1:
         rectWelcomeBtn1Click(nil);
       0:
@@ -825,14 +874,16 @@ begin
   end;
 end;
 
-procedure TForm2.FormPaint(Sender: TObject; Canvas: TCanvas;
+procedure TfrmLogin.FormPaint(Sender: TObject; Canvas: TCanvas;
   const ARect: TRectF);
 begin
   if cmbAreaCodes.DroppedDown = False then
     ResetComboBox;
 end;
 
-function TForm2.GetCountryFlag: string;
+// Part 2/3 of a larger function to automatically detect the country and selects
+// the corresponding country code.
+function TfrmLogin.GetCountryFlag: string;
 var
   Buffer: PChar;
   Size: integer;
@@ -847,7 +898,11 @@ begin
   end;
 end;
 
-function TForm2.GetScreenScale: Single;
+// Retrieves the current device scaling setting for the display.
+// The app is designed to look the same on every screen size, this
+// allows the app to compensate for the scaling by increasing or decreaing the
+// app size.
+function TfrmLogin.GetScreenScale: Single;
 var
   ScrService: IFMXScreenService;
 begin
@@ -858,45 +913,46 @@ begin
   end;
 end;
 
-function TForm2.GetVersionNumber: string;
+// FIX
+function TfrmLogin.GetVersionNumber: string;
 begin
   Result := Inttostr(TOSVersion.Major) + '.' + Inttostr(TOSVersion.Minor) + '.'
     + Inttostr(TOSVersion.Build);
 end;
 
-procedure TForm2.hideerror1;
+procedure TfrmLogin.hideerrorLoginU;
 begin
   lblLoginError.Text := '';
   rectErrorMoveUI.Position.Y := 120;
   rectLoginUsername.Stroke.Color := StringToAlphacolor('#FF1A69B9');
-  errorlogin1 := False;
+  b_err_login_u := False;
 end;
 
-procedure TForm2.hideerror2;
+procedure TfrmLogin.hideerrorLoginP;
 begin
   lblLogin2Error.Text := '';
   rectError2MoveUI.Position.Y := 130;
   rectLogin2Password.Stroke.Color := StringToAlphacolor('#FF1A69B9');
-  errorlogin2 := False;
+  b_err_login_p := False;
 end;
 
-procedure TForm2.hideerror3;
+procedure TfrmLogin.hideerrorCreate1;
 begin
   lblCreateAccountError.Text := '';
   rectCreateAccountError.Position.Y := 104;
   rectCreateAccountPhone.Stroke.Color := StringToAlphacolor('#FF1A69B9');
-  errorlogin3 := False;
+  b_err_create_1 := False;
 end;
 
-procedure TForm2.hideerror4;
+procedure TfrmLogin.hideerrorCreateP;
 begin
   lblCreateAccountPasswordError.Text := '';
   rectCreateAccountPasswordError.Position.Y := 170;
   rectEdtCreateAccountPassword.Stroke.Color := StringToAlphacolor('#FF1A69B9');
-  errorlogin4 := False;
+  b_err_create_p := False;
 end;
 
-procedure TForm2.hideerror5(opt: integer = 0);
+procedure TfrmLogin.hideerrorCreateName(opt: integer = 0);
 begin
   case opt of
     0:
@@ -911,35 +967,37 @@ begin
   end;
 end;
 
-procedure TForm2.imgCreateBtnBackMouseEnter(Sender: TObject);
+procedure TfrmLogin.imgCreateBtnBackMouseEnter(Sender: TObject);
 begin
   rectCreateBtnBack.Fill.Color := StringToAlphacolor('#FFe5e5e5');
 end;
 
-procedure TForm2.imgCreateBtnBackMouseLeave(Sender: TObject);
+procedure TfrmLogin.imgCreateBtnBackMouseLeave(Sender: TObject);
 begin
   rectCreateBtnBack.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
-procedure TForm2.imgLogin2BtnBackClick(Sender: TObject);
+procedure TfrmLogin.imgLogin2BtnBackClick(Sender: TObject);
 begin
   floatRect11PosF.Start;
   edtLoginUsername.SetFocus;
+  floatRectLogin2FadeF.Start;
   floatRectUsernameBackOpacityR.Start;
-  login_state := 1;
+  i_login_state := 1;
 end;
 
-procedure TForm2.imgLogin2BtnBackMouseEnter(Sender: TObject);
+procedure TfrmLogin.imgLogin2BtnBackMouseEnter(Sender: TObject);
 begin
   rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFe5e5e5');
 end;
 
-procedure TForm2.imgLogin2BtnBackMouseLeave(Sender: TObject);
+procedure TfrmLogin.imgLogin2BtnBackMouseLeave(Sender: TObject);
 begin
   rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
-function TForm2.IsEmailUsed(Email: string): Boolean;
+// Checks if email is already taken when creating account
+function TfrmLogin.IsEmailUsed(Email: string): Boolean;
 begin
   ADOQuery1.Close;
   ADOQuery1.SQL.Clear;
@@ -959,18 +1017,19 @@ begin
     Result := False;
 end;
 
-function TForm2.IsPhoneUsed(Phone: string): Boolean;
+// Checks if email is already taken when creating account
+function TfrmLogin.IsPhoneUsed(Phone: string): Boolean;
 begin
   ADOQuery1.Close;
   ADOQuery1.SQL.Clear;
-  ADOQuery1.SQL.Add('SELECT * FROM Users Where (phone = :phone)');
-  ADOQuery1.Parameters.ParamByName('phone').Value := Phone;
+  ADOQuery1.SQL.Add('SELECT * FROM Users Where (phone = :Phone)');
+  ADOQuery1.Parameters.ParamByName('Phone').Value := Phone;
   ADOQuery1.Open;
   if ADOQuery1.RecordCount = 0 then
   begin
     ADOQuery1.SQL.Clear;
-    ADOQuery1.SQL.Add('SELECT * FROM Employees Where (phone = :phone)');
-    ADOQuery1.Parameters.ParamByName('phone').Value := Phone;
+    ADOQuery1.SQL.Add('SELECT * FROM Employees Where (phone = :Phone)');
+    ADOQuery1.Parameters.ParamByName('Phone').Value := Phone;
     ADOQuery1.Open;
   end;
   if ADOQuery1.RecordCount > 0 then
@@ -979,7 +1038,8 @@ begin
     Result := False;
 end;
 
-function TForm2.IsValidEmail(const Value: string): Boolean;
+// Check if email follows RegEX (regular expression) for email addresses
+function TfrmLogin.IsValidEmail(const Value: string): Boolean;
   function CheckAllowed(const s: string): Boolean;
   var
     i: integer;
@@ -1025,7 +1085,7 @@ begin
   Result := CheckAllowed(namePart) and CheckAllowed(serverPart);
 end;
 
-procedure TForm2.lblUseEmailClick(Sender: TObject);
+procedure TfrmLogin.lblUseEmailClick(Sender: TObject);
 const
   edtWidth1: integer = 311;
   edtWidth2: integer = 407;
@@ -1040,7 +1100,7 @@ const
   edtHint2: string = 'Phone number';
 begin
   resetCreateScreen;
-  if Phone then
+  if b_phone then
   begin
     { enter email number }
     rectUseEmail.Width := 180;
@@ -1049,7 +1109,7 @@ begin
     rectCreateAccountPhone.Width := edtWidth2;
     rectCreateAccountPhone.Position.X := xpos2;
     lblUseEmail.Text := lbl2;
-    Phone := False;
+    b_phone := False;
   end
   else
   begin
@@ -1060,11 +1120,13 @@ begin
     rectCreateAccountPhone.Width := edtWidth1;
     rectCreateAccountPhone.Position.X := xpos1;
     lblUseEmail.Text := lbl1;
-    Phone := True;
+    b_phone := True;
   end;
 end;
 
-procedure TForm2.LoadCountry;
+// Part 1/3 of a larger function to automatically detect the country and selects
+// the corresponding country code.
+procedure TfrmLogin.LoadCountry;
 var
   Item, country: string;
 begin
@@ -1079,15 +1141,16 @@ begin
   end;
 end;
 
-procedure TForm2.LoadCountryCodeFiles;
+// Populates the countrycode stringlists from a textfile
+procedure TfrmLogin.LoadCountryCodeFiles;
 var
   filestream: TFileStream;
 begin
-  CountryCodes := TStringList.Create;
+  slst_ctry_codes := TStringList.Create;
   filestream := TFileStream.Create((GetCurrentDir + '\Country-Codes.txt'),
     fmShareDenyNone);
   Try
-    CountryCodes.LoadFromStream(filestream);
+    slst_ctry_codes.LoadFromStream(filestream);
   Except
     on Exception do
     begin
@@ -1097,18 +1160,19 @@ begin
   filestream.Destroy();
 end;
 
-procedure TForm2.LoadCountryCodes;
+// Populates the cmbAreaCodes combobox from the countrycode stringlist
+procedure TfrmLogin.LoadCountryCodes;
 begin
   try
     cmbAreaCodes.Items.Clear();
-    cmbAreaCodes.Items.AddStrings(CountryCodes);
+    cmbAreaCodes.Items.AddStrings(slst_ctry_codes);
   except
 
   end;
   StyleComboBoxItems(cmbAreaCodes, 'Calibri', 16, '#ff000000');
 end;
 
-procedure TForm2.loadImageProfilePicture(imagepath: string);
+procedure TfrmLogin.loadImageProfilePicture(imagepath: string);
 var
   bytes: integer;
   megabytes: real;
@@ -1124,14 +1188,15 @@ begin
   rectlblCreateAccountPictureUpload.Position.X := 126;
   rectlblCreateAccountPictureRemove.Position.X := 227;
   lblCreateAccountPictureRemove.Visible := True;
-  customImage := True;
+  b_custom_image := True;
 end;
 
-function TForm2.LoadSettingString(Section, Name, Value: string): string;
+// Returns the setting value from the setting file
+function TfrmLogin.LoadSettingString(Section, Name, Value: string): string;
 var
   ini: TIniFile;
 begin
-  ini := TIniFile.Create(GetCurrentDir + '\' + CONFIG_FILE_NAME);
+  ini := TIniFile.Create(GetCurrentDir + '\' + F_CONFIG_FILE);
   try
     Result := ini.ReadString(Section, Name, Value);
   finally
@@ -1139,12 +1204,12 @@ begin
   end;
 end;
 
-procedure TForm2.loginhideImage1HeightFinish(Sender: TObject);
+procedure TfrmLogin.loginhideImage1HeightFinish(Sender: TObject);
 begin
-  login_state := 0;
+  i_login_state := 0;
 end;
 
-procedure TForm2.loginhideRect2HeightFinish(Sender: TObject);
+procedure TfrmLogin.loginhideRect2HeightFinish(Sender: TObject);
 begin
   lblWelcome2.Visible := True;
   lblVersion.Visible := True;
@@ -1152,12 +1217,13 @@ begin
   rectWelcomeBtn2.Enabled := True;
 end;
 
-procedure TForm2.loginshowImage1HeightFinish(Sender: TObject);
+procedure TfrmLogin.loginshowImage1HeightFinish(Sender: TObject);
 begin
-  login_state := 1;
+  i_login_state := 1;
 end;
 
-procedure TForm2.passStrengthMeter(strength: integer);
+// Sets the password strength meter to the correct position
+procedure TfrmLogin.passStrengthMeter(strength: integer);
 const
   captions: array of string = ['Too short', 'Weak', 'Poor', 'Fair', 'Good',
     'Strong'];
@@ -1224,7 +1290,8 @@ begin
   end;
 end;
 
-function TForm2.password_strength(Password: string): integer;
+// Calculates the password strength
+function TfrmLogin.password_strength(Password: string): integer;
 var
   Len, number, upp, low, special: Boolean;
   s: Char;
@@ -1290,22 +1357,23 @@ begin
 
 end;
 
-procedure TForm2.rectCreateBtnBackClick(Sender: TObject);
+procedure TfrmLogin.rectCreateBtnBackClick(Sender: TObject);
 begin
   floatCreateAccountPassUIR.Start;
   floatCreateBackR.Start;
-  login_state := 3;
+  i_login_state := 3;
 end;
 
-procedure TForm2.rectCreateBtnBackClick2(Sender: TObject);
+procedure TfrmLogin.rectCreateBtnBackClick2(Sender: TObject);
 begin
   rectCreateBtnBack.OnClick := rectCreateBtnBackClick;
   imgCreateBtnBack.OnClick := rectCreateBtnBackClick;
   floatCreateAccountNameR.Start;
-  login_state := 4;
+  i_login_state := 4;
 end;
 
-procedure TForm2.rectCreatePasswordBtnNextClick(Sender: TObject);
+// Checks if the password is a valid password and strong enough.
+procedure TfrmLogin.rectCreatePasswordBtnNextClick(Sender: TObject);
 var
   pass: string;
   error: integer;
@@ -1330,17 +1398,17 @@ begin
 
   if error > -1 then
   begin
-    showerror4(error);
+    showerrorCreateP(error);
     Exit;
   end;
   db_password := pass;
-  login_state := 5;
+  i_login_state := 5;
   rectCreateBtnBack.OnClick := rectCreateBtnBackClick2;
   imgCreateBtnBack.OnClick := rectCreateBtnBackClick2;
   floatCreateAccountPassUIF2.Start;
 end;
 
-procedure TForm2.rectCreateShowPasswordClick(Sender: TObject);
+procedure TfrmLogin.rectCreateShowPasswordClick(Sender: TObject);
 begin
   if rectCreateShowPasswordBox.Fill.Color = StringToAlphacolor('#ffffffff') then
   begin
@@ -1355,25 +1423,25 @@ begin
 
 end;
 
-procedure TForm2.rectCreateShowPasswordMouseEnter(Sender: TObject);
+procedure TfrmLogin.rectCreateShowPasswordMouseEnter(Sender: TObject);
 begin
   if rectCreateShowPasswordBox.Fill.Color = StringToAlphacolor('#ff1a79ff') then
     rectCreateShowPasswordBox.Fill.Color := StringToAlphacolor('#ff135fc9');
 end;
 
-procedure TForm2.rectCreateShowPasswordMouseLeave(Sender: TObject);
+procedure TfrmLogin.rectCreateShowPasswordMouseLeave(Sender: TObject);
 begin
   if rectCreateShowPasswordBox.Fill.Color = StringToAlphacolor('#ff135fc9') then
     rectCreateShowPasswordBox.Fill.Color := StringToAlphacolor('#ff1a79ff');
 end;
 
-procedure TForm2.RectCreateAccountClick(Sender: TObject);
+procedure TfrmLogin.RectCreateAccountClick(Sender: TObject);
 begin
   rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#FFFFFFFF');
   rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
-procedure TForm2.rectBtnSignInClick(Sender: TObject);
+procedure TfrmLogin.rectBtnSignInClick(Sender: TObject);
 begin
   if confirmPassword then
   begin
@@ -1386,13 +1454,14 @@ begin
   begin
     lblLoginError.Visible := True;
     if Length(edtLoginPassword.Text) > 0 then
-      showerror2(0)
+      showerrorLoginP(0)
     else
-      showerror2(1);
+      showerrorLoginP(1);
   end;
 end;
 
-procedure TForm2.rectCreateAccountNameBtnNextClick(Sender: TObject);
+// Checks if the name, surname and username are valid.
+procedure TfrmLogin.rectCreateAccountNameBtnNextClick(Sender: TObject);
 var
   first_name, last_name: string;
   c: Char;
@@ -1420,10 +1489,10 @@ begin
 
   if (error_first > -1) or (error_last > -1) then
   begin
-    showerror5(TErrorsCreate([error_first, error_last]));
+    showerrorCreateName(TErrorsCreate([error_first, error_last]));
     Exit;
   end;
-  errorlogin5 := False;
+  b_err_create_n := False;
   db_first_name := first_name;
   db_last_name := last_name;
   rectCreateAccountPassword.Visible := False;
@@ -1431,39 +1500,48 @@ begin
   rectCreateAccountPicture.BringToFront;
 end;
 
-procedure TForm2.rectCreateAccountPictureDragDrop(Sender: TObject;
+procedure TfrmLogin.rectCreateAccountPictureDragDrop(Sender: TObject;
   const Data: TDragObject; const Point: TPointF);
 begin
+  {
+    Okay so this is a complicated one with a weird fix.
+    The rectangle component which functions as the area to receive the image
+    when dragging and dropping, needs to be behind everything else when not in
+    use. If it is in the front when not dragging and dropping, the buttons behind
+    it become unusable even if the rectangle is made invisiable.
+    If the rectangle is always at the back, it can never accept files during
+    dragging and dropping.
+  }
   rectImgDragDrop.SendToBack;
 end;
 
-procedure TForm2.rectCreateAccountPictureDragEnd(Sender: TObject);
+procedure TfrmLogin.rectCreateAccountPictureDragEnd(Sender: TObject);
 begin
   rectImgDragDrop.SendToBack;
 end;
 
-procedure TForm2.rectCreateAccountPictureDragLeave(Sender: TObject);
+procedure TfrmLogin.rectCreateAccountPictureDragLeave(Sender: TObject);
 begin
   rectImgDragDrop.SendToBack;
 end;
 
-procedure TForm2.rectCreateAccountPictureDragOver(Sender: TObject;
+procedure TfrmLogin.rectCreateAccountPictureDragOver(Sender: TObject;
   const Data: TDragObject; const Point: TPointF; var Operation: TDragOperation);
 begin
   rectImgDragDrop.BringToFront;
 end;
 
-procedure TForm2.rectCreateAccountUIpnlClick(Sender: TObject);
+procedure TfrmLogin.rectCreateAccountUIpnlClick(Sender: TObject);
 begin
   rectAreaCodeCombo.Fill.Color := StringToAlphacolor('#FFFFFFFF');
   rectAreaCodeLabel.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
-procedure TForm2.rectCreateAccountBackClick(Sender: TObject);
+procedure TfrmLogin.rectCreateAccountBackClick(Sender: TObject);
 begin
-  hideerror1;
-  hideerror2;
-  hideerror3;
+  hideerrorLoginU;
+  hideerrorLoginP;
+  hideerrorCreate1;
   resetUsernameScreen;
   rectCreateAccountUIpnl.Visible := False;
   rectLoginUIPnl.Visible := False;
@@ -1472,10 +1550,11 @@ begin
   gifLoading.Enabled := True;
   timerAnimation.Interval := Random(2000) + 1000;
   timerAnimation.Enabled := True;
-  login_state := 1;
+  i_login_state := 1;
 end;
 
-procedure TForm2.rectCreateAccountBtnNextClick(Sender: TObject);
+// Validate the email/phone used to create the new account.
+procedure TfrmLogin.rectCreateAccountBtnNextClick(Sender: TObject);
 var
   uname, area: string;
   error: integer;
@@ -1488,7 +1567,7 @@ begin
   uname := edtCreateAccountPhone.Text;
   uname := uname.Trim;
   area := Copy(lblAreaCodes.Text, 2, Length(lblAreaCodes.Text) - 1);
-  if Phone then
+  if b_phone then
   begin
 
     for s in uname do
@@ -1496,7 +1575,7 @@ begin
       try
         strtoint(s);
       except
-        showerror3(0);
+        showerrorCreate1(0);
         Exit;
       end;
     end;
@@ -1511,13 +1590,13 @@ begin
 
     if error > -1 then
     begin
-      showerror3(error);
+      showerrorCreate1(error);
       Exit;
     end;
 
     if IsPhoneUsed(area + '-' + FormatPhone(uname)) then
     begin
-      showerror3(4, lblAreaCodes.Text + uname);
+      showerrorCreate1(4, lblAreaCodes.Text + uname);
       Exit;
     end;
     db_phone := area + '-' + FormatPhone(uname);
@@ -1534,13 +1613,13 @@ begin
 
     if error > -1 then
     begin
-      showerror3(error);
+      showerrorCreate1(error);
       Exit;
     end;
 
     if IsEmailUsed(uname) then
     begin
-      showerror3(4, uname);
+      showerrorCreate1(4, uname);
       Exit;
     end;
     db_email := uname;
@@ -1550,17 +1629,17 @@ begin
   rectCreateAccountPassUI.Position.X := 455;
   lblCreateBtnBack.Text := uname;
   floatRectCreateAccountF.Start;
-  login_state := 4;
+  i_login_state := 4;
 end;
 
-procedure TForm2.rectAreaCodeLabelClick(Sender: TObject);
+procedure TfrmLogin.rectAreaCodeLabelClick(Sender: TObject);
 begin
   cmbAreaCodes.DropDown;
   cmbAreaCodes.OnClick(cmbAreaCodes);
   cmbAreaCodes.SetFocus;
 end;
 
-procedure TForm2.rectWelcomeBtn1Click(Sender: TObject);
+procedure TfrmLogin.rectWelcomeBtn1Click(Sender: TObject);
 begin
   fadeoutrectPos.Start;
   fadeoutrectOpacity.Start;
@@ -1570,7 +1649,7 @@ begin
   fadeoutlblWelcomeTitlePos.Start;
 end;
 
-procedure TForm2.rectWelcomeBtn2Click(Sender: TObject);
+procedure TfrmLogin.rectWelcomeBtn2Click(Sender: TObject);
 begin
   //
   lblWelcome2.Visible := False;
@@ -1584,7 +1663,7 @@ begin
   edtLoginUsername.SetFocus;
 end;
 
-procedure TForm2.rectBtnCreateAccountClick(Sender: TObject);
+procedure TfrmLogin.rectBtnCreateAccountClick(Sender: TObject);
 begin
   //
   resetCreateScreen;
@@ -1597,11 +1676,10 @@ begin
   LoadCountry;
   timerAnimation.Interval := Random(1000) + 1000;
   timerAnimation.Enabled := True;
-  CreateAccountForward := True;
-  login_state := 3;
+  i_login_state := 3;
 end;
 
-procedure TForm2.rectBtnCreateAccountMouseEnter(Sender: TObject);
+procedure TfrmLogin.rectBtnCreateAccountMouseEnter(Sender: TObject);
 begin
   with TLabel(TRectangle(Sender).Children[0]).TextSettings do
   begin
@@ -1610,7 +1688,7 @@ begin
   end;
 end;
 
-procedure TForm2.rectBtnCreateAccountMouseLeave(Sender: TObject);
+procedure TfrmLogin.rectBtnCreateAccountMouseLeave(Sender: TObject);
 begin
   with TLabel(TRectangle(Sender).Children[0]).TextSettings do
   begin
@@ -1619,11 +1697,11 @@ begin
   end;
 end;
 
-procedure TForm2.rectBtnFinishClick(Sender: TObject);
+procedure TfrmLogin.rectBtnFinishClick(Sender: TObject);
 begin
-  // Create record and save image
+  // Create record and save image in correct place
 
-  if customImage then
+  if b_custom_image then
   begin
     circleProfilePicture.Fill.Bitmap.Bitmap.SaveToFile
       (GetCurrentDir + '\accounts\' + db_username + '.png');
@@ -1639,35 +1717,36 @@ begin
   tblUsers['last_name'] := db_last_name;
   tblUsers['phone'] := db_phone;
   tblUsers['username'] := db_username;
-  tblUsers['password'] := db_password;
+  tblUsers['password'] := TNetEncoding.Base64.EncodeBytesToString
+    (TEncoding.UTF8.GetBytes(db_password));
   tblUsers['picture'] := db_picture;
   tblUsers.Post;
   tblUsers.Close;
 end;
 
-procedure TForm2.rectLogin2BtnBackMouseEnter(Sender: TObject);
+procedure TfrmLogin.rectLogin2BtnBackMouseEnter(Sender: TObject);
 begin
   rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFe5e5e5');
 end;
 
-procedure TForm2.rectLogin2BtnBackMouseLeave(Sender: TObject);
+procedure TfrmLogin.rectLogin2BtnBackMouseLeave(Sender: TObject);
 begin
   rectLogin2BtnBack.Fill.Color := StringToAlphacolor('#FFFFFFFF');
 end;
 
-procedure TForm2.rectForgotPasswordMouseEnter(Sender: TObject);
+procedure TfrmLogin.rectForgotPasswordMouseEnter(Sender: TObject);
 begin
   Label16.Font.Style := [TFontStyle.fsUnderline];
   Label16.FontColor := StringToAlphacolor('#FF666666');
 end;
 
-procedure TForm2.rectForgotPasswordMouseLeave(Sender: TObject);
+procedure TfrmLogin.rectForgotPasswordMouseLeave(Sender: TObject);
 begin
   Label16.Font.Style := [];
   Label16.FontColor := StringToAlphacolor('#FF3E81C4');
 end;
 
-procedure TForm2.rectImgDragDropDragDrop(Sender: TObject;
+procedure TfrmLogin.rectImgDragDropDragDrop(Sender: TObject;
   const Data: TDragObject; const Point: TPointF);
 begin
   rectImgDragDrop.Fill.Kind := TBrushKind.None;
@@ -1680,14 +1759,14 @@ begin
   rectImgDragDrop.SendToBack;
 end;
 
-procedure TForm2.rectImgDragDropDragLeave(Sender: TObject);
+procedure TfrmLogin.rectImgDragDropDragLeave(Sender: TObject);
 begin
   rectImgDragDrop.Fill.Kind := TBrushKind.None;
   lblDragDrop.Visible := False;
   rectImgDragDrop.SendToBack;
 end;
 
-procedure TForm2.rectImgDragDropDragOver(Sender: TObject;
+procedure TfrmLogin.rectImgDragDropDragOver(Sender: TObject;
   const Data: TDragObject; const Point: TPointF; var Operation: TDragOperation);
 begin
   rectImgDragDrop.BringToFront;
@@ -1696,7 +1775,7 @@ begin
   begin
     Operation := TDragOperation.Copy;
     rectImgDragDrop.Fill.Kind := TBrushKind.Gradient;
-    rectImgDragDrop.Fill.Gradient := gradientDragDrop;
+    rectImgDragDrop.Fill.Gradient := grad_drag_drop;
     lblDragDrop.Visible := True;
   end
   else
@@ -1704,37 +1783,36 @@ begin
 
 end;
 
-procedure TForm2.rectlblCreateAccountPictureRemoveClick(Sender: TObject);
+procedure TfrmLogin.rectlblCreateAccountPictureRemoveClick(Sender: TObject);
 begin
   rectlblCreateAccountPictureUpload.Position.X := 179;
   lblCreateAccountPictureRemove.Visible := False;
   circleProfilePicture.Fill.Bitmap.Bitmap := imglstProfile.Source.Items[0]
     .MultiResBitmap.Bitmaps[1];
-  customImage := False;
+  b_custom_image := False;
   db_picture := '';
 
 end;
 
-procedure TForm2.rectLoginBtnBackClick(Sender: TObject);
+procedure TfrmLogin.rectLoginBtnBackClick(Sender: TObject);
 begin
-  //
   RectWelome.BringToFront;
   loginhideRect2Height.Start;
   loginhideImage1Pos.Start;
   loginhideImage1Height.Start;
 end;
 
-procedure TForm2.rectLoginBtnBackMouseEnter(Sender: TObject);
+procedure TfrmLogin.rectLoginBtnBackMouseEnter(Sender: TObject);
 begin
   TRectangle(Sender).Fill.Color := StringToAlphacolor('#FFb2b2b2');
 end;
 
-procedure TForm2.rectLoginBtnBackMouseLeave(Sender: TObject);
+procedure TfrmLogin.rectLoginBtnBackMouseLeave(Sender: TObject);
 begin
   TRectangle(Sender).Fill.Color := StringToAlphacolor('#FFcccccc');
 end;
 
-procedure TForm2.rectBtnNextClick(Sender: TObject);
+procedure TfrmLogin.rectBtnNextClick(Sender: TObject);
 begin
   if confirmAccount then
   begin
@@ -1742,61 +1820,63 @@ begin
     rectLogin2.BringToFront;
     rectLogin.BringToFront;
     rectLogin2UI.Visible := False;
+    floatRectLoginFadeF.Start;
     floatRectLoginPosF.Start;
     resetPasswordScreen;
     edtLoginPasswordClick(edtLoginPassword);
-    login_state := 2;
+    i_login_state := 2;
   end
   else
   begin
     lblLoginError.Visible := True;
     if Length(edtLoginUsername.Text) > 0 then
-      showerror1(0)
+      showerrorLoginU(0)
     else
-      showerror1(1);
+      showerrorLoginU(1);
   end;
 end;
 
-procedure TForm2.rectBtnNextMouseEnter(Sender: TObject);
+procedure TfrmLogin.rectBtnNextMouseEnter(Sender: TObject);
 begin
   TRectangle(Sender).Fill.Color := StringToAlphacolor('#FF165fa7');
 end;
 
-procedure TForm2.rectBtnNextMouseLeave(Sender: TObject);
+procedure TfrmLogin.rectBtnNextMouseLeave(Sender: TObject);
 begin
   TRectangle(Sender).Fill.Color := StringToAlphacolor('#FF1a69b9');
 end;
 
-procedure TForm2.ResetComboBox;
+procedure TfrmLogin.ResetComboBox;
 begin
-  ComboboxSearch := '';
+  s_ctry_code_search := '';
   LoadCountryCodes;
 end;
 
-procedure TForm2.resetCreateScreen;
+procedure TfrmLogin.resetCreateScreen;
 begin
   rectCreateAccountPhone.Stroke.Color := TAlphaColors.black;
   edtCreateAccountPhone.Text := '';
-  hideerror3;
+  hideerrorCreate1;
 end;
 
-procedure TForm2.resetPasswordScreen;
+procedure TfrmLogin.resetPasswordScreen;
 begin
   rectLogin2.Stroke.Color := TAlphaColors.black;
   edtLoginPassword.Text := '';
 end;
 
-procedure TForm2.resetUsernameScreen;
+procedure TfrmLogin.resetUsernameScreen;
 begin
   rectLogin.Stroke.Color := TAlphaColors.black;
   edtLoginUsername.Text := '';
 end;
 
-procedure TForm2.SaveSettingString(Section, Name, Value: string);
+// Overwrites, Sets or Creates the specified setting in the config file
+procedure TfrmLogin.SaveSettingString(Section, Name, Value: string);
 var
   ini: TIniFile;
 begin
-  ini := TIniFile.Create(GetCurrentDir + '\' + CONFIG_FILE_NAME);
+  ini := TIniFile.Create(GetCurrentDir + '\' + F_CONFIG_FILE);
   try
     ini.WriteString(Section, Name, Value);
   finally
@@ -1804,35 +1884,34 @@ begin
   end;
 end;
 
-procedure TForm2.ScaleScreen;
+procedure TfrmLogin.ScaleScreen;
 var
   ScreenSize: TSize;
   SysScale: Single;
 begin
+  // Retrieves the screen resolution
   ScreenSize := Screen.Size;
+  // Retrieves the screen scale
   SysScale := GetScreenScale;
   // Put in settings tab
-  // Label23.Text := 'T: ' + floattostr(TrackBar2.Value) + '\n Width: ' +
-  // Inttostr(Width) + '\n Height: ' + Inttostr(Height);
-  // Label22.Text := floattostr(TrackBar1.Value) + '   ' +
-  // floattostr(Layout1.Scale.X);
-  // Label24.Text := 'R: ' + floattostr(ScreenSize.Width / Width) + ':' +
-  // floattostr(ScreenSize.Height / Height);
+
+  // 2.25 is the scale of the screen the application was created on (Mine)
 
   Layout1.Scale.X := (ScreenSize.Width / 3840) * (2.25 / SysScale);
   Layout1.Scale.Y := (ScreenSize.Height / 2160) * (2.25 / SysScale);
-  Self.Width := Round(iniWidth * (ScreenSize.Width / 3840) * (2.25 / SysScale));
-  Self.Height := Round(iniHeight * (ScreenSize.Height / 2160) *
+  Self.Width := Round(I_INI_FORM_WIDTH * (ScreenSize.Width / 3840) *
+    (2.25 / SysScale));
+  Self.Height := Round(I_INI_FORM_HEIGHT * (ScreenSize.Height / 2160) *
     (2.25 / SysScale));
 end;
 
-procedure TForm2.showerror1(error: integer);
+procedure TfrmLogin.showerrorLoginU(error: integer);
 begin
   rectLoginUsername.Stroke.Color := StringToAlphacolor('#FFde1916');
   case error of
     0:
       begin
-        lblLoginError.Text := 'That ' + Appname +
+        lblLoginError.Text := 'That ' + S_APP_NAME +
           ' account does not exist. Enter a different account or get a new one';
         rectErrorMoveUI.Position.Y := 160;
       end;
@@ -1842,13 +1921,13 @@ begin
         rectErrorMoveUI.Position.Y := 135;
       end;
   else
-    showerror1(last_error1);
+    showerrorLoginU(i_prev_err_login_u);
   end;
-  last_error1 := error;
-  errorlogin1 := True;
+  i_prev_err_login_u := error;
+  b_err_login_u := True;
 end;
 
-procedure TForm2.showerror2(error: integer);
+procedure TfrmLogin.showerrorLoginP(error: integer);
 begin
   rectLogin2Password.Stroke.Color := StringToAlphacolor('#FFde1916');
   case error of
@@ -1860,8 +1939,8 @@ begin
       end;
     1:
       begin
-        lblLogin2Error.Text := 'Please enter the password for your ' + Appname +
-          ' account.';
+        lblLogin2Error.Text := 'Please enter the password for your ' +
+          S_APP_NAME + ' account.';
         rectError2MoveUI.Position.Y := 147;
       end;
     2:
@@ -1870,13 +1949,13 @@ begin
         rectError2MoveUI.Position.Y := 147;
       end;
   else
-    showerror2(last_error2);
+    showerrorLoginP(i_prev_err_login_p);
   end;
-  last_error2 := error;
-  errorlogin2 := True;
+  i_prev_err_login_p := error;
+  b_err_login_p := True;
 end;
 
-procedure TForm2.showerror3(error: integer; s: string = '');
+procedure TfrmLogin.showerrorCreate1(error: integer; s: string = '');
 begin
   rectCreateAccountPhone.Stroke.Color := StringToAlphacolor('#FFde1916');
   case error of
@@ -1894,7 +1973,7 @@ begin
     2:
       begin
         lblCreateAccountError.Text := 'Enter the email address in the format' +
-          #13 + 'someone@example.com.';
+          #13 + 'someone@example.com';
         rectCreateAccountError.Position.Y := 145;
       end;
     3:
@@ -1904,27 +1983,27 @@ begin
       end;
     4:
       begin
-        if Phone then
+        if b_phone then
         begin
-          lblCreateAccountError.Text := s + ' is already a ' + Appname +
+          lblCreateAccountError.Text := s + ' is already a ' + S_APP_NAME +
             ' account.';
           rectCreateAccountError.Position.Y := 140;
         end
         else
         begin
-          lblCreateAccountError.Text := s + ' is already a ' + Appname +
+          lblCreateAccountError.Text := s + ' is already a ' + S_APP_NAME +
             ' account.';
           rectCreateAccountError.Position.Y := 125;
         end;
       end;
   else
-    showerror3(last_error3);
+    showerrorCreate1(i_prev_err_create_1);
   end;
-  last_error3 := error;
-  errorlogin3 := True;
+  i_prev_err_create_1 := error;
+  b_err_create_1 := True;
 end;
 
-procedure TForm2.showerror4(error: integer);
+procedure TfrmLogin.showerrorCreateP(error: integer);
 begin
   rectEdtCreateAccountPassword.Stroke.Color := StringToAlphacolor('#FFde1916');
   case error of
@@ -1942,13 +2021,13 @@ begin
         rectCreateAccountPasswordError.Position.Y := 230;
       end;
   else
-    showerror4(last_error4);
+    showerrorCreateP(i_prev_err_create_p);
   end;
-  last_error4 := error;
-  errorlogin4 := True;
+  i_prev_err_create_p := error;
+  b_err_create_p := True;
 end;
 
-procedure TForm2.showerror5(error: TErrors);
+procedure TfrmLogin.showerrorCreateName(error: TErrors);
 // [First name error, Last name error]
 const
   err: array [0 .. 1] of string = ('This information is required.',
@@ -1971,19 +2050,18 @@ begin
       Text := err[error[1]]
     end;
 
-  last_error5 := error;
-  errorlogin5 := True;
+  arr_prev_err_create_n := error;
+  b_err_create_n := True;
 end;
 
-procedure TForm2.timerAnimationTimer(Sender: TObject);
+procedure TfrmLogin.timerAnimationTimer(Sender: TObject);
 begin
   gifLoading.Stop;
   gifLoading.Enabled := False;
   gifLoading.Visible := False;
-  if CreateAccountForward then
+  if i_login_state = 3 then
   begin
     rectCreateAccountUIpnl.Visible := True;
-    CreateAccountForward := False;
   end
   else
   begin
@@ -1993,7 +2071,7 @@ begin
   timerAnimation.Enabled := False;
 end;
 
-procedure TForm2.zoomFinish(Sender: TObject);
+procedure TfrmLogin.zoomFinish(Sender: TObject);
 begin
   float.Start;
 end;
