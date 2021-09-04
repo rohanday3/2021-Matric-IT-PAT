@@ -1,0 +1,108 @@
+object Form4: TForm4
+  Left = 0
+  Top = 0
+  Caption = 'Form4'
+  ClientHeight = 640
+  ClientWidth = 462
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object rectCreateAccountPicture: TRectangle
+    Align = Client
+    Fill.Color = claWhite
+    Size.Width = 462.000000000000000000
+    Size.Height = 640.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Thickness = 0.000000000000000000
+    object lblCreateAccountPictureSubtitle: TLabel
+      StyledSettings = [Family, FontColor]
+      Position.X = 17.000000000000000000
+      Position.Y = 130.000000000000000000
+      Size.Width = 416.000000000000000000
+      Size.Height = 63.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 15.000000000000000000
+      TextSettings.Font.StyleExt = {00030000000000000004000000}
+      Text = 
+        'Add a picture that represents you to customise how others see yo' +
+        'u. You can always change this later in Settings > Account.'
+      TabOrder = 0
+    end
+    object lblCreateAccountPictureTitle: TLabel
+      StyledSettings = [Family, FontColor]
+      Position.X = 16.000000000000000000
+      Position.Y = 80.000000000000000000
+      Size.Width = 425.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.Font.Size = 36.000000000000000000
+      TextSettings.Font.StyleExt = {00030000000000000004000000}
+      Text = 'Choose Your Profile Picture'
+      TabOrder = 1
+    end
+    object Circle1: TCircle
+      Cursor = crHandPoint
+      Fill.Color = xFF8A8D91
+      Position.X = 162.000000000000000000
+      Position.Y = 250.000000000000000000
+      Size.Width = 130.000000000000000000
+      Size.Height = 130.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      OnClick = Circle1Click
+    end
+    object rectlblCreateAccountPictureRemove: TRectangle
+      Cursor = crHandPoint
+      Fill.Color = claWhite
+      Position.X = 227.000000000000000000
+      Position.Y = 392.000000000000000000
+      Size.Width = 50.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      OnClick = rectlblCreateAccountPictureRemoveClick
+      object lblCreateAccountPictureRemove: TLabel
+        Cursor = crHandPoint
+        StyledSettings = [Family, FontColor]
+        Margins.Left = 20.000000000000000000
+        Margins.Right = 20.000000000000000000
+        Size.Width = 102.000000000000000000
+        Size.Height = 20.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 15.000000000000000000
+        TextSettings.Font.StyleExt = {00030000000000000004000000}
+        TextSettings.HorzAlign = Center
+        Text = 'Remove Photo'
+        Visible = False
+        TabOrder = 0
+      end
+    end
+    object rectlblCreateAccountPictureUpload: TRectangle
+      Cursor = crHandPoint
+      Fill.Color = claWhite
+      Position.X = 176.000000000000000000
+      Position.Y = 392.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Thickness = 0.000000000000000000
+      object lblCreateAccountPictureUpload: TLabel
+        AutoSize = True
+        Cursor = crHandPoint
+        StyledSettings = [Family, FontColor]
+        Margins.Left = 1.000000000000000000
+        Margins.Right = 1.000000000000000000
+        Size.Width = 103.000000000000000000
+        Size.Height = 20.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 15.000000000000000000
+        TextSettings.Font.StyleExt = {00030000000000000004000000}
+        TextSettings.HorzAlign = Center
+        Text = 'Upload Photo'
+        TabOrder = 0
+        OnClick = Circle1Click
+      end
+    end
+  end
+end

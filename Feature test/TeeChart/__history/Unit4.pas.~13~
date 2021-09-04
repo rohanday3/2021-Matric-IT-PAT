@@ -1,0 +1,56 @@
+unit Unit4;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Variants,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, Data.Win.ADODB,
+  Data.DB, FMXTee.Engine, FMXTee.Series, FMXTee.Procs, FMXTee.Chart,
+  FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.StdCtrls;
+
+type
+  TForm4 = class(TForm)
+    Chart1: TChart;
+    Series1: TLineSeries;
+    ADOConnection1: TADOConnection;
+    ADOTable1: TADOTable;
+    ADOQuery1: TADOQuery;
+    Button1: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form4: TForm4;
+
+implementation
+
+{$R *.fmx}
+
+procedure TForm4.Button1Click(Sender: TObject);
+begin
+  ADOQuery1.First;
+  while not ADOQuery1.Eof do
+  begin
+    Chart1.Series[0].AddXY(strtodate(ADOQuery1.FieldByName('donation_date')
+      .ToString), strtoint(ADOQuery1.FieldByName('quantity').ToString));
+    ADOQuery1.Next;
+  end;
+end;
+
+procedure TForm4.FormCreate(Sender: TObject);
+begin
+  ADOQuery1.Close;
+  ADOQuery1.SQL.Clear;
+  ADOQuery1.SQL.Add
+    ('SELECT donation_date, SUM(donation_quantity) AS quantity FROM Donations GROUP BY donation_date ORDER BY donation_date ASC');
+  ADOQuery1.Active := True;
+
+end;
+
+end.

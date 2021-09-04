@@ -120,8 +120,7 @@ type
     { Private declarations }
     arrNavipanel: array [1 .. 8] of TNaviPanel;
     arrDashpanel: array [1 .. 6] of TDashPanel;
-    DonationFilterList, DonationList, donation_search_cells
-      : array of array of string;
+    DonationFilterList, DonationList: array of array of string;
     sorttype: Integer;
     sortcolumn: Integer;
     sort: Boolean;
@@ -131,7 +130,6 @@ type
     MIN_SIZE_ALGO1, MIN_SIZE_ALGO2, DATE_TIME_ENABLED: Boolean;
     procedure LoadDashboard;
     procedure LoadNavigationPanel;
-    procedure HighlightStrings(searchstring: string);
     function ChangeColour(colour, option: string): string;
     procedure StringFilter(ACol: array of Integer; Filter: String);
     procedure DateFilter(StartDate, EndDate: TDate);
@@ -146,6 +144,10 @@ type
     procedure AutoSizeCol(Grid: TStringGrid; Column: Integer);
     procedure WMGetMinMaxInfo(var MSG: Tmessage); message WM_GetMinMaxInfo;
     procedure FreeDynamics;
+    procedure HighlightCellText(const AGrid: TStringGrid; const ARect: TRect;
+      const ACanvas: TCanvas; FilterText, DisplayText: string;
+      AState: TGridDrawStates; BkColor: TColor = talphacolors.yellow;
+      SelectedBkColor: TColor = talphacolors.Grey);
 
   const
     MIN_HEIGHT: Integer = 600;
@@ -259,7 +261,6 @@ begin
   end
   else
   begin
-    SetLength(donation_search_cells, 0);
     StringGrid1.RowCount := 0;
     RestoreFilter;
     imgClearSearch.Visible := False;
@@ -388,21 +389,44 @@ begin
   end;
 end;
 
-procedure TForm1.HighlightStrings(searchstring: string);
+procedure TForm1.HighlightCellText(const AGrid: TStringGrid; const ARect: TRect;
+  const ACanvas: TCanvas; FilterText, DisplayText: string;
+  AState: TGridDrawStates; BkColor: TColor = talphacolors.yellow;
+  SelectedBkColor: TColor = talphacolors.Grey);
 var
-  i, K: Integer;
+  HlRect: TRect;
+  Position: Integer;
+  HlText, FilterColName: string;
+  i, offset: Integer;
 begin
-  SetLength(donation_search_cells, length(DonationFilterList) + 1,
-    StringGrid1.ColumnCount);
-  for i := 0 to length(DonationFilterList) - 1 do
+  Position := Pos(AnsiLowerCase(FilterText), AnsiLowerCase(DisplayText));
+  if Position > 0 then
   begin
-    for K := 0 to StringGrid1.ColumnCount - 1 do
-    begin
-      if ContainsText(DonationFilterList[i, K], searchstring) then
-      begin
-        donation_search_cells[i, K] := 'Highlight';
-      end;
-    end;
+    // set highlight area
+    HlRect.Left := round(ARect.Left + Canvas.TextWidth(Copy(DisplayText, 1,
+      Position - 1)));
+
+    HlRect.Top := ARect.Top + 1;
+    HlRect.Right := round(HlRect.Left + Canvas.TextWidth(Copy(DisplayText,
+      Position, length(FilterText))));
+    HlRect.Bottom := ARect.Bottom;
+
+    // check for  limit of the cell
+    if HlRect.Right > ARect.Right then
+      HlRect.Right := ARect.Right;
+
+    // setup the color and draw the rectangle in a width of the matching text
+    if TGridDrawState.Selected in AState then
+      Canvas.Fill.Color := SelectedBkColor
+    else
+      Canvas.Fill.Color := BkColor;
+
+    Canvas.FillRect(HlRect, 0, 0, [], 1, TCornerType.round);
+
+    HlText := Copy(DisplayText, Position, length(FilterText));
+    Canvas.Font.Size := 16;
+    Canvas.Fill.Color := TAlphaColorRec.Black;
+    Canvas.FillText(HlRect, HlText, False, 1, [], TTextAlign.Leading);
   end;
 end;
 
@@ -422,7 +446,6 @@ begin
   edtDonationsSearch.ShowHint := true;
   imgClearSearch.Visible := False;
   imgClearSearch.SetFocus;
-  SetLength(donation_search_cells, 0);
   StringGrid1.RowCount := 0;
   RestoreFilter;
 end;
@@ -573,7 +596,7 @@ end;
 procedure TForm1.LoadDonations;
 var
   i: Integer;
-  grey: Boolean;
+  Grey: Boolean;
   K: Integer;
   rows: array [0 .. 5] of string;
   temp_head: string;
@@ -697,7 +720,6 @@ var
   i: Integer;
   K: Integer;
 begin
-  SetLength(donation_search_cells, 0, 0);
   edtDonationsSearch.Text := '';
   lblNoRecords.Visible := False;
   imgNoRecordsFound.Visible := False;
@@ -730,8 +752,8 @@ begin
 
   Layout1.Scale.X := (ScreenSize.Width / 3840) * (2.25 / SysScale);
   Layout1.Scale.Y := (ScreenSize.Height / 2160) * (2.25 / SysScale);
-  Self.Width := Round(iniWidth * (ScreenSize.Width / 3840) * (2.25 / SysScale));
-  Self.Height := Round(iniHeight * (ScreenSize.Height / 2160) *
+  Self.Width := round(iniWidth * (ScreenSize.Width / 3840) * (2.25 / SysScale));
+  Self.Height := round(iniHeight * (ScreenSize.Height / 2160) *
     (2.25 / SysScale));
 end;
 
@@ -838,7 +860,6 @@ begin
     cellIndex := 0;
     J := 0;
     SetLength(DonationFilterList, 0);
-    SetLength(donation_search_cells, 0, 0);
     for i := 0 to length(DonationList) - 1 do
     begin
       Skip := False;
@@ -861,7 +882,6 @@ begin
     end;
     J := 0;
     StringGrid1.RowCount := 0;
-    HighlightStrings(Filter);
     StringGrid1.RowCount := length(DonationFilterList);
     if length(DonationFilterList) > 0 then
     begin
@@ -915,21 +935,20 @@ procedure TForm1.StringGrid1DrawColumnCell(Sender: TObject;
 var
   newBounds: TRectF;
   painted: Boolean;
+  Position: Integer;
+  HlRect: TRect;
 begin
-  if length(donation_search_cells) > 0 then
-    if donation_search_cells[Row, Column.index] = 'Highlight' then
-    begin
-      Canvas.Fill.Color := TAlphaColors.Yellow;
-      painted := true;
-    end;
+  // Alternate row colour between white and blue
   if (Row mod 2 = 0) and (painted = False) then
   begin
-    Canvas.Fill.Color := TAlphaColors.White;
+    Canvas.Fill.Color := talphacolors.White;
   end
   else if (Row mod 2 > 0) and (painted = False) then
   begin
     Canvas.Fill.Color := StringToAlphaColor('#FFddebf7');
   end;
+
+  // Text settings and boundries
   Canvas.Stroke.Thickness := 0;
   newBounds := Bounds;
   newBounds.Left := newBounds.Left - 5;
@@ -940,6 +959,11 @@ begin
   Canvas.Font.Size := 16;
   Canvas.Fill.Color := TAlphaColorRec.Black;
   Canvas.FillText(Bounds, Value.ToString, False, 1, [], TTextAlign.Leading);
+
+  // Highlight search string
+  if length(edtDonationsSearch.Text) > 0 then
+    HighlightCellText(StringGrid1, Bounds.round, Canvas,
+      edtDonationsSearch.Text, Value.ToString, State);
 end;
 
 procedure TForm1.StringGrid1DrawColumnHeader(Sender: TObject;
@@ -947,7 +971,7 @@ procedure TForm1.StringGrid1DrawColumnHeader(Sender: TObject;
 begin
   Canvas.Fill.Color := StringToAlphaColor('#FF5b9bd5');
   Canvas.Stroke.Thickness := 2;
-  Canvas.Stroke.Color := TAlphaColors.Darkgray;
+  Canvas.Stroke.Color := talphacolors.Darkgray;
   Canvas.FillRect(Bounds, 0, 0, [], 1);
   Canvas.Font.Size := donation_grid_head_size;
   Canvas.Font.Style := Canvas.Font.Style + [TFontStyle.fsBold];
@@ -957,7 +981,7 @@ end;
 
 procedure TForm1.StringGrid1Resize(Sender: TObject);
 begin
-  donation_grid_head_size := Round(20 * (StringGrid1.Width / 1293));
+  donation_grid_head_size := round(20 * (StringGrid1.Width / 1293));
 end;
 
 procedure TForm1.tContrMainChange(Sender: TObject);

@@ -1,0 +1,97 @@
+object Form4: TForm4
+  Left = 0
+  Top = 0
+  Caption = 'Form4'
+  ClientHeight = 643
+  ClientWidth = 969
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object Chart1: TChart
+    Position.X = 8.000000000000000000
+    Position.Y = 8.000000000000000000
+    Foot.Font.StyleExt = {00040000000200000004000000}
+    Legend.Title.Font.StyleExt = {00070000000000000004000000}
+    Legend.Visible = False
+    SubFoot.Font.StyleExt = {00040000000200000004000000}
+    Title.Text.Strings = (
+      'Donations')
+    BottomAxis.DateTimeFormat = 'yyyy/MM/dd'
+    BottomAxis.Title.Caption = 'Date'
+    Chart3DPercent = 1
+    LeftAxis.Title.Caption = 'Amount'
+    View3D = False
+    Zoom.Brush.Kind = None
+    Zoom.Pen.Fill.Color = claSilver
+    TabOrder = 0
+    Size.Width = 953.000000000000000000
+    Size.Height = 257.000000000000000000
+    Size.PlatformDefault = False
+    ColorPaletteIndex = 13
+    object Series1: TLineSeries
+      Marks.Style = smsValue
+      Brush.BackColor = x00FFFFFF
+      Pointer.Dark3D = False
+      Pointer.Draw3D = False
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.DateTime = True
+      XValues.Name = 'X'
+      XValues.Order = loNone
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+      Data = {
+        0019000000000000000040454000000000008046400000000000004E40000000
+        0000C052400000000000804B4000000000000064400000000000404F40000000
+        00000034400000000000404A4000000000000034400000000000003E40000000
+        0000D061400000000000B0684000000000000069400000000000406A40000000
+        000068704000000000000074400000000000A074400000000000C87940000000
+        0000D076400000000000C879400000000000407F400000000000248340000000
+        0000F886400000000000848740}
+    end
+  end
+  object Button1: TButton
+    Position.X = 448.000000000000000000
+    Position.Y = 312.000000000000000000
+    TabOrder = 4
+    Text = 'Button1'
+    OnClick = Button1Click
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 32.000000000000000000
+    Position.Y = 288.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 273.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Viewport.Width = 365.000000000000000000
+    Viewport.Height = 269.000000000000000000
+  end
+  object ADOConnection1: TADOConnection
+    Connected = True
+    ConnectionString = 
+      'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\DELL\Docum' +
+      'ents\2021-Matric-IT-PAT\Feature test\TeeChart\Win32\Debug\robinh' +
+      'ood.mdb;Mode=Read;Persist Security Info=False'
+    LoginPrompt = False
+    Mode = cmRead
+    Provider = 'Microsoft.Jet.OLEDB.4.0'
+    Left = 744
+    Top = 400
+  end
+  object ADOTable1: TADOTable
+    Connection = ADOConnection1
+    Left = 800
+    Top = 280
+  end
+  object ADOQuery1: TADOQuery
+    Connection = ADOConnection1
+    Parameters = <>
+    Left = 648
+    Top = 352
+  end
+end
